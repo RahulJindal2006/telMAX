@@ -52,8 +52,8 @@ export const supportData = [
         articles: [
           {
             q: "My internet keeps disconnecting or is slower than usual - what should I do?",
-            a: "Start in the eero app, which can detect many issues automatically. Then reboot your equipment: unplug the modem and your eero, wait about 15 seconds, plug the modem back in first, let it settle, then power the eero back on. Test again on a device connected by Ethernet to rule out WiFi interference. If the problem continues, contact telMAX support so we can check the line.",
-            keywords: ["disconnect", "dropping", "slow", "lag", "buffering", "unstable", "keeps cutting out", "not working", "internet down", "no internet"],
+            a: "Start in the eero app, which can run diagnostics and detect many issues automatically. Then reboot your equipment in the right order: unplug the modem (fibre box / ONT) and your eero, wait about 10 to 15 seconds, plug the modem back in first, let it fully settle, then power the eero back on. Test again on a device connected by Ethernet to rule out WiFi interference. If the problem continues, contact telMAX support so we can check the line.",
+            keywords: ["disconnect", "dropping", "slow", "lag", "buffering", "unstable", "keeps cutting out", "not working", "internet down", "no internet", "reboot", "restart"],
             popular: true,
           },
           {
@@ -63,14 +63,25 @@ export const supportData = [
             popular: true,
           },
           {
+            q: "What do the light colours on my eero mean?",
+            a: "As general eero guidance: a solid white light means everything is normal and connected. A red light means the eero can't reach the internet - reboot the fibre box (ONT) first, wait about two minutes, then reboot the eero. A flashing blue light means the eero is starting up, updating or broadcasting for setup, so give it a few minutes. No light at all usually means no power - check the cable and outlet. For the definitive guide for your equipment, use the eero app or contact telMAX support.",
+            keywords: ["eero light", "led", "light colour", "white light", "red light", "blue light", "blinking", "what does the light mean", "status light"],
+            popular: true,
+          },
+          {
+            q: "The fibre box (ONT) has a red LOS or alarm light - what should I do?",
+            a: "A red LOS (\"loss of signal\") or alarm light on your fibre box (ONT) points to a problem on the fibre line itself, not something a reboot at home will fix. Please contact telMAX support and let us know you're seeing an LOS or alarm light so we can investigate the connection to your home.",
+            keywords: ["los", "loss of signal", "ont", "fibre box", "red alarm", "alarm light", "fibre light", "no signal"],
+          },
+          {
             q: "Why won't certain devices connect to my WiFi?",
             a: "Some devices - older phones, smart-home gear, security cameras, thermostats and appliances - don't support WiFi 6 or the 5 GHz band. In the eero app you can temporarily hide the 5 GHz band so these devices connect to 2.4 GHz instead. Once they're paired, you can switch the 5 GHz band back on.",
             keywords: ["device won't connect", "smart home", "camera", "thermostat", "2.4 ghz", "5 ghz", "wifi 6", "compatibility"],
           },
           {
-            q: "My internet is completely down - is there an outage?",
-            a: "First reboot your modem and eero as described above. If neighbours are also affected, there may be a local outage - our team monitors the network 24/7 and works to restore service quickly. You can confirm an outage and get updates by contacting telMAX support.",
-            keywords: ["outage", "no internet", "internet down", "service down", "everything offline"],
+            q: "My internet is completely down - how do I check for an outage?",
+            a: "First reboot your modem and eero: unplug the modem, wait about 10 to 15 seconds, plug it back in, let it settle, then power the eero on. If the fibre box (ONT) shows a red LOS or alarm light, that's a fibre-side issue you can't fix at home. If neighbours are also affected, there may be a local outage. To confirm an outage or report one, contact telMAX support - our team monitors the network 24/7 and can give you the latest status and updates.",
+            keywords: ["outage", "no internet", "internet down", "service down", "everything offline", "report outage", "check outage", "local outage"],
           },
         ],
       },
@@ -163,8 +174,8 @@ export const supportData = [
         articles: [
           {
             q: "My eero is offline or showing a red light - how do I fix it?",
-            a: "A red or blinking light usually means the eero can't reach the internet. Reboot it: unplug the eero for about 15 seconds, plug it back in and wait a few minutes. Check that the cable from the modem is firmly seated. If the gateway eero is fine but a satellite shows red, move it closer to another eero. If it stays offline, contact support.",
-            keywords: ["eero offline", "red light", "blinking", "eero not working", "no wifi", "wifi down"],
+            a: "A red light on the eero usually means it can't reach the internet. Reboot the fibre box (ONT) first: unplug it for about 10 to 15 seconds, plug it back in and wait roughly two minutes, then reboot the eero the same way. Check that the cable from the modem is firmly seated. If the gateway eero is fine but a satellite shows red, move it closer to another eero. If the fibre box shows a red LOS or alarm light, that's a line issue - contact support rather than continuing to reboot.",
+            keywords: ["eero offline", "red light", "blinking", "eero not working", "no wifi", "wifi down", "led", "reboot eero", "los"],
             popular: true,
           },
           {
@@ -334,8 +345,8 @@ export const supportData = [
           },
           {
             q: "What are the home phone star codes?",
-            a: "Star codes turn calling features on and off from your handset. Common codes include: *43 enable Call Waiting, *44 disable Call Waiting; *69 Last Call Return; *98 Voicemail management; *72 Call Forward All on/off, *90 Call Forward when Busy, *92 Call Forward on No Answer, *94 Call Forward when Out of Service; *78 enable Do Not Disturb, *79 disable Do Not Disturb; *77 block anonymous callers, *87 allow anonymous callers; *64 block all other callers, *74 allow all other callers. A full star-code guide is available - contact support if you need it.",
-            keywords: ["star codes", "star code", "feature codes", "call forwarding", "call waiting", "do not disturb", "*72", "*98", "*69"],
+            a: "Star codes turn calling features on and off from your handset. Common codes include: *43 enable Call Waiting, *44 disable Call Waiting; *69 Last Call Return; *98 Voicemail management; *72 Call Forward All on/off, *90 Call Forward when Busy, *92 Call Forward on No Answer, *94 Call Forward when Out of Service; *78 enable Do Not Disturb, *79 disable Do Not Disturb; *77 block anonymous callers, *87 allow anonymous callers; *60 block selected callers, *59 allow selected callers. This list is a handy reference - for the definitive, up-to-date set of codes for your service, see the telMAX Star Codes guide or contact telMAX support.",
+            keywords: ["star codes", "star code", "feature codes", "call forwarding", "call waiting", "do not disturb", "anonymous", "selective", "*72", "*98", "*69", "*77", "*60"],
             popular: true,
           },
           {
@@ -370,14 +381,14 @@ export const supportData = [
         articles: [
           {
             q: "There's no dial tone on my home phone - how do I fix it?",
-            a: "Check that your phone cable is plugged into the POTS1 port on the modem. Reboot the modem by unplugging it for about 15 seconds and plugging it back in. If your service uses a Grandstream phone adapter, confirm its cables are secure too. If there's still no dial tone after rebooting, contact telMAX support.",
+            a: "Check that your phone cable is plugged into the POTS1 port on the modem (the black box). Reboot the modem by unplugging it for about 10 to 15 seconds and plugging it back in. If your service uses a Grandstream phone adapter, confirm its cables are secure too (not every install has one). If there's still no dial tone after rebooting, contact telMAX support.",
             keywords: ["no dial tone", "phone not working", "dead phone", "can't make calls", "pots1", "grandstream", "phone down"],
             popular: true,
           },
           {
             q: "Will 911 work during a power or internet outage?",
-            a: "Because home phone service runs over the internet, 911 emergency calling may not be available during a power outage or internet interruption. We strongly recommend keeping a charged mobile phone on hand as a backup for emergencies.",
-            keywords: ["911", "emergency", "power outage", "emergency calling", "safety"],
+            a: "Your home phone is a VoIP service that works over your internet connection. That means 911 and other calling may be unavailable during a power outage or internet interruption. Please keep a charged mobile phone on hand as a backup for emergencies, and make sure the service address on your account is always current so emergency services can be directed to the right location. If you move or your address changes, let telMAX know right away.",
+            keywords: ["911", "emergency", "power outage", "voip", "emergency calling", "safety", "backup", "service address"],
           },
         ],
       },
@@ -397,6 +408,7 @@ export const supportData = [
         icon: "user-circle",
         articles: [
           {
+            // TODO(verify): confirm the phone-balance IVR path ("press 4") against current telMAX phone menu.
             q: "How do I check my account balance?",
             a: "Sign in to your My telMAX account and your balance appears in the account summary. You can also call from the phone number on your account and press 4 to hear your balance.",
             keywords: ["balance", "how much do i owe", "account summary", "check bill"],
@@ -432,6 +444,12 @@ export const supportData = [
             keywords: ["pay by phone", "phone payment", "call to pay"],
           },
           {
+            q: "How do I set up e-billing and automatic payments?",
+            a: "Sign in to My telMAX to go paperless and turn on automatic payments. In the billing section you can view and download your invoices, save a credit card, and enable autopay so each bill is paid on time without you having to think about it. You can update or remove your saved payment method there at any time.",
+            keywords: ["e-billing", "ebilling", "paperless", "autopay", "automatic payment", "auto pay", "recurring payment", "payment method", "credit card"],
+            popular: true,
+          },
+          {
             q: "How do I change my billing cycle?",
             a: "Contact telMAX support by phone or email to request a change to your billing cycle and we'll help where possible.",
             keywords: ["billing cycle", "billing date", "change due date"],
@@ -453,6 +471,12 @@ export const supportData = [
             q: "How do I upgrade my services?",
             a: "Contact telMAX support and we can upgrade your internet, TV or phone services quickly. Most upgrades don't require new equipment or a technician visit.",
             keywords: ["upgrade", "change plan", "add service", "more speed"],
+          },
+          {
+            q: "I'm moving - how do I transfer my service to a new address?",
+            a: "Get in touch with telMAX support as early as you can before your move. We'll check whether telMAX fibre is available at your new address, arrange installation there, and update your account, billing and home-phone service details. If you have home phone, keeping your service address current also keeps your 911 information accurate. Contact us at 1-844-483-5629 or support@telmax.com to get the move started.",
+            keywords: ["moving", "move", "new address", "transfer service", "relocate", "moving home", "change address"],
+            popular: true,
           },
         ],
       },

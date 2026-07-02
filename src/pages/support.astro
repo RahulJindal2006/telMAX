@@ -135,9 +135,13 @@ const chips = [
           <p>Billing, payments and services</p>
         </a>
       </div>
+      <p class="s-chat">
+        Prefer to chat? The <strong>telMAX Assistant</strong> is right here on this page -
+        look for the chat button in the bottom corner.
+      </p>
       <p class="s-resident" id="resident-relations">
-        Have feedback to share? Our <strong>Resident Relations</strong> team is here to listen -
-        <a href="/contact">GET IN TOUCH</a>.
+        Building or property concern? Our <strong>Resident Relations</strong> team is here to help -
+        email <a href="mailto:rr@telmax.com">rr@telmax.com</a>.
       </p>
     </div>
   </section>
@@ -269,6 +273,15 @@ const chips = [
       </span>
     </a>`;
 
+  /* "Was this helpful?" affordance - front-end only, no backend.
+     A "No" answer gently nudges the reader toward contacting support. */
+  const helpfulHTML = () => `
+    <div class="s-helpful" data-helpful>
+      <span class="s-helpful__q">Was this helpful?</span>
+      <button type="button" class="s-helpful__btn" data-vote="yes">Yes</button>
+      <button type="button" class="s-helpful__btn" data-vote="no">No</button>
+    </div>`;
+
   const articleHTML = (a, open) => `
     <details class="s-article"${open ? " open" : ""}>
       <summary>
@@ -276,7 +289,7 @@ const chips = [
         <span class="s-q">${esc(a.q)}</span>
         <span class="s-chev" aria-hidden="true"></span>
       </summary>
-      <div class="s-a"><p>${esc(a.a)}</p></div>
+      <div class="s-a"><p>${esc(a.a)}</p>${helpfulHTML()}</div>
     </details>`;
 
   /* ================= VIEWS ================= */
@@ -365,11 +378,15 @@ const chips = [
     const { results, product, trouble } = runSearch(query);
 
     if (!results.length) {
+      const tips = ["Internet is slow", "Reset my eero", "No dial tone", "Pay my bill"];
       root.innerHTML = `
         <div class="s-empty">
           <div class="s-empty__icon" aria-hidden="true"></div>
           <h2>No results for “${esc(query)}”</h2>
-          <p>Try different words, or browse by product below.</p>
+          <p>Try simpler words, or pick a common topic. You can also browse by product below.</p>
+          <div class="s-empty__tips">
+            ${tips.map((t) => `<a class="s-empty__tip" href="#q/${encodeURIComponent(t)}">${esc(t)}</a>`).join("")}
+          </div>
         </div>
         <div class="s-grid s-grid--products">${supportData.map(productCard).join("")}</div>`;
       return;
@@ -404,6 +421,7 @@ const chips = [
               <a class="s-a__link" href="#p/${a.productId}/${a.categoryId}">
                 ${esc(a.productName)} › ${esc(a.categoryName)}
               </a>
+              ${helpfulHTML()}
             </div>
           </details>`
           )
@@ -432,6 +450,11 @@ const chips = [
       renderHome();
     }
 
+    // Subtle fade on each view change (respects prefers-reduced-motion via CSS).
+    root.classList.remove("s-fade");
+    void root.offsetWidth; // restart the animation
+    root.classList.add("s-fade");
+
     if (!firstLoad) {
       const y = appEl.getBoundingClientRect().top + window.scrollY - 88;
       window.scrollTo({ top: y, behavior: "smooth" });
@@ -454,6 +477,20 @@ const chips = [
     if (!link) return;
     e.preventDefault();
     document.getElementById("contact-support")?.scrollIntoView({ behavior: "smooth" });
+  });
+
+  // "Was this helpful?" - front-end only. Yes shows a thank-you;
+  // No gently points to the support team. No data leaves the browser.
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".s-helpful__btn");
+    if (!btn) return;
+    const box = btn.closest("[data-helpful]");
+    if (!box) return;
+    const yes = btn.dataset.vote === "yes";
+    box.classList.add("is-done");
+    box.innerHTML = yes
+      ? `<span class="s-helpful__thanks">Thanks for the feedback.</span>`
+      : `<span class="s-helpful__thanks">Sorry that didn't help. <a href="#contact-support" data-scroll>Contact our support team</a> and we'll sort it out.</span>`;
   });
 
   route();

@@ -406,6 +406,75 @@ a.s-crumb:hover { color: var(--deep-green); }
 }
 .s-pop span:last-child { flex: 1; }
 
+/* ---------- Was this helpful? ---------- */
+.s-helpful {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--green-line);
+}
+.s-helpful__q {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--deep-green);
+}
+.s-helpful__btn {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--deep-green);
+  background: var(--white);
+  border: 1px solid var(--green-line);
+  border-radius: 999px;
+  padding: 7px 18px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.s-helpful__btn:hover {
+  background: var(--lime);
+  border-color: var(--lime);
+  transform: translateY(-1px);
+}
+.s-helpful__btn:focus-visible { outline: 3px solid var(--deep-green); outline-offset: 2px; }
+.s-helpful.is-done { border-top-color: transparent; padding-top: 0; }
+.s-helpful__thanks {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--green-soft);
+}
+.s-helpful__thanks a { color: var(--deep-green); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+
+/* ---------- Empty-search suggestions ---------- */
+.s-empty__tips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 9px;
+  margin: 0 auto 34px;
+  max-width: 460px;
+}
+.s-empty__tip {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--deep-green);
+  background: var(--white);
+  border: 1px solid var(--green-line);
+  padding: 8px 15px;
+  border-radius: 999px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.s-empty__tip:hover { background: var(--lime); border-color: var(--lime); }
+
+/* ---------- View-change fade ---------- */
+.s-fade { animation: s-fade-in 0.28s ease both; }
+@keyframes s-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ---------- Contact ---------- */
 .s-contact {
   text-align: center;
@@ -427,10 +496,17 @@ a.s-crumb:hover { color: var(--deep-green); }
 .bg-green .s-contact h3 { color: var(--deep-green); }
 .bg-green .s-contact strong { color: var(--deep-green); }
 .bg-green .s-contact p { color: var(--green-soft); }
-.s-resident {
+.s-chat {
   text-align: center;
   margin-top: 34px;
   color: rgba(249, 249, 235, 0.82);
+}
+.s-chat strong { color: var(--cream); }
+.s-resident {
+  text-align: center;
+  margin-top: 12px;
+  color: rgba(249, 249, 235, 0.7);
+  font-size: 0.95rem;
 }
 .s-resident a { color: var(--lime); text-decoration: underline; font-weight: 700; }
 
@@ -459,5 +535,8 @@ a.s-crumb:hover { color: var(--deep-green); }
   .s-cat,
   .s-pop,
   .s-card__media img,
+  .s-helpful__btn,
+  .s-empty__tip,
   .s-chev { transition: none; }
+  .s-fade { animation: none; }
 }
