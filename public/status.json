@@ -1,11 +1,20 @@
 {
-  "_readme": "Live data source for the Network Status page (/status). Edit this file to change what visitors see - the page fetches it and refreshes every ~60s, so NO site rebuild is required. Each service 'status' must be one of: operational | maintenance | degraded | outage. Set 'updated' to the current time in ISO 8601 (e.g. 2026-07-02T14:30:00-04:00). The top banner follows the most severe service automatically; optionally add a top-level 'overall' (same values) to force it. To post an incident, add an object to 'incidents' with: title, status, body, time (ISO).",
+  "_readme": "Live data source for the Network Status page (/status). Edit this file to change what visitors see - the page fetches it and refreshes every ~60s, so NO site rebuild is required. Every 'status' must be one of: operational | maintenance | degraded | outage. Set 'updated' to the current time in ISO 8601 (e.g. 2026-07-02T14:30:00-04:00). 'services' = products; 'areas' = service cities. The top banner follows the most severe service/area automatically; optionally add a top-level 'overall' to force it. To post an incident, add an object to 'incidents' with: title, status, body, time (ISO).",
   "updated": "2026-07-02T09:00:00-04:00",
   "services": [
     { "id": "internet", "name": "MAXfibre Internet", "note": "Pure fibre network", "status": "operational" },
     { "id": "tv", "name": "MAXview TV", "note": "Live TV, apps and Cloud-PVR", "status": "operational" },
     { "id": "phone", "name": "MAXtalk Home Phone", "note": "Calling and voicemail", "status": "operational" },
     { "id": "portal", "name": "My telMAX", "note": "Account portal and billing", "status": "operational" }
+  ],
+  "areas": [
+    { "name": "Aurora", "status": "operational" },
+    { "name": "Barrie", "status": "operational" },
+    { "name": "Brooklin", "status": "operational" },
+    { "name": "Markham", "status": "operational" },
+    { "name": "Newmarket", "status": "operational" },
+    { "name": "Richmond Hill", "status": "operational" },
+    { "name": "Stouffville", "status": "operational" }
   ],
   "incidents": []
 }
