@@ -3,10 +3,12 @@ import Layout from "../layouts/Layout.astro";
 
 /*
  * Network Status page.
- * NOTE: This is a STATIC page. The statuses below are hard-coded to
- * "operational". Wire this to a real status source (a status feed, a
- * monitoring API, or a CMS field the network team updates) before relying
- * on it as a live indicator. The "updated" stamp reflects the last build.
+ * The board below is the server-rendered fallback (shown if JS is off).
+ * On load, a client script fetches /status.json and re-renders the board
+ * with live data, then refreshes every 60s. Update public/status.json to
+ * change what visitors see - no rebuild required. To plug in a real
+ * monitoring API instead, point the fetch in the script at that endpoint
+ * (mapping its response to { updated, services[], incidents[] }).
  */
 const services = [
   { name: "MAXfibre Internet", note: "Pure fibre network" },
@@ -59,7 +61,7 @@ const checkSteps = [
 
   <section class="section">
     <div class="container status-wrap">
-      <div class="status-board card">
+      <div class="status-board card" id="status-board">
         <div class="status-banner">
           <span class="status-dot" aria-hidden="true"></span>
           <div class="status-banner__text">
@@ -173,17 +175,26 @@ const checkSteps = [
   .status-banner__text { display: flex; flex-direction: column; line-height: 1.35; }
   .status-banner__text strong { font-family: var(--serif); font-size: 1.2rem; }
   .status-banner__text span { color: var(--green-soft); font-size: 0.92rem; }
+  .status-banner { --dot: #35c46f; }
+  .status-banner.is-maintenance { --dot: #6f8fd6; background: rgba(111, 143, 214, 0.12); border-color: rgba(111, 143, 214, 0.42); }
+  .status-banner.is-degraded { --dot: #e0a13a; background: rgba(224, 161, 58, 0.13); border-color: rgba(224, 161, 58, 0.45); }
+  .status-banner.is-outage { --dot: #cd2225; background: rgba(205, 34, 37, 0.1); border-color: rgba(205, 34, 37, 0.4); }
   .status-dot {
+    position: relative;
     width: 14px; height: 14px; flex: none;
     border-radius: 50%;
-    background: #35c46f;
-    box-shadow: 0 0 0 0 rgba(53, 196, 111, 0.55);
+    background: var(--dot, #35c46f);
+  }
+  .status-dot::after {
+    content: "";
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: var(--dot, #35c46f);
     animation: status-pulse 2.4s ease-out infinite;
   }
   @keyframes status-pulse {
-    0% { box-shadow: 0 0 0 0 rgba(53, 196, 111, 0.5); }
-    70% { box-shadow: 0 0 0 12px rgba(53, 196, 111, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(53, 196, 111, 0); }
+    0% { transform: scale(1); opacity: 0.5; }
+    70%, 100% { transform: scale(2.6); opacity: 0; }
   }
 
   .status-list { display: grid; }
@@ -212,6 +223,35 @@ const checkSteps = [
     border-radius: 999px;
   }
   .status-pill__dot { width: 8px; height: 8px; border-radius: 50%; background: #35c46f; }
+  .status-pill.is-maintenance { background: rgba(111, 143, 214, 0.14); color: #3a5aa8; }
+  .status-pill.is-maintenance .status-pill__dot { background: #6f8fd6; }
+  .status-pill.is-degraded { background: rgba(224, 161, 58, 0.16); color: #8a5f12; }
+  .status-pill.is-degraded .status-pill__dot { background: #e0a13a; }
+  .status-pill.is-outage { background: rgba(205, 34, 37, 0.12); color: #a81d20; }
+  .status-pill.is-outage .status-pill__dot { background: #cd2225; }
+
+  .status-incidents { display: grid; gap: 10px; margin: 2px 2px 14px; }
+  .status-incident {
+    border: 1px solid var(--green-line);
+    border-left: 4px solid var(--st, #e0a13a);
+    border-radius: var(--radius-sm);
+    background: var(--cream);
+    padding: 14px 16px;
+  }
+  .status-incident.is-maintenance { --st: #6f8fd6; }
+  .status-incident.is-degraded { --st: #e0a13a; }
+  .status-incident.is-outage { --st: #cd2225; }
+  .status-incident__head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .status-incident__head strong { font-family: var(--serif); font-size: 1.02rem; }
+  .status-incident p { margin-top: 6px; font-size: 0.92rem; }
+  .status-incident__time { display: block; margin-top: 6px; font-size: 0.78rem; color: var(--green-soft); }
+
+  .status-live { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: #1c7a45; }
+  .status-live::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%; background: #35c46f;
+    animation: status-blink 2s ease-in-out infinite;
+  }
+  @keyframes status-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
   .status-updated {
     margin-top: 16px;
@@ -240,6 +280,91 @@ const checkSteps = [
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .status-dot { animation: none; }
+    .status-dot::after,
+    .status-live::before { animation: none; }
+    .status-dot::after { opacity: 0; }
   }
 </style>
+
+<script>
+  // Live status: fetch /status.json, re-render the board, refresh every 60s.
+  // The server-rendered board stays as the no-JS fallback.
+  const board = document.getElementById("status-board");
+  if (board) {
+    const ORDER = ["operational", "maintenance", "degraded", "outage"];
+    const STATUS = {
+      operational: { label: "Operational", cls: "is-operational", banner: "All systems operational", sub: "No outages are currently reported across the telMAX network." },
+      maintenance: { label: "Maintenance", cls: "is-maintenance", banner: "Scheduled maintenance underway", sub: "Some services may be briefly affected during planned maintenance." },
+      degraded: { label: "Degraded", cls: "is-degraded", banner: "Some services are degraded", sub: "We're aware of an issue affecting performance and are working on it." },
+      outage: { label: "Outage", cls: "is-outage", banner: "Service disruption", sub: "We're investigating an outage affecting one or more services." },
+    };
+    const meta = (k) => STATUS[k] || STATUS.operational;
+    const esc = (s) =>
+      String(s == null ? "" : s).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+    const fmt = (iso) => { const d = new Date(iso); return isNaN(d.getTime()) ? "" : d.toLocaleString("en-CA", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Toronto" }); };
+    const fmtLong = (iso) => { const d = iso ? new Date(iso) : new Date(); return (isNaN(d.getTime()) ? new Date() : d).toLocaleString("en-CA", { dateStyle: "long", timeStyle: "short", timeZone: "America/Toronto" }); };
+
+    function render(data) {
+      const services = Array.isArray(data.services) ? data.services : [];
+      let worst = "operational";
+      services.forEach((s) => { if (ORDER.indexOf(s.status) > ORDER.indexOf(worst)) worst = s.status; });
+      const o = meta(STATUS[data.overall] ? data.overall : worst);
+
+      const incidents = (Array.isArray(data.incidents) ? data.incidents : []).filter(Boolean);
+      const incidentsHTML = incidents.length
+        ? `<div class="status-incidents">${incidents.map((inc) => {
+            const im = meta(inc.status);
+            return `<div class="status-incident ${im.cls}">
+              <div class="status-incident__head">
+                <span class="status-pill ${im.cls}"><span class="status-pill__dot" aria-hidden="true"></span>${esc(im.label)}</span>
+                <strong>${esc(inc.title || "")}</strong>
+              </div>
+              ${inc.body ? `<p>${esc(inc.body)}</p>` : ""}
+              ${inc.time ? `<span class="status-incident__time">Updated ${esc(fmt(inc.time))}</span>` : ""}
+            </div>`;
+          }).join("")}</div>`
+        : "";
+
+      const rows = services.map((s) => {
+        const sm = meta(s.status);
+        return `<li class="status-row">
+          <span class="status-svc">
+            <span class="status-svc__name">${esc(s.name)}</span>
+            ${s.note ? `<span class="status-svc__note">${esc(s.note)}</span>` : ""}
+          </span>
+          <span class="status-pill ${sm.cls}"><span class="status-pill__dot" aria-hidden="true"></span>${esc(sm.label)}</span>
+        </li>`;
+      }).join("");
+
+      board.innerHTML = `
+        <div class="status-banner ${o.cls}">
+          <span class="status-dot" aria-hidden="true"></span>
+          <div class="status-banner__text">
+            <strong>${esc(o.banner)}</strong>
+            <span>${esc(o.sub)}</span>
+          </div>
+        </div>
+        ${incidentsHTML}
+        <ul class="status-list">${rows}</ul>
+        <p class="status-updated">
+          Last updated ${esc(fmtLong(data.updated))} (ET) &middot;
+          <a href="#report">Report an outage</a> &middot;
+          <span class="status-live">Live</span>
+        </p>`;
+    }
+
+    async function load() {
+      try {
+        const res = await fetch(`/status.json?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) return;
+        render(await res.json());
+      } catch (e) {
+        /* keep the server-rendered fallback */
+      }
+    }
+
+    load();
+    setInterval(() => { if (!document.hidden) load(); }, 60000);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+  }
+</script>
