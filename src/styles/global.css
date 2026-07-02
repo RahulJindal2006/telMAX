@@ -64,8 +64,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 ul { list-style: none; }
 main { flex: 1; }
 
-/* A branded text-selection colour is a small detail that reads as considered. */
-::selection { background: var(--lime); color: var(--deep-green); }
+/* Branded text-selection colour. Uses mauve (not lime) so the highlight stays
+   visible on lime-background sections too. */
+::selection { background: var(--mauve); color: var(--deep-green); }
 
 /* ---------- Typography ---------- */
 h1, h2, h3, h4 {
