@@ -1,0 +1,192 @@
+---
+/**
+ * Site footer - link columns, contact details and legal row.
+ * Edit the `columns` array to change footer link groups.
+ */
+const columns = [
+  {
+    title: "Products",
+    links: [
+      { label: "Internet", href: "/internet" },
+      { label: "TV & Streaming", href: "/tv" },
+      { label: "Home Phone", href: "/home-phone" },
+      { label: "Business", href: "/business" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About telMAX", href: "/about" },
+      { label: "Careers", href: "/careers" },
+      { label: "MAX Deals", href: "/deals" },
+      { label: "Refer a Friend", href: "/refer-a-friend" },
+    ],
+  },
+  {
+    title: "Help",
+    links: [
+      { label: "Support", href: "/support" },
+      { label: "Contact Us", href: "/contact" },
+      { label: "My telMAX", href: "/my-telmax" },
+      { label: "Resident Relations", href: "/support#resident-relations" },
+    ],
+  },
+];
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="logo"></span>
+        <p>Canada's fastest pure fibre internet - built from the ground up for the Greater Toronto Area.</p>
+        <div class="socials">
+          <a href="https://www.facebook.com/" aria-label="Facebook" class="social social--facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M13.5 21v-8h2.6l.4-3h-3V8c0-.87.27-1.46 1.52-1.46L17 6.5V3.9c-.28-.04-1.25-.13-2.37-.13-2.34 0-3.95 1.43-3.95 4.06V10H8v3h2.68v8z" />
+            </svg>
+          </a>
+          <a href="https://www.instagram.com/" aria-label="Instagram" class="social social--instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+              <circle cx="12" cy="12" r="3.6" />
+              <circle cx="17.2" cy="6.8" r="1.25" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
+          <a href="https://www.linkedin.com/" aria-label="LinkedIn" class="social social--linkedin">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3.2 9h3.6v12H3.2zM9.3 9h3.45v1.64h.05c.48-.9 1.66-1.85 3.42-1.85 3.66 0 4.33 2.4 4.33 5.53V21h-3.6v-5.2c0-1.24-.02-2.83-1.73-2.83-1.73 0-2 1.35-2 2.74V21H9.3z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      {
+        columns.map((col) => (
+          <nav class="footer-col" aria-label={col.title}>
+            <h4>{col.title}</h4>
+            <ul>
+              {col.links.map((l) => (
+                <li>
+                  <a href={l.href}>{l.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+
+      <div class="footer-col">
+        <h4>Get in touch</h4>
+        <ul>
+          <li><a href="tel:18444835629">Support: 1-844-483-5629</a></li>
+          <li><a href="mailto:support@telmax.com">support@telmax.com</a></li>
+          <li><a href="tel:18444925333">Business: 1-844-492-5333</a></li>
+          <li><a href="mailto:businesssupport@telmax.com">businesssupport@telmax.com</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© {year} telMAX Inc. All rights reserved.</p>
+      <nav class="legal" aria-label="Legal">
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--deep-green);
+    color: var(--cream);
+    padding: 64px 0 32px;
+    margin-top: auto;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1.6fr repeat(4, 1fr);
+    gap: 40px;
+    padding-bottom: 44px;
+    border-bottom: 1px solid rgba(249, 249, 235, 0.16);
+  }
+  .footer-brand .logo { width: 150px; color: var(--cream); }
+  .footer-brand p {
+    color: rgba(249, 249, 235, 0.72);
+    font-size: 0.93rem;
+    margin: 16px 0 20px;
+    max-width: 280px;
+  }
+  .socials { display: flex; gap: 12px; }
+  .social {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: rgba(249, 249, 235, 0.1);
+    display: grid; place-items: center;
+    color: var(--cream);
+    transition: transform 0.3s var(--ease-out), background 0.25s ease,
+      color 0.25s ease, box-shadow 0.25s ease;
+  }
+  .social svg { width: 20px; height: 20px; }
+  .social:hover {
+    transform: translateY(-4px) scale(1.12);
+    box-shadow: 0 12px 22px -10px rgba(0, 0, 0, 0.55);
+  }
+  .social--facebook:hover { background: #1877f2; color: #fff; }
+  .social--instagram:hover {
+    background: linear-gradient(
+      45deg,
+      #f09433,
+      #e6683c,
+      #dc2743,
+      #cc2366,
+      #bc1888
+    );
+    color: #fff;
+  }
+  .social--linkedin:hover { background: #0a66c2; color: #fff; }
+  @media (prefers-reduced-motion: reduce) {
+    .social { transition: background 0.25s ease, color 0.25s ease; }
+    .social:hover { transform: none; }
+  }
+
+  .footer-col h4 {
+    color: var(--cream);
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .footer-col ul { display: grid; gap: 11px; }
+  .footer-col a {
+    color: rgba(249, 249, 235, 0.74);
+    font-size: 0.92rem;
+    transition: color 0.15s ease;
+  }
+  .footer-col a:hover { color: var(--lime); }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 26px;
+  }
+  .footer-bottom p { color: rgba(249, 249, 235, 0.6); font-size: 0.86rem; }
+  .legal { display: flex; gap: 22px; }
+  .legal a { color: rgba(249, 249, 235, 0.6); font-size: 0.86rem; }
+  .legal a:hover { color: var(--lime); }
+
+  @media (max-width: 900px) {
+    .footer-top { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    .footer-brand { grid-column: 1 / -1; }
+  }
+  @media (max-width: 520px) {
+    .footer-top { grid-template-columns: 1fr; }
+  }
+</style>

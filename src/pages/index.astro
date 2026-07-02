@@ -1,0 +1,306 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const differenceMakers = [
+  {
+    img: "/images/photos/difference-fibre.jpg",
+    title: "100% pure fibre",
+    text: "A true fibre-to-the-home network - no copper, no coax, no compromise from our core all the way to your living room.",
+  },
+  {
+    img: "/images/photos/difference-independent.jpg",
+    title: "Fully independent",
+    text: "We didn't lease another company's lines. We designed, funded and built our own network from the ground up.",
+  },
+  {
+    img: "/images/photos/difference-local.jpg",
+    title: "Local, GTA-based service",
+    text: "Real people in your community answer the phone - no offshore call centres, no endless transfers.",
+  },
+  {
+    img: "/images/photos/difference-pricing.jpg",
+    title: "Honest pricing",
+    text: "Straightforward plans with no surprise fees. The price we quote is the price you pay.",
+  },
+];
+
+const testimonials = [
+  {
+    quote: "Speeds are exactly what telMAX advertises - every single day. Switching from a national carrier was the best decision we made.",
+    who: "James K. - Newmarket",
+  },
+  {
+    quote: "Rock-solid reliability and the local support team actually picks up. I've never had service this consistent.",
+    who: "Andrey K. - Aurora",
+  },
+  {
+    quote: "Faster and cheaper than what I had with the big providers. Installation was painless and the WiFi reaches everywhere.",
+    who: "Mickey Y. - Stouffville",
+  },
+];
+---
+
+<Layout>
+  <!-- Hero -->
+  <section class="hero">
+    <img class="hero__bg" src="/images/photos/hero-home.webp" alt="" />
+    <div class="container">
+      <div class="hero__inner">
+        <span class="pill">★ Spring Offer - Canada's Fastest Pure Fibre Internet</span>
+        <h1>We didn't borrow our network. We built it.</h1>
+        <p>
+          Pure fibre internet with symmetrical speeds up to 8 Gbps, crystal-clear
+          TV and home phone - all on a 100% independent network engineered for the
+          Greater Toronto Area.
+        </p>
+        <div class="hero__actions">
+          <a href="/internet" class="btn btn--lime">Shop internet plans</a>
+          <a href="/deals" class="btn btn--outline">See MAX Deals</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Offer cards -->
+  <section class="section--tight">
+    <div class="container">
+      <div class="grid grid-2">
+        <div class="card offer-card">
+          <h3>MAXfibre internet</h3>
+          <p>Pure fibre speeds up to 8 Gbps with unlimited data and a complimentary eero WiFi system on most plans.</p>
+          <a href="/internet" class="btn btn--primary">View internet plans</a>
+        </div>
+        <div class="card offer-card">
+          <h3>MAXview TV</h3>
+          <p>132 channels including TSN, Sportsnet, CNN and Crave, plus a 50-hour Cloud-PVR you can watch anywhere.</p>
+          <a href="/tv" class="btn btn--primary">Explore TV & Streaming</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Powering possibilities -->
+  <section class="section bg-green">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Powering everyday possibilities</span>
+        <h2>An independent network built for what's next</h2>
+        <p>
+          Streaming, gaming, working, learning - everything runs better on a
+          dedicated pure fibre connection that isn't shared with your whole street.
+        </p>
+      </div>
+      <div class="grid grid-3">
+        <div class="feat">
+          <span class="icon-chip"><span class="icon-mask" style="--src:url('/images/icons/optical-fiber.svg')"></span></span>
+          <h3>Pure fibre internet</h3>
+          <p>Balanced upload and download speeds up to 8 Gbps, ultra-low latency and truly unlimited data.</p>
+        </div>
+        <div class="feat">
+          <span class="icon-chip"><span class="icon-mask" style="--src:url('/images/icons/tv.svg')"></span></span>
+          <h3>TV & Streaming</h3>
+          <p>Flexible channel packages in stunning quality, with recording and catch-up built right in.</p>
+        </div>
+        <div class="feat">
+          <span class="icon-chip"><span class="icon-mask" style="--src:url('/images/icons/phone-ring.svg')"></span></span>
+          <h3>Home Phone</h3>
+          <p>Crystal-clear voice quality and unlimited calling at a refreshingly fair monthly rate.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Awards -->
+  <section class="section">
+    <div class="container">
+      <div class="awards">
+        <div>
+          <span class="eyebrow">Setting the standard in internet speed</span>
+          <h2>Recognised as Canada's fastest, four years running</h2>
+          <p class="lede">
+            PCMag's independent speed testing has named telMAX among Canada's
+            fastest internet service providers - including fastest overall for
+            gaming. Speed you can measure, not just marketing.
+          </p>
+        </div>
+        <div class="badges">
+          <img src="/images/badges/pc-mag-2025.webp" alt="PCMag fastest ISP award badge" />
+          <img src="/images/badges/pc-mag-gaming.webp" alt="PCMag fastest gaming ISP award badge" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Difference makers -->
+  <section class="section bg-lime">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Our difference makers</span>
+        <h2>Why neighbours are switching to telMAX</h2>
+      </div>
+      <div class="grid grid-4">
+        {
+          differenceMakers.map((d) => (
+            <article class="diff-card">
+              <img src={d.img} alt="" />
+              <div class="diff-card__body">
+                <h3>{d.title}</h3>
+                <p>{d.text}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+      <div class="stats" style="margin-top:56px">
+        <div class="stat"><div class="num">8 Gbps</div><div class="label">Top symmetrical speed</div></div>
+        <div class="stat"><div class="num">99.95%</div><div class="label">Network uptime</div></div>
+        <div class="stat"><div class="num">132</div><div class="label">TV channels available</div></div>
+        <div class="stat"><div class="num">100%</div><div class="label">Independent fibre network</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Referral -->
+  <section class="section">
+    <div class="container">
+      <div class="referral card">
+        <div>
+          <span class="eyebrow">Refer a friend</span>
+          <h2>Earn $200 for every friend you refer</h2>
+          <p class="lede">
+            Love your telMAX service? Share it. When a friend signs up on your
+            recommendation, you both win - and there's no limit to how many
+            referrals you can make.
+          </p>
+        </div>
+        <a href="/refer-a-friend" class="btn btn--primary btn--lg">Start referring</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section bg-green">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">From our customers</span>
+        <h2>Five-star service, neighbour to neighbour</h2>
+      </div>
+      <div class="grid grid-3">
+        {
+          testimonials.map((t) => (
+            <div class="card quote">
+              <div class="stars"><span></span><span></span><span></span><span></span><span></span></div>
+              <p>“{t.quote}”</p>
+              <div class="who">{t.who}</div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section bg-lime">
+    <div class="container cta-band">
+      <h2>Ready for internet the way it should be?</h2>
+      <p class="lede" style="max-width:560px;margin:14px auto 0">
+        Check availability at your address and make the switch to pure fibre today.
+      </p>
+      <div class="actions">
+        <a href="/internet" class="btn btn--primary">Check availability</a>
+        <a href="/contact" class="btn btn--outline">Talk to our team</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .offer-card { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .offer-card .btn { margin-top: 8px; }
+
+  .awards { display: grid; grid-template-columns: 1.5fr 1fr; gap: 48px; align-items: center; }
+  .awards .badges { display: flex; gap: 20px; justify-content: center; }
+  .awards .badges img { width: 150px; height: auto; }
+
+  .referral {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; flex-wrap: wrap;
+    background: var(--deep-green);
+    padding: 48px;
+  }
+  .referral .eyebrow, .referral p { color: rgba(249, 249, 235, 0.8); }
+  .referral h2 { color: var(--cream); }
+  .referral .lede { max-width: 560px; }
+  .referral .btn { flex: none; }
+
+  @media (max-width: 760px) {
+    .awards { grid-template-columns: 1fr; gap: 28px; }
+  }
+</style>
+
+<script>
+  // Count the stat numbers up from zero when they scroll into view.
+  const statsEl = document.querySelector(".stats");
+  if (statsEl) {
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    const nums: {
+      el: Element;
+      raw: string;
+      target: number;
+      decimals: number;
+      suffix: string;
+    }[] = [];
+
+    statsEl.querySelectorAll(".num").forEach((el) => {
+      const raw = (el.textContent || "").trim();
+      const m = raw.match(/^([\d.]+)(.*)$/);
+      if (m) {
+        nums.push({
+          el,
+          raw,
+          target: parseFloat(m[1]),
+          decimals: (m[1].split(".")[1] || "").length,
+          suffix: m[2],
+        });
+      }
+    });
+
+    if (!reduceMotion && nums.length) {
+      // Reset to zero up front so there's no flash of the final value
+      nums.forEach((n) => {
+        n.el.textContent = (0).toFixed(n.decimals) + n.suffix;
+      });
+
+      const run = () => {
+        const duration = 1500;
+        const startTime = performance.now();
+        const frame = (now: number) => {
+          const t = Math.min((now - startTime) / duration, 1);
+          const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+          nums.forEach((n) => {
+            n.el.textContent =
+              t < 1
+                ? (n.target * eased).toFixed(n.decimals) + n.suffix
+                : n.raw;
+          });
+          if (t < 1) requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
+      };
+
+      const io = new IntersectionObserver(
+        (entries, obs) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            run();
+            obs.disconnect();
+          }
+        },
+        { threshold: 0.4 },
+      );
+      io.observe(statsEl);
+    }
+  }
+</script>

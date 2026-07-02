@@ -1,0 +1,172 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const pillars = [
+  { icon: "optical-fiber", title: "Exceptional connectivity", text: "Dedicated, ultra-fast fibre infrastructure built to deliver the speeds we promise." },
+  { icon: "credit-card", title: "Transparent service", text: "Straightforward pricing with no hidden fees and no fine-print surprises." },
+  { icon: "maple-leaf", title: "Community investment", text: "Strengthening the local neighbourhoods and businesses we're proud to serve." },
+];
+
+const values = [
+  { letter: "P", title: "Performance & Commitment", text: "We hold ourselves to the standards we set for our network." },
+  { letter: "A", title: "Agility & Collaboration", text: "We adapt quickly and build better by working together." },
+  { letter: "C", title: "Customer Centricity", text: "Every decision starts with what's right for our customers." },
+  { letter: "T", title: "Trust & Integrity", text: "We do what we say - honestly and transparently." },
+];
+
+const buildSteps = [
+  { n: "01", title: "Planning", text: "Permits, network design and engineering for each neighbourhood." },
+  { n: "02", title: "Preparation", text: "Installing protective pathways for the fibre to travel through." },
+  { n: "03", title: "Building", text: "Laying the pure fibre that forms the backbone of the network." },
+  { n: "04", title: "Restoration", text: "Cleaning up the work area and completing municipal approvals." },
+  { n: "05", title: "Connect", text: "Activating service and connecting fibre directly to your home." },
+];
+---
+
+<Layout
+  title="About telMAX - Our Story"
+  description="telMAX built Canada's fastest pure fibre network from the ground up to serve the Greater Toronto Area."
+>
+  <section class="section bg-green hero-block">
+    <div class="container">
+      <div class="hero-block__inner">
+        <span class="pill">About telMAX</span>
+        <h1>We built Canada's fastest fibre network - on purpose.</h1>
+        <p class="lede">
+          Founded in 2016 in the Greater Toronto Area, telMAX set out to do
+          something the big carriers wouldn't: design and build a brand-new pure
+          fibre network from scratch, rather than patch up decades-old copper.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container about-intro">
+      <div>
+        <span class="eyebrow">Our story</span>
+        <h2>A network built from the ground up</h2>
+        <p class="flow">
+          Where other providers run service over shared, ageing infrastructure,
+          telMAX engineered its own pure fibre network and ran it directly to
+          each home. That independence is why we can deliver symmetrical speeds
+          up to 8 Gbps with the consistency our customers count on.
+        </p>
+        <p>
+          We started in Newmarket, Aurora, Stouffville and Brooklin - and we've
+          since expanded into Barrie and Markham, with more of the GTA on the way.
+        </p>
+      </div>
+      <img class="about-photo" src="/images/photos/detail-fibre-optic.webp" alt="Close-up of pure fibre optic strands" />
+    </div>
+  </section>
+
+  <section class="section bg-lime">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">What we stand for</span>
+        <h2>Three principles guide everything we do</h2>
+      </div>
+      <div class="grid grid-3">
+        {
+          pillars.map((p) => (
+            <div class="feat">
+              <span class="icon-chip">
+                <span class="icon-mask" style={`--src:url('/images/icons/${p.icon}.svg')`} />
+              </span>
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Our imPACT values</span>
+        <h2>The values behind our culture</h2>
+      </div>
+      <div class="grid grid-4">
+        {
+          values.map((v) => (
+            <div class="card value-card">
+              <span class="value-letter">{v.letter}</span>
+              <h3>{v.title}</h3>
+              <p style="margin-top:6px">{v.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-green">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">How we build</span>
+        <h2>From permit to pure fibre - in five stages</h2>
+      </div>
+      <div class="steps">
+        {
+          buildSteps.map((s) => (
+            <div class="step">
+              <span class="step__n">{s.n}</span>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-lime">
+    <div class="container cta-band">
+      <h2>Recognised as Canada's fastest</h2>
+      <p class="lede" style="max-width:600px;margin:14px auto 0">
+        PCMag named telMAX Canada's fastest ISP for gaming in January 2026 - and
+        among Canada's fastest providers for four consecutive years.
+      </p>
+      <div class="actions">
+        <a href="/internet" class="btn btn--primary">Explore our plans</a>
+        <a href="/careers" class="btn btn--outline">Join the team</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-block { padding-top: clamp(64px, 9vw, 120px); }
+  .hero-block__inner { max-width: 720px; }
+
+  .about-intro { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center; }
+  .about-photo { border-radius: var(--radius); width: 100%; height: 100%; object-fit: cover; }
+
+  .value-card { text-align: left; }
+  .value-letter {
+    display: grid; place-items: center;
+    width: 48px; height: 48px; border-radius: 12px;
+    background: var(--lime); color: var(--deep-green);
+    font-family: var(--serif); font-size: 1.5rem; font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+  .step__n {
+    font-family: var(--serif); font-size: 2rem; font-weight: 600;
+    color: var(--lime); display: block; margin-bottom: 8px;
+  }
+  .step h3 { color: var(--cream); font-size: 1.2rem; }
+  .step p { color: rgba(249,249,235,0.78); font-size: 0.9rem; margin-top: 6px; }
+
+  @media (max-width: 860px) {
+    .about-intro { grid-template-columns: 1fr; gap: 28px; }
+    .steps { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 520px) {
+    .steps { grid-template-columns: 1fr; }
+  }
+</style>

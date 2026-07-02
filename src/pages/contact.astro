@@ -1,0 +1,102 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const contacts = [
+  { icon: "phone", label: "Residential support", value: "1-844-483-5629", href: "tel:18444835629" },
+  { icon: "headquarters", label: "Business support", value: "1-844-492-5333", href: "tel:18444925333" },
+  { icon: "email", label: "Residential email", value: "support@telmax.com", href: "mailto:support@telmax.com" },
+  { icon: "email", label: "Business email", value: "businesssupport@telmax.com", href: "mailto:businesssupport@telmax.com" },
+];
+---
+
+<Layout
+  title="Contact Us - telMAX"
+  description="Get in touch with telMAX - residential and business support, sales and general enquiries."
+>
+  <section class="section bg-green hero-block">
+    <div class="container">
+      <div class="hero-block__inner">
+        <span class="pill">Contact Us</span>
+        <h1>We'd love to hear from you.</h1>
+        <p class="lede">
+          Questions about availability, plans or your account? Reach our local
+          GTA-based team - we're here to help.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container contact-grid">
+      <div>
+        <span class="eyebrow">Reach us</span>
+        <h2>Contact details</h2>
+        <div class="contact-list">
+          {
+            contacts.map((c) => (
+              <a href={c.href} class="contact-item">
+                <span class="icon-chip">
+                  <span class="icon-mask" style={`--src:url('/images/icons/${c.icon}.svg')`} />
+                </span>
+                <span>
+                  <small>{c.label}</small>
+                  <strong>{c.value}</strong>
+                </span>
+              </a>
+            ))
+          }
+        </div>
+        <p class="hours">Support hours: 7 days a week. We aim to respond to emails within one business day.</p>
+      </div>
+
+      <div class="card form-card">
+        <h3>Send us a message</h3>
+        <form class="form" data-validate data-done="contact-done" data-reset>
+          <div class="field-row">
+            <label>Full name<input type="text" name="name" required /></label>
+            <label>Email<input type="email" name="email" required /></label>
+          </div>
+          <div class="field-row">
+            <label>Phone<input type="tel" name="phone" /></label>
+            <label>
+              Topic
+              <select name="topic">
+                <option>New service / availability</option>
+                <option>Billing & account</option>
+                <option>Technical support</option>
+                <option>Business enquiry</option>
+                <option>Other</option>
+              </select>
+            </label>
+          </div>
+          <label>Message<textarea name="message" rows="5" required></textarea></label>
+          <button type="submit" class="btn btn--primary">Send message</button>
+          <p id="contact-done" hidden class="form-done">Thanks! We've received your message and will be in touch shortly.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-block { padding-top: clamp(64px, 9vw, 120px); }
+  .hero-block__inner { max-width: 680px; }
+
+  .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: start; }
+  .contact-list { display: grid; gap: 14px; margin-top: 22px; }
+  .contact-item {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--white); border: 1px solid var(--green-line);
+    border-radius: var(--radius-sm); padding: 14px 18px;
+    transition: transform 0.15s ease;
+  }
+  .contact-item:hover { transform: translateX(3px); }
+  .contact-item .icon-chip { margin: 0; width: 44px; height: 44px; }
+  .contact-item small { display: block; font-size: 0.78rem; color: var(--green-soft); font-weight: 600; }
+  .contact-item strong { font-size: 1.05rem; }
+  .hours { margin-top: 20px; font-size: 0.9rem; }
+
+  @media (max-width: 800px) {
+    .contact-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+</style>

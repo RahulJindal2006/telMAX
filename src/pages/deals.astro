@@ -1,0 +1,108 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const deals = [
+  {
+    tag: "Spring offer",
+    title: "MAXfibre 2.0 for $89.95/mo",
+    text: "Our most popular plan - 2 Gbps symmetrical, unlimited data and eero WiFi included - at promotional pricing on a 1-year term.",
+    cta: { label: "Get this deal", href: "/internet" },
+  },
+  {
+    tag: "Bundle & save",
+    title: "Internet + TV + Home Phone",
+    text: "Combine all three services and save every month. One bill, one local provider, one network you can count on.",
+    cta: { label: "Build a bundle", href: "/contact" },
+  },
+  {
+    tag: "Referral reward",
+    title: "Earn $200 per friend",
+    text: "Refer friends and neighbours to telMAX. There's no limit - every successful referral puts $200 in your pocket.",
+    cta: { label: "Refer a friend", href: "/refer-a-friend" },
+  },
+];
+---
+
+<Layout
+  title="MAX Deals - telMAX Offers & Promotions"
+  description="Current telMAX deals: spring internet pricing, bundle savings and the $200 refer-a-friend reward."
+>
+  <section class="section bg-green hero-block">
+    <div class="container">
+      <div class="hero-block__inner">
+        <span class="pill">MAX Deals</span>
+        <h1>The best of telMAX, at its best price.</h1>
+        <p class="lede">
+          Limited-time offers on pure fibre internet, TV and home phone - plus
+          rewards for sharing telMAX with the people you know.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid-3">
+        {
+          deals.map((d) => (
+            <div class="card deal">
+              <span class="pill">{d.tag}</span>
+              <h3>{d.title}</h3>
+              <p>{d.text}</p>
+              <a href={d.cta.href} class="btn btn--primary">{d.cta.label}</a>
+            </div>
+          ))
+        }
+      </div>
+      <p class="fineprint">
+        Promotional pricing applies to new customers on a 1-year term. A $4/mo
+        network access fee applies to new customers. Offers may change or end at
+        any time. Taxes extra.
+      </p>
+    </div>
+  </section>
+
+  <section class="section bg-lime">
+    <div class="container cta-band">
+      <h2>Not sure which deal is right for you?</h2>
+      <p class="lede" style="max-width:520px;margin:14px auto 0">
+        Our local team will help you find the best combination of services and savings.
+      </p>
+      <div class="actions">
+        <a href="/contact" class="btn btn--primary">Talk to our team</a>
+        <a href="/internet" class="btn btn--outline">Browse plans</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-block { padding-top: clamp(64px, 9vw, 120px); }
+  .hero-block__inner { max-width: 700px; }
+  .deal { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .deal .btn { margin-top: auto; }
+
+  /* Make the deal badges glow so each offer reads as a standout deal */
+  .deal .pill {
+    background: linear-gradient(110deg, var(--electric-lime), var(--lime));
+    color: var(--deep-green);
+    font-size: 0.84rem;
+    animation: deal-glow 2.6s ease-in-out infinite;
+  }
+  @keyframes deal-glow {
+    0%, 100% { box-shadow: 0 0 10px -1px rgba(231, 249, 75, 0.55); }
+    50% { box-shadow: 0 0 24px 5px rgba(231, 249, 75, 0.95); }
+  }
+  /* A featured deal card lifts the whole offer on hover */
+  .deal:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+  @media (prefers-reduced-motion: reduce) {
+    .deal .pill {
+      animation: none;
+      box-shadow: 0 0 16px 2px rgba(231, 249, 75, 0.7);
+    }
+  }
+  .fineprint {
+    margin-top: 28px; font-size: 0.82rem; color: var(--green-soft);
+    opacity: 0.8; text-align: center; max-width: 720px; margin-inline: auto;
+  }
+</style>

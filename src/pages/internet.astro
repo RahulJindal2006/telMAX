@@ -1,0 +1,276 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+/* Plan data - edit prices, speeds and features here. */
+const plans = [
+  {
+    name: "MAXfibre 500",
+    speed: "500 Mbps symmetrical",
+    price: "79.95",
+    was: "104.95",
+    featured: false,
+    features: [
+      "500 Mbps download & upload",
+      "Unlimited data",
+      "eero WiFi mesh system included",
+      "Free professional installation",
+    ],
+  },
+  {
+    name: "MAXfibre 2.0",
+    speed: "2 Gbps symmetrical",
+    price: "89.95",
+    was: "124.95",
+    featured: true,
+    features: [
+      "2 Gbps download & upload",
+      "Unlimited data",
+      "eero WiFi mesh system included",
+      "Near-zero latency for gaming",
+      "Free professional installation",
+    ],
+  },
+  {
+    name: "MAXfibre 4.0",
+    speed: "4 Gbps symmetrical",
+    price: "164.95",
+    was: "199.95",
+    featured: false,
+    features: [
+      "4 Gbps download & upload",
+      "Unlimited data",
+      "Ideal for large, busy households",
+      "Free professional installation",
+    ],
+  },
+  {
+    name: "MAXfibre 8.0",
+    speed: "8 Gbps symmetrical",
+    price: "249.95",
+    was: "299.95",
+    featured: false,
+    features: [
+      "8 Gbps download & upload",
+      "Unlimited data",
+      "Canada's fastest residential tier",
+      "Free professional installation",
+    ],
+  },
+];
+
+const faqs = [
+  {
+    q: "Where is telMAX internet available?",
+    a: "We currently serve Stouffville, Brooklin, Newmarket, Richmond Hill, Aurora, Barrie and Markham, and our pure fibre network keeps expanding across the GTA.",
+  },
+  {
+    q: "Why is fibre better than copper or coax?",
+    a: "Fibre carries data as light, so it delivers symmetrical speeds, far lower latency and far more consistent performance than the copper or coaxial lines used by traditional providers.",
+  },
+  {
+    q: "What does an independent network mean for me?",
+    a: "Because we built and own the entire network, your connection isn't shared with the whole neighbourhood - you get the speeds you pay for, even at peak times.",
+  },
+  {
+    q: "Is there really unlimited data?",
+    a: "Yes. Every MAXfibre plan includes truly unlimited data with no caps, no throttling and no overage charges.",
+  },
+];
+---
+
+<Layout
+  title="Internet Plans - telMAX Pure Fibre"
+  description="MAXfibre internet plans with symmetrical speeds up to 8 Gbps, unlimited data and free installation across the GTA."
+>
+  <!-- Hero -->
+  <section class="hero page-hero">
+    <img class="hero__bg" src="/images/photos/internet-service-bg.jpg" alt="" />
+    <div class="container">
+      <div class="hero__inner">
+        <span class="pill">Pure Fibre Internet</span>
+        <h1>Others talk speed. We set it.</h1>
+        <p>
+          Switch to a 100% pure fibre connection with symmetrical speeds up to
+          8 Gbps - and discover what your home network was always meant to do.
+        </p>
+        <a href="#plans" class="btn btn--lime">View MAXfibre plans</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Plans -->
+  <section class="section" id="plans">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">MAXfibre plans</span>
+        <h2>Symmetrical speed for every home</h2>
+        <p>Limited-time spring pricing. All plans include unlimited data and free professional installation.</p>
+      </div>
+      <div class="plan-grid grid-4">
+        {
+          plans.map((p) => (
+            <article class={`plan ${p.featured ? "plan--featured" : ""}`}>
+              {p.featured && <span class="plan__tag">Most popular</span>}
+              <div class="plan__name">{p.name}</div>
+              <div class="plan__speed">{p.speed}</div>
+              <div class="plan__price">
+                <span class="amount">${p.price}</span>
+                <span class="per">/mo</span>
+              </div>
+              <div class="plan__was">Regular ${p.was}/mo</div>
+              <ul class="plan__features">
+                {p.features.map((f) => (
+                  <li>{f}</li>
+                ))}
+              </ul>
+              <a href="/contact" class={`btn ${p.featured ? "btn--primary" : "btn--outline"}`}>
+                Get this plan
+              </a>
+            </article>
+          ))
+        }
+      </div>
+      <p class="fineprint">
+        Promotional pricing for new customers on a 1-year term. A $4/mo network
+        access fee applies to new customers. eero WiFi included on plans up to
+        2 Gbps. Taxes extra.
+      </p>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section bg-green">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Built different</span>
+        <h2>What pure fibre actually gets you</h2>
+      </div>
+      <div class="grid grid-3">
+        <div class="feat">
+          <span class="icon-chip"><span class="icon-mask" style="--src:url('/images/icons/energy.svg')"></span></span>
+          <h3>Lightning-fast everything</h3>
+          <p>Download, upload and back up at the same blistering speed - no waiting, no buffering.</p>
+        </div>
+        <div class="feat">
+          <span class="icon-chip"><span class="icon-mask" style="--src:url('/images/icons/cloud-upload.svg')"></span></span>
+          <h3>Symmetrical by design</h3>
+          <p>Uploads as fast as downloads - perfect for video calls, content creation and cloud backups.</p>
+        </div>
+        <div class="feat">
+          <span class="icon-chip"><span class="icon-mask" style="--src:url('/images/icons/stopwatch.svg')"></span></span>
+          <h3>Ultra-low latency</h3>
+          <p>Near-zero lag gives competitive gamers the responsive edge that copper networks can't match.</p>
+        </div>
+        <div class="feat">
+          <span class="icon-chip"><span class="icon-mask" style="--src:url('/images/icons/wifi.svg')"></span></span>
+          <h3>eero WiFi included</h3>
+          <p>A complimentary eero mesh system on plans up to 2 Gbps blankets your whole home in fast WiFi.</p>
+        </div>
+        <div class="feat">
+          <span class="icon-chip"><span class="icon-mask" style="--src:url('/images/icons/graph.svg')"></span></span>
+          <h3>Unlimited data</h3>
+          <p>Stream, game and work without ever worrying about caps, throttling or overage fees.</p>
+        </div>
+        <div class="feat">
+          <span class="icon-chip"><span class="icon-mask" style="--src:url('/images/icons/security-shield.svg')"></span></span>
+          <h3>99.95% uptime</h3>
+          <p>A network engineered for rock-solid reliability, monitored around the clock.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- eero -->
+  <section class="section">
+    <div class="container eero">
+      <div>
+        <span class="eyebrow">Whole-home WiFi</span>
+        <h2>eero mesh WiFi, included</h2>
+        <p class="lede">
+          Most MAXfibre plans come with a complimentary eero mesh WiFi system.
+          Multiple units work together to eliminate dead zones, and the eero app
+          lets you run speed tests, manage devices and set parental controls in
+          seconds.
+        </p>
+        <ul class="ticks">
+          <li>Seamless coverage in every room</li>
+          <li>Automatic updates and self-optimising network</li>
+          <li>Easy parental controls and device profiles</li>
+        </ul>
+      </div>
+      <div class="eero-card card">
+        <img src="/images/badges/pc-mag-gaming.webp" alt="PCMag fastest gaming ISP badge" />
+        <h3>Made for gamers</h3>
+        <p>
+          MAXfibre 2.0's near-zero latency makes it the sweet spot for competitive
+          play - PCMag named telMAX Canada's fastest ISP for gaming.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section bg-lime">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">FAQ</span>
+        <h2>Internet questions, answered</h2>
+      </div>
+      <div class="faq">
+        {
+          faqs.map((f) => (
+            <details>
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container cta-band">
+      <h2>Ready to make the switch?</h2>
+      <p class="lede" style="max-width:540px;margin:14px auto 0">
+        Bundle internet with TV and home phone and save even more every month.
+      </p>
+      <div class="actions">
+        <a href="/contact" class="btn btn--primary">Check availability</a>
+        <a href="/deals" class="btn btn--outline">See bundle deals</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .fineprint {
+    margin-top: 28px;
+    font-size: 0.82rem;
+    color: var(--green-soft);
+    opacity: 0.8;
+    text-align: center;
+    max-width: 720px;
+    margin-inline: auto;
+  }
+  .eero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center; }
+  .ticks { margin-top: 20px; display: grid; gap: 12px; }
+  .ticks li { display: flex; gap: 10px; font-weight: 600; }
+  .ticks li::before {
+    content: ""; flex: none; width: 22px; height: 22px;
+    background: var(--lime);
+    border-radius: 50%;
+    -webkit-mask: none;
+  }
+  .ticks li::before {
+    background:
+      url("/images/icons/check.svg") center / 13px no-repeat,
+      var(--lime);
+  }
+  .eero-card { text-align: center; }
+  .eero-card img { width: 120px; margin: 0 auto 14px; }
+  @media (max-width: 760px) {
+    .eero { grid-template-columns: 1fr; gap: 28px; }
+  }
+</style>

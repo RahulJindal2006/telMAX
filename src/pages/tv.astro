@@ -1,0 +1,177 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const packages = [
+  {
+    name: "MAXview Basic",
+    channels: "35+ channels",
+    price: "44.95",
+    featured: false,
+    features: [
+      "35+ popular channels",
+      "telMAX TV app for iOS & Android",
+      "3-day Catch-Up TV",
+      "Cloud-PVR ready",
+    ],
+  },
+  {
+    name: "MAXview Essentials",
+    channels: "55+ channels",
+    price: "64.95",
+    featured: true,
+    features: [
+      "55+ channels including sports",
+      "telMAX TV app for iOS & Android",
+      "3-day Catch-Up TV",
+      "50-hour Cloud-PVR",
+      "Voice control with Google Assistant",
+    ],
+  },
+  {
+    name: "MAXview Essentials+",
+    channels: "85+ channels",
+    price: "84.95",
+    featured: false,
+    features: [
+      "85+ channels - the full lineup",
+      "telMAX TV app for iOS & Android",
+      "3-day Catch-Up TV",
+      "50-hour Cloud-PVR with remote access",
+      "Voice control with Google Assistant",
+    ],
+  },
+];
+
+const addOns = [
+  { name: "Hollywood Suites", detail: "4 channels", price: "5" },
+  { name: "Crave & HBO", detail: "6 channels", price: "20" },
+  { name: "Fairchild Combo", detail: "3 channels", price: "25" },
+  { name: "Phoenix Combo", detail: "2 channels", price: "10" },
+  { name: "CNN Package", detail: "1 channel", price: "5" },
+  { name: "À-la-carte channels", detail: "Build your own", price: "5" },
+];
+
+const features = [
+  { icon: "video-player", title: "telMAX TV app", text: "Watch live TV and recordings on your phone or tablet, at home or on the go." },
+  { icon: "phone", title: "Voice control", text: "Change channels and search hands-free with Google Assistant." },
+  { icon: "play", title: "Catch-Up TV", text: "Missed a show? Rewind up to three days and watch whenever you like." },
+  { icon: "document", title: "Cloud-PVR", text: "Record up to 50 hours and access your library from any device." },
+];
+---
+
+<Layout
+  title="TV & Streaming - telMAX MAXview"
+  description="MAXview TV packages with up to 132 channels, Cloud-PVR, Catch-Up TV and the telMAX TV app."
+>
+  <section class="hero page-hero">
+    <img class="hero__bg" src="/images/photos/tv-service-bg.jpg" alt="" />
+    <div class="container">
+      <div class="hero__inner">
+        <span class="pill">TV & Streaming</span>
+        <h1>Spring showers, streaming hours.</h1>
+        <p>
+          132 channels including TSN, Sportsnet, CNN and Crave - plus recording,
+          catch-up and the telMAX TV app, all on Canada's fastest pure fibre network.
+        </p>
+        <a href="#packages" class="btn btn--lime">View TV packages</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="packages">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">MAXview packages</span>
+        <h2>Pick the lineup that fits your living room</h2>
+        <p>12-month promotional pricing. Requires a qualifying MAXfibre internet plan.</p>
+      </div>
+      <div class="plan-grid grid-3">
+        {
+          packages.map((p) => (
+            <article class={`plan ${p.featured ? "plan--featured" : ""}`}>
+              {p.featured && <span class="plan__tag">Most popular</span>}
+              <div class="plan__name">{p.name}</div>
+              <div class="plan__speed">{p.channels}</div>
+              <div class="plan__price">
+                <span class="amount">${p.price}</span>
+                <span class="per">/mo</span>
+              </div>
+              <ul class="plan__features">
+                {p.features.map((f) => (
+                  <li>{f}</li>
+                ))}
+              </ul>
+              <a href="/contact" class={`btn ${p.featured ? "btn--primary" : "btn--outline"}`}>
+                Choose {p.name}
+              </a>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-lime">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Premium add-ons</span>
+        <h2>Top up with the channels you love</h2>
+      </div>
+      <div class="grid grid-3">
+        {
+          addOns.map((a) => (
+            <div class="card addon">
+              <div>
+                <h3>{a.name}</h3>
+                <span class="addon__detail">{a.detail}</span>
+              </div>
+              <div class="addon__price">${a.price}<span>/mo</span></div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-green">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Features you'll tune in for</span>
+        <h2>TV that works the way you do</h2>
+      </div>
+      <div class="grid grid-4">
+        {
+          features.map((f) => (
+            <div class="feat">
+              <span class="icon-chip">
+                <span class="icon-mask" style={`--src:url('/images/icons/${f.icon}.svg')`} />
+              </span>
+              <h3>{f.title}</h3>
+              <p>{f.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container cta-band">
+      <h2>MAX out your bundle</h2>
+      <p class="lede" style="max-width:540px;margin:14px auto 0">
+        Combine TV with MAXfibre internet and home phone for the best value every month.
+      </p>
+      <div class="actions">
+        <a href="/deals" class="btn btn--primary">See bundle deals</a>
+        <a href="/contact" class="btn btn--outline">Talk to our team</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .addon { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .addon__detail { color: var(--green-soft); font-size: 0.9rem; font-weight: 600; }
+  .addon__price { font-family: var(--serif); font-size: 1.8rem; font-weight: 600; }
+  .addon__price span { font-family: var(--sans); font-size: 0.85rem; color: var(--green-soft); }
+</style>

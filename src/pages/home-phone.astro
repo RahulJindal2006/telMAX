@@ -1,0 +1,167 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const plans = [
+  {
+    name: "MAXtalk",
+    coverage: "Unlimited Canada-wide calling",
+    price: "29.95",
+    featured: false,
+    features: [
+      "Unlimited calling across Canada",
+      "Voicemail",
+      "Call display & caller ID",
+      "Call forwarding",
+      "3-way calling & call waiting",
+      "Simple self-installation",
+    ],
+  },
+  {
+    name: "MAXtalk Plus",
+    coverage: "Unlimited Canada & Continental USA",
+    price: "34.95",
+    featured: true,
+    features: [
+      "Unlimited calling in Canada & the USA",
+      "Voicemail",
+      "Call display & caller ID",
+      "Call forwarding",
+      "3-way calling & call waiting",
+      "Simple self-installation",
+    ],
+  },
+];
+
+const features = [
+  { icon: "phone-ring", title: "Crystal-clear quality", text: "Fibre-powered voice with the clarity your conversations deserve." },
+  { icon: "credit-card", title: "Budget-friendly rates", text: "Stop overpaying for a dial tone - fair monthly pricing, no surprises." },
+  { icon: "line-bubble-message", title: "Calling features included", text: "Voicemail, call display, forwarding, 3-way calling and call waiting on every plan." },
+  { icon: "wrench", title: "Self-installation", text: "Set up your home phone yourself in minutes - no technician visit needed." },
+];
+
+const faqs = [
+  {
+    q: "Do I need internet to get a home phone?",
+    a: "Yes. telMAX Home Phone runs over our fibre network, so it requires a qualifying MAXfibre internet plan.",
+  },
+  {
+    q: "Can I keep my current phone number?",
+    a: "In most cases, yes. Number transfers (port-ins) typically take 8-9 business days to complete.",
+  },
+  {
+    q: "How do I use calling features like call forwarding?",
+    a: "Calling features are activated with simple star codes from your handset. A full star-code user guide is available, and our support team is happy to walk you through it.",
+  },
+  {
+    q: "What happens to 911 during an outage?",
+    a: "Because the service is internet-based, 911 emergency calling may be unavailable during a power outage or internet interruption. We recommend keeping a charged mobile phone as a backup.",
+  },
+];
+---
+
+<Layout
+  title="Home Phone - telMAX MAXtalk"
+  description="MAXtalk home phone plans with unlimited calling, crystal-clear fibre voice quality and all the calling features included."
+>
+  <section class="hero page-hero">
+    <img class="hero__bg" src="/images/photos/phone-header-bg.jpg" alt="" />
+    <div class="container">
+      <div class="hero__inner">
+        <span class="pill">Home Phone</span>
+        <h1>Stop overpaying for a dial tone.</h1>
+        <p>
+          Budget-friendly home phone rates and the refreshingly crystal-clear
+          quality your conversations deserve - powered by pure fibre.
+        </p>
+        <a href="#plans" class="btn btn--lime">View phone plans</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="plans">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">MAXtalk plans</span>
+        <h2>Two simple plans, every feature included</h2>
+        <p>Requires a qualifying MAXfibre internet plan. All calling features come standard.</p>
+      </div>
+      <div class="plan-grid grid-2" style="max-width:740px;margin:0 auto">
+        {
+          plans.map((p) => (
+            <article class={`plan ${p.featured ? "plan--featured" : ""}`}>
+              {p.featured && <span class="plan__tag">Best value</span>}
+              <div class="plan__name">{p.name}</div>
+              <div class="plan__speed">{p.coverage}</div>
+              <div class="plan__price">
+                <span class="amount">${p.price}</span>
+                <span class="per">/mo</span>
+              </div>
+              <ul class="plan__features">
+                {p.features.map((f) => (
+                  <li>{f}</li>
+                ))}
+              </ul>
+              <a href="/contact" class={`btn ${p.featured ? "btn--primary" : "btn--outline"}`}>
+                Choose {p.name}
+              </a>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-green">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Why MAXtalk</span>
+        <h2>A home phone worth picking up</h2>
+      </div>
+      <div class="grid grid-4">
+        {
+          features.map((f) => (
+            <div class="feat">
+              <span class="icon-chip">
+                <span class="icon-mask" style={`--src:url('/images/icons/${f.icon}.svg')`} />
+              </span>
+              <h3>{f.title}</h3>
+              <p>{f.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-lime">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">FAQ</span>
+        <h2>Home phone questions, answered</h2>
+      </div>
+      <div class="faq">
+        {
+          faqs.map((f) => (
+            <details>
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container cta-band">
+      <h2>Add MAXtalk to your bundle</h2>
+      <p class="lede" style="max-width:520px;margin:14px auto 0">
+        Pair home phone with internet and TV for the best monthly value.
+      </p>
+      <div class="actions">
+        <a href="/deals" class="btn btn--primary">See bundle deals</a>
+        <a href="/contact" class="btn btn--outline">Contact us</a>
+      </div>
+    </div>
+  </section>
+</Layout>

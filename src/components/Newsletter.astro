@@ -1,0 +1,161 @@
+---
+/**
+ * Newsletter sign-up band - shown above the footer on most pages.
+ * Front-end only; wire the form to a mailing-list service later.
+ */
+---
+
+<section class="nl">
+  <div class="container nl__inner">
+    <div class="nl__text">
+      <h2>Connection at the speed <em>of life</em></h2>
+      <p>Keep in touch and stay up to date with telMAX!</p>
+    </div>
+    <form class="nl__form" id="nl-form" novalidate>
+      <input
+        type="email"
+        name="email"
+        placeholder="Your email"
+        aria-label="Your email address"
+        required
+      />
+      <button type="submit">Subscribe</button>
+    </form>
+    <p class="nl__error" id="nl-error" role="alert" hidden>
+      Please enter a valid email address.
+    </p>
+    <p class="nl__done" id="nl-done" hidden>
+      Thanks for subscribing - keep an eye on your inbox!
+    </p>
+  </div>
+</section>
+
+<style>
+  .nl {
+    background: var(--deep-green);
+    color: var(--cream);
+    padding: clamp(44px, 6vw, 72px) 0;
+  }
+  .nl__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .nl__text h2 {
+    color: var(--cream);
+    font-size: clamp(1.8rem, 3.2vw, 2.7rem);
+  }
+  .nl__text h2 em {
+    color: var(--lime);
+    font-style: italic;
+  }
+  .nl__text p {
+    color: rgba(249, 249, 235, 0.82);
+    font-size: 1.08rem;
+    margin-top: 8px;
+  }
+
+  .nl__form {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--white);
+    border-radius: 999px;
+    padding: 6px;
+    min-width: min(420px, 100%);
+    box-shadow: 0 0 0 2px var(--lime);
+  }
+  .nl__form input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 0.98rem;
+    font-weight: 500;
+    color: var(--deep-green);
+    padding: 12px 18px;
+  }
+  .nl__form input:focus {
+    outline: none;
+  }
+  .nl__form input::placeholder {
+    color: var(--green-soft);
+    opacity: 0.7;
+  }
+  .nl__form button {
+    flex: none;
+    background: var(--mauve);
+    color: var(--deep-green);
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 13px 28px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition:
+      transform 0.2s var(--ease-out),
+      filter 0.2s ease;
+  }
+  .nl__form button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+  }
+
+  .nl__done {
+    background: var(--lime);
+    color: var(--deep-green);
+    font-weight: 700;
+    padding: 13px 22px;
+    border-radius: 999px;
+  }
+  .nl__done[hidden] {
+    display: none;
+  }
+  .nl__error {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffd9d9;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px 16px;
+    border-radius: 999px;
+  }
+  .nl__error[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 760px) {
+    .nl__form {
+      min-width: 100%;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nl__form button {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById("nl-form") as HTMLFormElement | null;
+  const done = document.getElementById("nl-done");
+  const error = document.getElementById("nl-error");
+  const input = form?.querySelector("input");
+  input?.addEventListener("input", () => {
+    if (error) error.hidden = true;
+  });
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = String(new FormData(form).get("email") || "").trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      if (error) error.hidden = false;
+      input?.focus();
+      return;
+    }
+    if (error) error.hidden = true;
+    form.hidden = true;
+    if (done) done.hidden = false;
+  });
+</script>

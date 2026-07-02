@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200" fill="none">
+  <style>
+    * { transform-box: view-box; }
+    @keyframes flow { to { stroke-dashoffset: -28; } }
+    @keyframes pop  { 0%,100% { transform: scale(1); } 50% { transform: scale(1.13); } }
+    .flow  { animation: flow 1s linear infinite; }
+    .badge { animation: pop 2.4s ease-in-out infinite; transform-origin: 198px 80px; }
+  </style>
+  <ellipse cx="150" cy="182" rx="78" ry="10" fill="#1b3d38" opacity=".12"/>
+  <path d="M36 178 C 70 178 74 150 120 150" stroke="#1b3d38" stroke-width="7" stroke-linecap="round" opacity=".22"/>
+  <path class="flow" d="M36 178 C 70 178 74 150 120 150" stroke="#eef985" stroke-width="7" stroke-linecap="round" stroke-dasharray="2 12"/>
+  <circle cx="36" cy="178" r="6" fill="#1b3d38"/>
+  <rect x="104" y="106" width="92" height="66" fill="#fdfdf5" stroke="#1b3d38" stroke-width="4"/>
+  <path d="M96 110 L150 64 L204 110 Z" fill="#1b3d38"/>
+  <rect x="138" y="132" width="26" height="40" fill="#1b3d38"/>
+  <circle cx="158" cy="152" r="2.6" fill="#eef985"/>
+  <rect x="116" y="122" width="20" height="20" rx="3" fill="#eef985" stroke="#1b3d38" stroke-width="2.5"/>
+  <g class="badge">
+    <circle cx="198" cy="80" r="21" fill="#eef985" stroke="#1b3d38" stroke-width="3.5"/>
+    <path d="M188 80 l7 8 l13 -16" stroke="#1b3d38" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200" fill="none">
+  <style>
+    * { transform-box: view-box; }
+    @keyframes sweep {
+      0%   { transform: rotate(-78deg); }
+      50%  { transform: rotate(74deg); }
+      100% { transform: rotate(-78deg); }
+    }
+    .needle { animation: sweep 3.6s cubic-bezier(.65,0,.35,1) infinite; transform-origin: 140px 150px; }
+  </style>
+  <ellipse cx="140" cy="184" rx="66" ry="9" fill="#1b3d38" opacity=".12"/>
+  <path d="M58 150 A82 82 0 0 1 222 150" stroke="#e0ebe4" stroke-width="17" stroke-linecap="round"/>
+  <path d="M58 150 A82 82 0 0 1 198 92" stroke="#eef985" stroke-width="17" stroke-linecap="round"/>
+  <g stroke="#1b3d38" stroke-width="3" stroke-linecap="round" opacity=".5">
+    <line x1="62" y1="150" x2="76" y2="150"/>
+    <line x1="80" y1="100" x2="90" y2="108"/>
+    <line x1="140" y1="70" x2="140" y2="84"/>
+    <line x1="200" y1="100" x2="190" y2="108"/>
+    <line x1="218" y1="150" x2="204" y2="150"/>
+  </g>
+  <g class="needle">
+    <path d="M133 150 L140 82 L147 150 Z" fill="#cd2225"/>
+  </g>
+  <circle cx="140" cy="150" r="13" fill="#1b3d38"/>
+  <circle cx="140" cy="150" r="5" fill="#eef985"/>
+</svg>

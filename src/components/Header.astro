@@ -1,0 +1,244 @@
+---
+/**
+ * Site header - sticky navigation bar.
+ * To add or rename a nav link, edit the `navItems` array below.
+ */
+const navItems = [
+  { label: "Residential", href: "/" },
+  { label: "Business", href: "/business" },
+  {
+    label: "MAX Deals",
+    href: "/deals",
+    children: [{ label: "Refer a Friend", href: "/refer-a-friend" }],
+  },
+  { label: "Internet", href: "/internet" },
+  { label: "TV & Streaming", href: "/tv" },
+  { label: "Home Phone", href: "/home-phone" },
+  {
+    label: "Support",
+    href: "/support",
+    children: [{ label: "Resident Relations", href: "/support#resident-relations" }],
+  },
+];
+
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : path.startsWith(href);
+
+/* Show the "exclusive offer" CTA on every page so the header bar stays the
+   exact same size and layout no matter which page you're on. */
+const showOffer = true;
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="brand" aria-label="telMAX home">
+      <span class="logo"></span>
+    </a>
+
+    <nav class="primary-nav" aria-label="Primary">
+      <ul>
+        {
+          navItems.map((item) => (
+            <li class={item.children ? "has-sub" : ""}>
+              <a href={item.href} class={isActive(item.href) ? "active" : ""}>
+                {item.label}
+                {item.children && <span class="caret" aria-hidden="true"></span>}
+              </a>
+              {item.children && (
+                <ul class="submenu">
+                  {item.children.map((c) => (
+                    <li>
+                      <a href={c.href}>{c.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      {
+        showOffer && (
+          <a href="/get-started" class="btn btn--lime btn--sm offer-cta">
+            Get Your Exclusive Offer
+          </a>
+        )
+      }
+      <a href="/my-telmax" class="btn btn--primary btn--sm">My telMAX</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(249, 249, 235, 0.88);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--green-line);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .site-header.scrolled {
+    box-shadow: 0 10px 30px -20px rgba(27, 61, 56, 0.55);
+    border-color: transparent;
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 16px;
+    height: var(--header-h);
+  }
+  .brand { color: var(--deep-green); }
+  .brand .logo { width: 132px; }
+
+  .primary-nav { margin-left: auto; }
+  .primary-nav > ul {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 2px;
+  }
+  .primary-nav a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    padding: 9px 11px;
+    border-radius: 999px;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .primary-nav a:hover { background: rgba(27, 61, 56, 0.07); }
+  .primary-nav a.active { color: var(--deep-green); background: var(--lime); }
+  .has-sub:hover > a .caret { transform: rotate(180deg); }
+  .caret { transition: transform 0.25s var(--ease-out); }
+
+  .caret {
+    width: 12px;
+    height: 12px;
+    background: currentColor;
+    -webkit-mask: url("/images/icons/chevron-down.svg") center / contain no-repeat;
+    mask: url("/images/icons/chevron-down.svg") center / contain no-repeat;
+  }
+
+  .has-sub { position: relative; }
+  .submenu {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    min-width: 220px;
+    background: var(--white);
+    border: 1px solid var(--green-line);
+    border-radius: var(--radius-sm);
+    padding: 8px;
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px) scale(0.98);
+    transform-origin: top left;
+    transition: opacity 0.2s var(--ease-out), transform 0.2s var(--ease-out),
+      visibility 0.2s;
+    /* Linger: wait before hiding so the cursor can travel down to it */
+    transition-delay: 0.4s;
+  }
+  /* Invisible bridge across the gap so hover never breaks mid-travel */
+  .submenu::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -14px;
+    height: 16px;
+  }
+  .has-sub:hover .submenu,
+  .has-sub:focus-within .submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    /* Appear instantly on hover; only the hide is delayed */
+    transition-delay: 0s;
+  }
+  .submenu a { font-size: 0.9rem; border-radius: 8px; }
+  .submenu li + li { margin-top: 2px; }
+
+  .header-actions { display: flex; align-items: center; gap: 12px; }
+  .btn--sm { padding: 10px 20px; font-size: 0.9rem; }
+  /* Keep the header tidy: the offer CTA only shows when there's room for the
+     full nav alongside it, so the bar stays evenly fitted on every page. */
+  @media (max-width: 1200px) {
+    .offer-cta { display: none; }
+  }
+
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px;
+  }
+  .nav-toggle span {
+    width: 24px;
+    height: 2px;
+    background: var(--deep-green);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  @media (max-width: 1080px) {
+    .nav-toggle { display: flex; }
+    .primary-nav {
+      position: fixed;
+      inset: var(--header-h) 0 auto 0;
+      background: var(--cream);
+      border-bottom: 1px solid var(--green-line);
+      padding: 16px 24px 24px;
+      margin: 0;
+      display: none;
+      box-shadow: 0 30px 40px -24px rgba(27, 61, 56, 0.4);
+    }
+    .primary-nav.open { display: block; }
+    .primary-nav > ul { flex-direction: column; align-items: stretch; gap: 2px; }
+    .primary-nav a { padding: 14px 12px; }
+    .submenu {
+      position: static;
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      box-shadow: none;
+      border: none;
+      padding: 0 0 0 16px;
+      transition: none;
+    }
+    .submenu::before { display: none; }
+    .nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  }
+</style>
+
+<script>
+  // Mobile menu toggle
+  const toggle = document.querySelector(".nav-toggle");
+  const nav = document.querySelector(".primary-nav");
+  toggle?.addEventListener("click", () => {
+    const open = nav?.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", String(!!open));
+  });
+
+  // Drop a soft shadow on the header once the page is scrolled
+  const header = document.querySelector(".site-header");
+  const onScroll = () =>
+    header?.classList.toggle("scrolled", window.scrollY > 8);
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+</script>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200" fill="none">
+  <style>
+    * { transform-box: view-box; }
+    @keyframes fl { 0%,100% { transform: rotate(-7deg) translateY(0); } 50% { transform: rotate(-7deg) translateY(-6px); } }
+    @keyframes rg { 0%,100% { opacity:.15; } 50% { opacity:1; } }
+    .hs { animation: fl 3.6s ease-in-out infinite; transform-origin: 150px 110px; }
+    .r1 { animation: rg 1.8s ease-in-out infinite; }
+    .r2 { animation: rg 1.8s ease-in-out .45s infinite; }
+  </style>
+  <ellipse cx="140" cy="180" rx="62" ry="10" fill="#1b3d38" opacity=".12"/>
+  <rect x="100" y="150" width="100" height="26" rx="12" fill="#2a514b"/>
+  <rect x="100" y="160" width="100" height="16" rx="8" fill="#1b3d38"/>
+  <g stroke="#eef985" stroke-width="6" stroke-linecap="round" fill="none">
+    <path class="r1" d="M106 60 Q92 75 106 90"/>
+    <path class="r2" d="M90 50 Q68 75 90 100"/>
+    <path class="r1" d="M194 60 Q208 75 194 90"/>
+    <path class="r2" d="M210 50 Q232 75 210 100"/>
+  </g>
+  <g class="hs">
+    <rect x="123" y="50" width="54" height="120" rx="22" fill="#1b3d38"/>
+    <rect x="139" y="62" width="22" height="8" rx="4" fill="#b7b5f5"/>
+    <rect x="133" y="78" width="34" height="26" rx="6" fill="#eef985"/>
+    <g fill="#f9f9eb">
+      <circle cx="138" cy="120" r="3.4"/><circle cx="150" cy="120" r="3.4"/><circle cx="162" cy="120" r="3.4"/>
+      <circle cx="138" cy="134" r="3.4"/><circle cx="150" cy="134" r="3.4"/><circle cx="162" cy="134" r="3.4"/>
+      <circle cx="138" cy="148" r="3.4"/><circle cx="150" cy="148" r="3.4"/><circle cx="162" cy="148" r="3.4"/>
+    </g>
+  </g>
+</svg>

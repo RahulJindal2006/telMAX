@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200" fill="none">
+  <style>
+    * { transform-box: view-box; }
+    @keyframes wv { 0%,100% { opacity:.18; } 50% { opacity:1; } }
+    @keyframes fl { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+    @keyframes bl { 0%,100% { opacity:1; } 50% { opacity:.25; } }
+    .dev { animation: fl 4s ease-in-out infinite; }
+    .w1  { animation: wv 2.4s ease-in-out infinite; }
+    .w2  { animation: wv 2.4s ease-in-out .3s infinite; }
+    .w3  { animation: wv 2.4s ease-in-out .6s infinite; }
+    .led { animation: bl 1.8s ease-in-out infinite; }
+  </style>
+  <ellipse cx="140" cy="180" rx="58" ry="10" fill="#1b3d38" opacity=".12"/>
+  <g class="dev">
+    <path class="w3" d="M90 134 Q140 84 190 134" stroke="#b7b5f5" stroke-width="8" stroke-linecap="round"/>
+    <path class="w2" d="M105 134 Q140 100 175 134" stroke="#1b3d38" stroke-width="8" stroke-linecap="round"/>
+    <path class="w1" d="M119 134 Q140 114 161 134" stroke="#1b3d38" stroke-width="8" stroke-linecap="round"/>
+    <rect x="100" y="132" width="80" height="44" rx="15" fill="#fdfdf5" stroke="#1b3d38" stroke-width="4"/>
+    <rect x="112" y="140" width="56" height="9" rx="4.5" fill="#eef985"/>
+    <circle class="led" cx="140" cy="163" r="5" fill="#1b3d38"/>
+  </g>
+</svg>

@@ -1,0 +1,93 @@
+---
+/**
+ * Base layout - wraps every page with <head>, the Header and the Footer.
+ * Props:
+ *   title       - browser tab + SEO title
+ *   description - meta description
+ */
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Chatbot from "../components/Chatbot.astro";
+import Newsletter from "../components/Newsletter.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "telMAX - Canada's Fastest Pure Fibre Internet",
+  description = "telMAX delivers 100% pure fibre internet, TV and home phone with symmetrical speeds up to 8 Gbps across the Greater Toronto Area.",
+} = Astro.props;
+
+/* The newsletter band is hidden on support, account and funnel pages. */
+const path = (Astro.url.pathname.replace(/\/$/, "") || "/").toLowerCase();
+const NO_NEWSLETTER = ["/support", "/my-telmax", "/forgot-password", "/get-started"];
+const showNewsletter = !NO_NEWSLETTER.includes(path);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* Flag set before paint so reveal animations hide content cleanly.
+        If JS is off the class never lands and everything shows normally. */}
+    <script is:inline>
+      document.documentElement.classList.add("reveal-on");
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    {showNewsletter && <Newsletter />}
+    <Footer />
+    <Chatbot />
+
+    <script>
+      // Styled inline validation for demo forms (no native bubbles).
+      import { enhanceForms } from "../scripts/forms.js";
+      enhanceForms();
+    </script>
+
+    <script>
+      // Reveal elements as they scroll into view.
+      const targets = document.querySelectorAll(
+        ".section-head, .grid > *, .plan-grid > *, .stats > *, .faq, " +
+          ".awards > *, .eero > *, .referral, .cta-band, .prose > *",
+      );
+
+      const reveal = (el: Element) => el.classList.add("is-visible");
+
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver(
+          (entries, obs) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                reveal(entry.target);
+                obs.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
+        );
+        targets.forEach((el) => io.observe(el));
+      } else {
+        // No observer support - just show everything.
+        targets.forEach(reveal);
+      }
+    </script>
+  </body>
+</html>

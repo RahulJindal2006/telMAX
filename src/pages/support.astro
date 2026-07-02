@@ -1,0 +1,460 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { supportData } from "../data/support.js";
+import "../styles/support.css";
+
+/* Article count per product (for the card footer) */
+const articleCount = (p) => p.categories.reduce((n, c) => n + c.articles.length, 0);
+
+/* Flat list - used for the server-rendered "Popular questions" block */
+const flat = [];
+supportData.forEach((p) =>
+  p.categories.forEach((c) =>
+    c.articles.forEach((a, idx) =>
+      flat.push({ q: a.q, productId: p.id, categoryId: c.id, idx, popular: a.popular })
+    )
+  )
+);
+const popular = flat.filter((a) => a.popular).slice(0, 8);
+
+const chips = [
+  "Internet is slow",
+  "Reset my eero",
+  "Pay my bill",
+  "Transfer my number",
+];
+---
+
+<Layout
+  title="Support - telMAX Help Centre"
+  description="Find answers for telMAX internet, WiFi, TV, home phone, billing and installation - browse by product or search."
+>
+  <!-- ===================== HERO + SEARCH ===================== -->
+  <section class="support-hero">
+    <div class="container">
+      <span class="pill">Support Centre</span>
+      <h1>How can we help?</h1>
+      <p class="sub">Search for an answer, or pick a product below to browse step-by-step help.</p>
+
+      <form id="support-search-form" class="s-search" role="search">
+        <span class="s-search__icon" aria-hidden="true"></span>
+        <input
+          id="support-search"
+          type="search"
+          placeholder="Try “TV not working” or “no dial tone”…"
+          aria-label="Search the support centre"
+          autocomplete="off"
+        />
+        <button type="submit" class="btn btn--lime">Search</button>
+      </form>
+
+      <div class="s-chips">
+        <span class="s-chips__label">Popular:</span>
+        {
+          chips.map((c) => (
+            <a class="s-chip" href={`#q/${encodeURIComponent(c)}`}>{c}</a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SUPPORT APP ===================== -->
+  <section class="s-app" id="support-app">
+    <div class="container">
+      <nav id="support-crumbs" class="s-crumbs" aria-label="Breadcrumb">
+        <span class="s-crumb current">Support</span>
+      </nav>
+
+      <div id="support-root">
+        <!-- Server-rendered home view (works without JS; the script enhances it) -->
+        <div class="s-head">
+          <h2>Choose a product or topic</h2>
+          <p>Select a product to see everything we can help you with.</p>
+        </div>
+        <div class="s-grid s-grid--products">
+          {
+            supportData.map((p) => (
+              <a class={`s-card s-card--${p.id}`} href={`#p/${p.id}`}>
+                <span class="s-card__media">
+                  <img src={`/images/products/${p.id}.svg`} alt="" loading="lazy" />
+                </span>
+                <span class="s-card__body">
+                  <span class="s-card__name">{p.name}</span>
+                  <span class="s-card__blurb">{p.blurb}</span>
+                  <span class="s-card__foot">
+                    <span class="s-card__count">{articleCount(p)} articles</span>
+                    <span class="s-card__arrow" aria-hidden="true" />
+                  </span>
+                </span>
+              </a>
+            ))
+          }
+        </div>
+        <div class="s-popular">
+          <h3>Popular questions</h3>
+          <div class="s-pop-list">
+            {
+              popular.map((a) => (
+                <a class="s-pop" href={`#p/${a.productId}/${a.categoryId}/${a.idx}`}>
+                  <span class="s-pop__q" aria-hidden="true" />
+                  <span>{a.q}</span>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CONTACT ===================== -->
+  <section class="section bg-green" id="contact-support">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Still need a hand?</span>
+        <h2>Reach our local support team</h2>
+      </div>
+      <div class="grid grid-3">
+        <a href="tel:18444835629" class="card s-contact">
+          <span class="icon-chip"><span class="icon-mask" style="--src:url('/images/icons/phone.svg')"></span></span>
+          <h3>Call us</h3>
+          <strong>1-844-483-5629</strong>
+          <p>Technical support: ext. 2</p>
+        </a>
+        <a href="mailto:support@telmax.com" class="card s-contact">
+          <span class="icon-chip"><span class="icon-mask" style="--src:url('/images/icons/email.svg')"></span></span>
+          <h3>Email us</h3>
+          <strong>support@telmax.com</strong>
+          <p>We reply within one business day</p>
+        </a>
+        <a href="/my-telmax" class="card s-contact">
+          <span class="icon-chip"><span class="icon-mask" style="--src:url('/images/icons/user-circle.svg')"></span></span>
+          <h3>My telMAX</h3>
+          <strong>Manage your account</strong>
+          <p>Billing, payments and services</p>
+        </a>
+      </div>
+      <p class="s-resident" id="resident-relations">
+        Have feedback to share? Our <strong>Resident Relations</strong> team is here to listen -
+        <a href="/contact">GET IN TOUCH</a>.
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<!-- ===================== SUPPORT CENTRE LOGIC ===================== -->
+<script>
+  import { supportData } from "../data/support.js";
+
+  const root = document.getElementById("support-root");
+  const crumbs = document.getElementById("support-crumbs");
+  const appEl = document.getElementById("support-app");
+  const searchForm = document.getElementById("support-search-form");
+  const searchInput = document.getElementById("support-search");
+
+  /* ---- Flatten every article into a searchable index ---- */
+  const allArticles = [];
+  supportData.forEach((p) =>
+    p.categories.forEach((c) =>
+      c.articles.forEach((a, idx) => {
+        allArticles.push({
+          ...a,
+          productId: p.id,
+          productName: p.name,
+          categoryId: c.id,
+          categoryName: c.name,
+          idx,
+        });
+      })
+    )
+  );
+
+  const productById = (id) => supportData.find((p) => p.id === id);
+  const categoryById = (p, cid) => p && p.categories.find((c) => c.id === cid);
+  const articleCount = (p) => p.categories.reduce((n, c) => n + c.articles.length, 0);
+
+  const esc = (s) =>
+    String(s).replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]));
+
+  /* ================= SMART SEARCH ================= */
+  const STOP = new Set(
+    "the a an of to in on is are i my me do does how can what why and or with for it this that your you have help".split(" ")
+  );
+
+  // Words that hint at which product a vague query is about
+  const PRODUCT_HINTS = {
+    internet: ["internet", "connection", "online", "disconnect", "mbps", "gbps", "bandwidth", "ethernet"],
+    wifi: ["wifi", "wi-fi", "eero", "router", "signal", "coverage", "mesh", "dead zone", "deadzone", "extender", "hotspot"],
+    tv: ["tv", "television", "channel", "channels", "guide", "pvr", "record", "recording", "catch up", "catch-up", "maxview", "set-top", "set top", "remote", "stream", "streaming", "watch", "picture"],
+    "home-phone": ["phone", "call", "calls", "calling", "dial tone", "dialtone", "voicemail", "landline", "star code", "maxtalk", "911", "caller"],
+    account: ["bill", "billing", "payment", "pay", "invoice", "charge", "account", "balance", "credit card"],
+    installation: ["install", "installation", "installed", "technician", "appointment"],
+  };
+  // Phrases that signal the user has a problem (troubleshooting intent)
+  const TROUBLE = [
+    "not working", "notworking", "doesn't work", "doesnt work", "broken", "down", "won't", "wont",
+    "can't", "cant", "cannot", "stopped", "no internet", "no signal", "no dial tone", "no picture",
+    "no wifi", "issue", "problem", "fix", "error", "slow", "lag", "buffering", "frozen", "freeze",
+    "dead", "offline", "outage", "disconnect", "drop", "trouble", "not connecting", "won't connect",
+  ];
+
+  function detectProduct(q) {
+    let best = null,
+      bestN = 0;
+    for (const [pid, hints] of Object.entries(PRODUCT_HINTS)) {
+      const n = hints.filter((h) => q.includes(h)).length;
+      if (n > bestN) {
+        bestN = n;
+        best = pid;
+      }
+    }
+    return best;
+  }
+
+  function runSearch(query) {
+    const q = query.toLowerCase().trim();
+    const tokens = q.split(/[^a-z0-9]+/).filter((t) => t.length > 1 && !STOP.has(t));
+    const product = detectProduct(q);
+    const trouble = TROUBLE.some((w) => q.includes(w));
+
+    const scored = allArticles
+      .map((a) => {
+        let score = 0;
+        const ql = a.q.toLowerCase();
+        const kw = (a.keywords || []).join(" ").toLowerCase();
+        const al = a.a.toLowerCase();
+        tokens.forEach((t) => {
+          if (ql.includes(t)) score += 5;
+          if (kw.includes(t)) score += 4;
+          if (al.includes(t)) score += 1;
+        });
+        (a.keywords || []).forEach((k) => {
+          if (k.length > 4 && q.includes(k.toLowerCase())) score += 5;
+        });
+        if (product && a.productId === product) score += 6;
+        if (trouble && a.categoryId === "troubleshooting") score += 6;
+        return { a, score };
+      })
+      .filter((x) => x.score > 0)
+      .sort((x, y) => y.score - x.score);
+
+    return { results: scored.slice(0, 10).map((x) => x.a), product, trouble };
+  }
+
+  /* ================= RENDER HELPERS ================= */
+  function setCrumbs(parts) {
+    crumbs.innerHTML = parts
+      .map((p, i) => {
+        const last = i === parts.length - 1;
+        return last
+          ? `<span class="s-crumb current">${esc(p.label)}</span>`
+          : `<a class="s-crumb" href="${p.hash}">${esc(p.label)}</a>`;
+      })
+      .join('<span class="s-crumb-sep">›</span>');
+  }
+
+  const productCard = (p) => `
+    <a class="s-card s-card--${p.id}" href="#p/${p.id}">
+      <span class="s-card__media">
+        <img src="/images/products/${p.id}.svg" alt="" loading="lazy" />
+      </span>
+      <span class="s-card__body">
+        <span class="s-card__name">${esc(p.name)}</span>
+        <span class="s-card__blurb">${esc(p.blurb)}</span>
+        <span class="s-card__foot">
+          <span class="s-card__count">${articleCount(p)} articles</span>
+          <span class="s-card__arrow" aria-hidden="true"></span>
+        </span>
+      </span>
+    </a>`;
+
+  const articleHTML = (a, open) => `
+    <details class="s-article"${open ? " open" : ""}>
+      <summary>
+        ${a.popular ? '<span class="s-badge">Popular</span>' : ""}
+        <span class="s-q">${esc(a.q)}</span>
+        <span class="s-chev" aria-hidden="true"></span>
+      </summary>
+      <div class="s-a"><p>${esc(a.a)}</p></div>
+    </details>`;
+
+  /* ================= VIEWS ================= */
+  function renderHome() {
+    setCrumbs([{ label: "Support" }]);
+    const pop = allArticles.filter((a) => a.popular).slice(0, 8);
+    root.innerHTML = `
+      <div class="s-head">
+        <h2>Choose a product or topic</h2>
+        <p>Select a product to see everything we can help you with.</p>
+      </div>
+      <div class="s-grid s-grid--products">${supportData.map(productCard).join("")}</div>
+      <div class="s-popular">
+        <h3>Popular questions</h3>
+        <div class="s-pop-list">
+          ${pop
+            .map(
+              (a) => `
+            <a class="s-pop" href="#p/${a.productId}/${a.categoryId}/${a.idx}">
+              <span class="s-pop__q" aria-hidden="true"></span>
+              <span>${esc(a.q)}</span>
+            </a>`
+            )
+            .join("")}
+        </div>
+      </div>`;
+  }
+
+  function renderProduct(pid) {
+    const p = productById(pid);
+    if (!p) return renderHome();
+    setCrumbs([{ label: "Support", hash: "#" }, { label: p.name }]);
+    const cards = p.categories
+      .map((c) => {
+        const n = c.articles.length;
+        return `
+          <a class="s-cat" href="#p/${p.id}/${c.id}">
+            <span class="s-cat__icon" style="--src:url('/images/icons/${c.icon}.svg')"></span>
+            <span class="s-cat__text">
+              <span class="s-cat__name">${esc(c.name)}</span>
+              <span class="s-cat__count">${n} question${n === 1 ? "" : "s"}</span>
+            </span>
+            <span class="s-card__arrow" aria-hidden="true"></span>
+          </a>`;
+      })
+      .join("");
+    root.innerHTML = `
+      <div class="s-head">
+        <h2>${esc(p.name)} help</h2>
+        <p>${esc(p.blurb)}</p>
+      </div>
+      <div class="s-grid s-grid--cats">${cards}</div>`;
+  }
+
+  function renderCategory(pid, cid, openIdx) {
+    const p = productById(pid);
+    if (!p) return renderHome();
+    const c = categoryById(p, cid);
+    if (!c) return renderProduct(pid);
+    setCrumbs([
+      { label: "Support", hash: "#" },
+      { label: p.name, hash: "#p/" + p.id },
+      { label: c.name },
+    ]);
+    // popular questions first - these are the "most commonly asked"
+    const ordered = c.articles
+      .map((a, i) => ({ a, i }))
+      .sort((x, y) => (y.a.popular ? 1 : 0) - (x.a.popular ? 1 : 0));
+    root.innerHTML = `
+      <div class="s-head">
+        <h2>${esc(c.name)}</h2>
+        <p>${esc(p.name)} · ${c.articles.length} question${c.articles.length === 1 ? "" : "s"}</p>
+      </div>
+      <div class="s-articles">
+        ${ordered.map(({ a, i }) => articleHTML(a, openIdx === i)).join("")}
+      </div>
+      <div class="s-cant">
+        Can't find your answer?
+        <a href="#contact-support" data-scroll>Contact our support team</a>.
+      </div>`;
+  }
+
+  function renderSearch(query) {
+    setCrumbs([{ label: "Support", hash: "#" }, { label: "Search results" }]);
+    searchInput.value = query;
+    const { results, product, trouble } = runSearch(query);
+
+    if (!results.length) {
+      root.innerHTML = `
+        <div class="s-empty">
+          <div class="s-empty__icon" aria-hidden="true"></div>
+          <h2>No results for “${esc(query)}”</h2>
+          <p>Try different words, or browse by product below.</p>
+        </div>
+        <div class="s-grid s-grid--products">${supportData.map(productCard).join("")}</div>`;
+      return;
+    }
+
+    // show what the search "understood" from a vague query
+    let interpret = "";
+    if (product || trouble) {
+      const tags = [];
+      if (product) tags.push(`<span class="s-tag">${esc(productById(product).name)}</span>`);
+      if (trouble) tags.push(`<span class="s-tag">Troubleshooting</span>`);
+      interpret = `<div class="s-interpret">Looks like you need help with: ${tags.join(" ")}</div>`;
+    }
+
+    root.innerHTML = `
+      <div class="s-head">
+        <h2>${results.length} result${results.length === 1 ? "" : "s"} for “${esc(query)}”</h2>
+        ${interpret}
+      </div>
+      <div class="s-articles">
+        ${results
+          .map(
+            (a) => `
+          <details class="s-article">
+            <summary>
+              ${a.popular ? '<span class="s-badge">Popular</span>' : ""}
+              <span class="s-q">${esc(a.q)}</span>
+              <span class="s-chev" aria-hidden="true"></span>
+            </summary>
+            <div class="s-a">
+              <p>${esc(a.a)}</p>
+              <a class="s-a__link" href="#p/${a.productId}/${a.categoryId}">
+                ${esc(a.productName)} › ${esc(a.categoryName)}
+              </a>
+            </div>
+          </details>`
+          )
+          .join("")}
+      </div>
+      <div class="s-cant">
+        Not quite what you needed?
+        <a href="#contact-support" data-scroll>Contact our support team</a>.
+      </div>`;
+  }
+
+  /* ================= ROUTER ================= */
+  let firstLoad = true;
+
+  function route() {
+    const raw = location.hash.replace(/^#/, "");
+
+    if (raw.startsWith("q/")) {
+      renderSearch(decodeURIComponent(raw.slice(2)));
+    } else if (raw.startsWith("p/")) {
+      const parts = raw.slice(2).split("/");
+      if (parts.length === 1) renderProduct(parts[0]);
+      else if (parts.length === 2) renderCategory(parts[0], parts[1]);
+      else renderCategory(parts[0], parts[1], parseInt(parts[2], 10));
+    } else {
+      renderHome();
+    }
+
+    if (!firstLoad) {
+      const y = appEl.getBoundingClientRect().top + window.scrollY - 88;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+    firstLoad = false;
+  }
+
+  window.addEventListener("hashchange", route);
+
+  searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = searchInput.value.trim();
+    location.hash = q ? "q/" + encodeURIComponent(q) : "";
+    if (!q) route();
+  });
+
+  // "Contact our team" links scroll smoothly without disturbing the app view
+  document.addEventListener("click", (e) => {
+    const link = e.target.closest("a[data-scroll]");
+    if (!link) return;
+    e.preventDefault();
+    document.getElementById("contact-support")?.scrollIntoView({ behavior: "smooth" });
+  });
+
+  route();
+</script>

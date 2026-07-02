@@ -1,0 +1,91 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const steps = [
+  { n: "01", title: "Share telMAX", text: "Tell a friend or neighbour about your telMAX service and the offers available." },
+  { n: "02", title: "They sign up", text: "Your friend joins telMAX and mentions your name when they activate service." },
+  { n: "03", title: "You earn $200", text: "Once their service is active, a $200 referral reward is yours - with no limit." },
+];
+---
+
+<Layout
+  title="Refer a Friend - Earn $200 | telMAX"
+  description="Refer friends to telMAX and earn $200 for every successful referral. No limits."
+>
+  <section class="section bg-green hero-block">
+    <div class="container">
+      <div class="hero-block__inner">
+        <span class="pill">Refer a Friend</span>
+        <h1>Earn $200 for every friend you refer.</h1>
+        <p class="lede">
+          You already love your pure fibre service - now get rewarded for sharing
+          it. Every successful referral earns you $200, and there's no cap on how
+          many friends you can refer.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">How it works</span>
+        <h2>Three simple steps</h2>
+      </div>
+      <div class="grid grid-3">
+        {
+          steps.map((s) => (
+            <div class="card step-card">
+              <span class="step-num">{s.n}</span>
+              <h3>{s.title}</h3>
+              <p style="margin-top:8px">{s.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-lime">
+    <div class="container">
+      <div class="refer-form card">
+        <div>
+          <span class="eyebrow">Submit a referral</span>
+          <h2>Tell us who to thank</h2>
+          <p class="lede">Send us your friend's details and we'll take it from there.</p>
+        </div>
+        <form class="form" data-validate data-done="refer-done" data-reset>
+          <div class="field-row">
+            <label>Your name<input type="text" name="your-name" required /></label>
+            <label>Your telMAX account email<input type="email" name="your-email" required /></label>
+          </div>
+          <div class="field-row">
+            <label>Friend's name<input type="text" name="friend-name" required /></label>
+            <label>Friend's email<input type="email" name="friend-email" required /></label>
+          </div>
+          <button type="submit" class="btn btn--primary">Submit referral</button>
+          <p id="refer-done" hidden class="form-done">Thanks! Your referral has been submitted.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-block { padding-top: clamp(64px, 9vw, 120px); }
+  .hero-block__inner { max-width: 700px; }
+
+  .step-card { text-align: left; }
+  .step-num {
+    font-family: var(--serif); font-size: 2.4rem; font-weight: 600;
+    color: var(--canada-red); display: block; margin-bottom: 4px;
+  }
+
+  .refer-form {
+    display: grid; grid-template-columns: 1fr 1.3fr; gap: 44px;
+    align-items: center; padding: 44px;
+  }
+  @media (max-width: 800px) {
+    .refer-form { grid-template-columns: 1fr; gap: 26px; }
+  }
+</style>

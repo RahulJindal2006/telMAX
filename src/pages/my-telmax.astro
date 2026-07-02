@@ -1,0 +1,108 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const features = [
+  { icon: "credit-card", title: "View & pay your bill", text: "See your balance, download invoices and manage payment methods." },
+  { icon: "user-circle", title: "Manage your account", text: "Update contact details and add authorized users in seconds." },
+  { icon: "wifi", title: "Manage your services", text: "Review your internet, TV and home phone plans in one place." },
+  { icon: "help", title: "Get support", text: "Open a support request and track it from start to finish." },
+];
+---
+
+<Layout
+  title="My telMAX - Account Portal"
+  description="Sign in to My telMAX to manage your account, pay your bill and view your services."
+>
+  <section class="section bg-green hero-block">
+    <div class="container">
+      <div class="hero-block__inner">
+        <span class="pill">My telMAX</span>
+        <h1>Your account, all in one place.</h1>
+        <p class="lede">
+          Sign in to manage billing, view your services and reach support - the
+          easiest way to stay on top of your telMAX account.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container portal-grid">
+      <div class="card form-card signin">
+        <h3>Sign in</h3>
+        <form class="form" data-validate data-done="signin-note">
+          <label>Email<input type="email" name="email" required /></label>
+          <label>Password<input type="password" name="password" required /></label>
+          <div class="signin-row">
+            <label class="remember"><input type="checkbox" name="remember" /> Remember me</label>
+            <a href="/forgot-password" class="forgot">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn btn--primary">Sign in</button>
+          <p id="signin-note" hidden class="form-done">
+            This is a demo sign-in form - connect it to your account system to enable real logins.
+          </p>
+        </form>
+        <p class="register-note">
+          New to telMAX? <a href="#register">Register for an account</a>.
+        </p>
+      </div>
+
+      <div class="portal-features">
+        <span class="eyebrow">What you can do</span>
+        <h2>Everything you need to self-serve</h2>
+        <div class="feature-list">
+          {
+            features.map((f) => (
+              <div class="feature-row">
+                <span class="icon-chip">
+                  <span class="icon-mask" style={`--src:url('/images/icons/${f.icon}.svg')`} />
+                </span>
+                <div>
+                  <h4>{f.title}</h4>
+                  <p>{f.text}</p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-lime" id="register">
+    <div class="container cta-band">
+      <h2>Register for My telMAX</h2>
+      <p class="lede" style="max-width:520px;margin:14px auto 0">
+        Already a customer? Create your online account to manage everything in one place.
+      </p>
+      <div class="actions">
+        <a href="/contact" class="btn btn--primary">Register now</a>
+        <a href="/support" class="btn btn--outline">Need help?</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-block { padding-top: clamp(64px, 9vw, 120px); }
+  .hero-block__inner { max-width: 680px; }
+  .hero-block h1 { margin-bottom: 18px; }
+
+  .portal-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: start; }
+  .signin-row { display: flex; justify-content: space-between; align-items: center; }
+  .remember { display: flex; flex-direction: row; align-items: center; gap: 8px; font-weight: 500; }
+  .remember input { width: auto; flex: none; }
+  .forgot { font-size: 0.85rem; font-weight: 700; text-decoration: underline; }
+  .register-note { margin-top: 18px; font-size: 0.9rem; }
+  .register-note a { font-weight: 700; text-decoration: underline; }
+
+  .feature-list { display: grid; gap: 18px; margin-top: 22px; }
+  .feature-row { display: flex; gap: 16px; }
+  .feature-row .icon-chip { margin: 0; flex: none; }
+  .feature-row h4 { margin-bottom: 2px; }
+  .feature-row p { font-size: 0.92rem; }
+
+  @media (max-width: 800px) {
+    .portal-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+</style>

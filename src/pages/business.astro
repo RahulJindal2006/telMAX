@@ -1,0 +1,170 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const differentiators = [
+  { icon: "optical-fiber", title: "Pure fibre, not hybrid", text: "A true fibre connection end-to-end - no copper or coax bottlenecks between us and your office." },
+  { icon: "headquarters", title: "Local GTA-based support", text: "Responsive, knowledgeable support from a team that knows your community." },
+  { icon: "security-shield", title: ">99.99% uptime", text: "Under five minutes of downtime a year, backed by 24/7 network monitoring." },
+  { icon: "energy", title: "Dedicated bandwidth", text: "Non-shared capacity, so your speeds stay consistent during the busiest hours." },
+  { icon: "wifi", title: "Feature-rich solutions", text: "Managed WiFi, cybersecurity and cloud services tailored to how your business runs." },
+  { icon: "stopwatch", title: "Committed MTTR", text: "Defined Mean-Time-To-Repair targets so you always know what to expect." },
+];
+
+const offerings = [
+  { title: "Business fibre internet", text: "Symmetrical speeds up to 10 Gbps on dedicated, business-grade infrastructure." },
+  { title: "Cloud-based phone", text: "Flexible, scalable business phone lines that move with your team." },
+  { title: "Business TV", text: "Professional TV packages for waiting rooms, lobbies and common areas." },
+  { title: "Built-in security", text: "A modern fibre network with security advantages over legacy cable and DSL." },
+];
+
+const testimonials = [
+  { quote: "telMAX cut our connectivity costs while improving reliability - our services never skip a beat anymore.", who: "Community Church - Newmarket" },
+  { quote: "The local support team is outstanding. Fast fibre and people who actually answer; exactly what our clinic needed.", who: "Physiotherapy Practice - Aurora" },
+];
+---
+
+<Layout
+  title="Business Internet - telMAX"
+  description="Business-grade pure fibre internet up to 10 Gbps, cloud phone and business TV with >99.99% uptime across the GTA."
+>
+  <section class="section bg-green hero-block">
+    <div class="container">
+      <div class="hero-block__inner">
+        <span class="pill">telMAX for Business</span>
+        <h1>Powering business <em class="accent">possibilities</em> without limitations</h1>
+        <p class="lede">
+          Canada's fastest pure fibre provider, four years running - now delivering
+          100% fibre, 100% independent, 100% business-grade connectivity across the
+          Greater Toronto Area.
+        </p>
+        <div class="hero__actions">
+          <a href="/contact" class="btn btn--lime">Request a call-back</a>
+          <a href="tel:18444925333" class="btn btn--outline">1-844-492-5333</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">What we offer</span>
+        <h2>Connectivity that scales with you</h2>
+      </div>
+      <div class="grid grid-4 biz-offerings">
+        {
+          offerings.map((o) => (
+            <div class="card">
+              <h3>{o.title}</h3>
+              <p style="margin-top:8px">{o.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-lime">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">The telMAX difference</span>
+        <h2>Why GTA businesses choose telMAX</h2>
+      </div>
+      <div class="grid grid-3">
+        {
+          differentiators.map((d) => (
+            <div class="feat">
+              <span class="icon-chip">
+                <span class="icon-mask" style={`--src:url('/images/icons/${d.icon}.svg')`} />
+              </span>
+              <h3>{d.title}</h3>
+              <p>{d.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-green">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Trusted locally</span>
+        <h2>Businesses are switching to telMAX</h2>
+      </div>
+      <div class="grid grid-2">
+        {
+          testimonials.map((t) => (
+            <div class="card quote">
+              <div class="stars"><span /><span /><span /><span /><span /></div>
+              <p>“{t.quote}”</p>
+              <div class="who">{t.who}</div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="biz-contact card">
+        <div>
+          <span class="eyebrow">Let's talk business</span>
+          <h2>Get a tailored business quote</h2>
+          <p class="lede">
+            Tell us what your business needs and our team will design a scalable,
+            customised solution - and call you back.
+          </p>
+        </div>
+        <div class="biz-contact__details">
+          <a href="tel:18444925333" class="biz-line">
+            <span>Call</span>1-844-492-5333
+          </a>
+          <a href="mailto:businesssupport@telmax.com" class="biz-line">
+            <span>Email</span>businesssupport@telmax.com
+          </a>
+          <a href="/contact" class="btn btn--primary">Request a call-back</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-block { padding-top: clamp(64px, 9vw, 120px); }
+  .hero-block__inner { max-width: 700px; }
+  .hero-block h1 { margin-bottom: 18px; }
+  /* Give the hero buttons some breathing room below the paragraph */
+  .hero-block .hero__actions { margin-top: 34px; }
+
+  /* "Connectivity that scales with you" cards grow slightly on hover */
+  .biz-offerings .card {
+    transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
+  }
+  .biz-offerings .card:hover {
+    transform: translateY(-6px) scale(1.035);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .biz-contact {
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px;
+    align-items: center; background: var(--deep-green); padding: 48px;
+  }
+  .biz-contact .eyebrow, .biz-contact p { color: rgba(249,249,235,0.8); }
+  .biz-contact h2 { color: var(--cream); }
+  .biz-contact__details { display: grid; gap: 14px; }
+  .biz-line {
+    display: flex; flex-direction: column;
+    background: rgba(249,249,235,0.08);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px; color: var(--cream); font-weight: 700;
+  }
+  .biz-line span {
+    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--lime); margin-bottom: 2px;
+  }
+  @media (max-width: 760px) {
+    .biz-contact { grid-template-columns: 1fr; gap: 26px; }
+  }
+</style>
