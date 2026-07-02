@@ -77,7 +77,13 @@ const deals = [
 </Layout>
 
 <style>
-  .hero-block { padding-top: clamp(64px, 9vw, 120px); }
+  .hero-block {
+    padding-top: clamp(64px, 9vw, 120px);
+    /* Photo hero with a green duotone overlay, darker on the left for text. */
+    background:
+      linear-gradient(90deg, rgba(27, 61, 56, 0.94) 0%, rgba(27, 61, 56, 0.66) 55%, rgba(24, 54, 49, 0.34) 100%),
+      url("/images/photos/deals-hero.jpg") center / cover no-repeat;
+  }
   .hero-block__inner { max-width: 700px; }
   .deal { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
   .deal .btn { margin-top: auto; }
