@@ -62,6 +62,22 @@ const year = new Date().getFullYear();
             </svg>
           </a>
         </div>
+        <a
+          href="https://hondaindy.com/"
+          class="footer-partner"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="footer-partner__label">Proud partner of the<br />Ontario Honda Dealers Indy at Markham</span>
+          <span class="footer-partner__logo">
+            <img
+              src="/images/logos/ontario-honda-dealers-indy.png"
+              alt="Ontario Honda Dealers Indy at Markham"
+              width="281"
+              height="77"
+            />
+          </span>
+        </a>
       </div>
 
       {
@@ -123,6 +139,38 @@ const year = new Date().getFullYear();
     max-width: 280px;
   }
   .socials { display: flex; gap: 12px; }
+
+  /* Ontario Honda Dealers Indy partnership lockup */
+  .footer-partner {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 26px;
+    width: max-content;
+    max-width: 100%;
+  }
+  .footer-partner__label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.45;
+    color: rgba(249, 249, 235, 0.55);
+  }
+  .footer-partner__logo {
+    display: inline-flex;
+    align-self: flex-start;
+    background: var(--white);
+    border-radius: 10px;
+    padding: 9px 13px;
+    transition: transform 0.25s var(--ease-out);
+  }
+  .footer-partner:hover .footer-partner__logo { transform: translateY(-2px); }
+  .footer-partner__logo img { height: 34px; width: auto; display: block; }
+  @media (prefers-reduced-motion: reduce) {
+    .footer-partner__logo { transition: none; }
+    .footer-partner:hover .footer-partner__logo { transform: none; }
+  }
   .social {
     width: 42px; height: 42px;
     border-radius: 50%;
