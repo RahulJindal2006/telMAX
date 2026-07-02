@@ -478,6 +478,12 @@ export const supportData = [
             keywords: ["moving", "move", "new address", "transfer service", "relocate", "moving home", "change address"],
             popular: true,
           },
+          {
+            q: "How do I cancel my telMAX service?",
+            a: "To cancel, contact telMAX support by phone at 1-844-483-5629 or by email at support@telmax.com and we'll walk you through the steps. MAXfibre plans are provided on a 1-year term, so please ask our team about any terms that apply to cancelling before your term ends, and about returning your telMAX equipment. If you're moving, let us know first - in many cases we can transfer your service to your new address instead of cancelling.",
+            keywords: ["cancel", "cancellation", "close account", "disconnect", "end service", "leave telmax", "terminate"],
+            // TODO(verify): confirm early-cancellation / contract terms and the equipment-return process against current telMAX policy.
+          },
         ],
       },
     ],
