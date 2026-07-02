@@ -175,7 +175,7 @@ const chips = [
   const articleCount = (p) => p.categories.reduce((n, c) => n + c.articles.length, 0);
 
   const esc = (s) =>
-    String(s).replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]));
+    String(s).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
 
   /* ================= SMART SEARCH ================= */
   const STOP = new Set(

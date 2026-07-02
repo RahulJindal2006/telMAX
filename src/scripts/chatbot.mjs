@@ -58,8 +58,11 @@ export const supportTroubleHref = (productId) =>
 /* Escape dynamic / user-supplied text before it goes into innerHTML */
 export function esc(s) {
   return String(s).replace(
-    /[&<>"]/g,
-    (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[m],
+    /[&<>"']/g,
+    (m) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        m
+      ],
   );
 }
 
@@ -296,12 +299,14 @@ export function initChatbot(root) {
   function openPanel() {
     root.classList.add("cb-open");
     fab.setAttribute("aria-expanded", "true");
+    fab.setAttribute("aria-label", "Close the telMAX assistant");
     reset();
   }
 
   function closePanel() {
     root.classList.remove("cb-open");
     fab.setAttribute("aria-expanded", "false");
+    fab.setAttribute("aria-label", "Open the telMAX assistant");
     try {
       fab.focus({ preventScroll: true });
     } catch (e) {

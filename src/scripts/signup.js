@@ -15,8 +15,11 @@ const el = (id) => document.getElementById(id);
 const money = (n) => Number(n).toFixed(2);
 function esc(s) {
   return String(s == null ? "" : s).replace(
-    /[&<>"]/g,
-    (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[m],
+    /[&<>"']/g,
+    (m) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        m
+      ],
   );
 }
 
@@ -236,6 +239,12 @@ function calendarHTML(which) {
   const today = startOfToday();
   const min = new Date(today);
   min.setDate(min.getDate() + 1); // earliest bookable day is tomorrow
+  // A second preference can never fall before the first one.
+  if (which === "2" && state.schedule.date1) {
+    const [dy, dm, dd] = state.schedule.date1.split("-").map(Number);
+    const firstPref = new Date(dy, dm - 1, dd);
+    if (firstPref > min) min.setTime(firstPref.getTime());
+  }
   const firstDow = new Date(y, m, 1).getDay();
   const daysInMonth = new Date(y, m + 1, 0).getDate();
   const atStartMonth =
@@ -1093,8 +1102,16 @@ function wireSchedule() {
         render();
         break;
       case "pick-date":
-        if (btn.dataset.cal === "1") sc.date1 = btn.dataset.date;
-        else sc.date2 = btn.dataset.date;
+        if (btn.dataset.cal === "1") {
+          sc.date1 = btn.dataset.date;
+          // Moving the first choice later can strand an earlier second choice.
+          if (sc.date2 && sc.date2 < sc.date1) {
+            sc.date2 = null;
+            sc.slot2 = null;
+          }
+        } else {
+          sc.date2 = btn.dataset.date;
+        }
         render();
         break;
       case "slot":
