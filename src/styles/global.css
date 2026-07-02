@@ -52,6 +52,8 @@ body {
   color: var(--deep-green);
   background: var(--cream);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -62,18 +64,25 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 ul { list-style: none; }
 main { flex: 1; }
 
+/* A branded text-selection colour is a small detail that reads as considered. */
+::selection { background: var(--lime); color: var(--deep-green); }
+
 /* ---------- Typography ---------- */
 h1, h2, h3, h4 {
   font-family: var(--serif);
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.01em;
+  /* Optical sizing lets Fraunces adjust its shapes to the display size, and
+     balanced wrapping avoids ugly one-word orphan lines in headings. */
+  font-optical-sizing: auto;
+  text-wrap: balance;
 }
 h1 { font-size: clamp(2.4rem, 5vw, 4.2rem); }
 h2 { font-size: clamp(2rem, 3.6vw, 3.1rem); }
 h3 { font-size: clamp(1.3rem, 2vw, 1.7rem); }
 h4 { font-size: 1.15rem; }
-p { color: var(--green-soft); }
+p { color: var(--green-soft); text-wrap: pretty; }
 .eyebrow {
   font-family: var(--sans);
   font-weight: 700;
@@ -217,7 +226,7 @@ em { font-style: italic; }
 .plan__name { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; }
 .plan__speed { color: var(--green-soft); font-weight: 600; margin-top: 2px; }
 .plan__price { display: flex; align-items: baseline; gap: 6px; margin: 18px 0 4px; }
-.plan__price .amount { font-family: var(--serif); font-size: 2.6rem; font-weight: 600; }
+.plan__price .amount { font-family: var(--serif); font-size: 2.6rem; font-weight: 600; font-variant-numeric: tabular-nums; }
 .plan__price .per { color: var(--green-soft); font-weight: 600; }
 .plan__was { font-size: 0.9rem; color: var(--green-soft); text-decoration: line-through; opacity: 0.7; }
 .plan__features { margin: 20px 0 24px; display: grid; gap: 11px; }
@@ -340,7 +349,7 @@ em { font-style: italic; }
 
 /* ---------- Stat strip ---------- */
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center; }
-.stat .num { font-family: var(--serif); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 600; }
+.stat .num { font-family: var(--serif); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 600; font-variant-numeric: tabular-nums; }
 .stat .label { color: var(--green-soft); font-size: 0.95rem; margin-top: 4px; }
 
 /* ---------- CTA band ---------- */
