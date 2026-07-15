@@ -1,0 +1,32 @@
+# Cloudflare Worker config for the telMAX status monitor.
+# Deploy from the repo root:  npm run cf:deploy
+# (First set up the KV namespace + paste its id below - see cloudflare/README.md.)
+
+name = "telmax-status"
+main = "worker.mjs"
+compatibility_date = "2025-01-01"
+
+# Probe every 5 minutes -> 288 runs/day, safely inside the free KV write limit.
+# Tighten to "*/2 * * * *" or "* * * * *" if you like (watch the 1,000 KV writes/day
+# free cap: 1-minute = 1,440/day, which needs a paid plan or change-only writes).
+[triggers]
+crons = ["*/5 * * * *"]
+
+# KV namespace that stores the board. Create it once with:
+#   npm run cf:kv:create
+# then paste the printed id here (and a preview_id for `wrangler dev` if you use it).
+[[kv_namespaces]]
+binding = "STATUS_KV"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+
+[vars]
+# CORS origin allowed to read the board from a browser. Lock this down to your
+# site's origin in production, e.g. "https://www.telmax.com".
+ALLOW_ORIGIN = "*"
+# Optional tunables (defaults shown):
+# STATUS_TIMEOUT_MS = "8000"
+# STATUS_DEGRADED_MS = "2500"
+# STATUS_WINDOW_DAYS = "90"
+
+[observability]
+enabled = true

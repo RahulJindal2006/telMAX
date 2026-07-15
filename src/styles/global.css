@@ -42,7 +42,13 @@
 
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html {
+  scroll-behavior: smooth;
+  /* Keep anchor jumps clear of the sticky header instead of tucking the
+     target under it (header height + a little breathing room). */
+  scroll-padding-top: calc(var(--header-h) + 12px);
+  -webkit-text-size-adjust: 100%;
+}
 body {
   font-family: var(--sans);
   font-weight: 500;
@@ -53,7 +59,6 @@ body {
   background: var(--cream);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -63,6 +68,10 @@ a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; }
 ul { list-style: none; }
 main { flex: 1; }
+/* Respect users who ask for less motion: jump instantly instead of animating. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
 
 /* Branded text-selection colour. Uses mauve (not lime) so the highlight stays
    visible on lime-background sections too. */
@@ -462,8 +471,10 @@ em { font-style: italic; }
   .reveal-on .cta-band,
   .reveal-on .prose > * {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out);
+    transform: translateY(16px);
+    /* Kept short so content is settled by the time it's in view - a longer
+       fade reads as scroll "lag". */
+    transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
   }
   .reveal-on .is-visible {
     opacity: 1;
@@ -472,14 +483,14 @@ em { font-style: italic; }
   /* Gentle stagger for items sitting side by side in a row */
   .reveal-on .grid > *:nth-child(2),
   .reveal-on .plan-grid > *:nth-child(2),
-  .reveal-on .stats > *:nth-child(2) { transition-delay: 0.09s; }
+  .reveal-on .stats > *:nth-child(2) { transition-delay: 0.06s; }
   .reveal-on .grid > *:nth-child(3),
   .reveal-on .plan-grid > *:nth-child(3),
-  .reveal-on .stats > *:nth-child(3) { transition-delay: 0.18s; }
+  .reveal-on .stats > *:nth-child(3) { transition-delay: 0.12s; }
   .reveal-on .grid > *:nth-child(4),
   .reveal-on .plan-grid > *:nth-child(4),
-  .reveal-on .stats > *:nth-child(4) { transition-delay: 0.27s; }
-  .reveal-on .grid > *:nth-child(n + 5) { transition-delay: 0.32s; }
+  .reveal-on .stats > *:nth-child(4) { transition-delay: 0.18s; }
+  .reveal-on .grid > *:nth-child(n + 5) { transition-delay: 0.2s; }
 }
 
 /* ---------- Focus states ---------- */

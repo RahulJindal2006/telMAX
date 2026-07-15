@@ -17,6 +17,16 @@ pnpm-debug.log*
 .env
 .env.production
 
+# status monitor runtime state (regenerated at runtime)
+server/state.json
+# submitted outage reports (contains personal info - never commit)
+server/reports.jsonl
+server/reports.xlsx
+
+# office/spreadsheet lock + temp files
+~$*
+*.tmp
+
 # macOS-specific files
 .DS_Store
 

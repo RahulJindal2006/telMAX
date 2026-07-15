@@ -181,6 +181,17 @@ const chips = [
   const esc = (s) =>
     String(s).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
 
+  // A hand-typed or pasted hash can contain a malformed escape (e.g. "#q/50%off"),
+  // which makes decodeURIComponent throw. Fall back to the raw text instead of
+  // letting the router blow up and leave the view blank.
+  const safeDecode = (s) => {
+    try {
+      return decodeURIComponent(s);
+    } catch (e) {
+      return s;
+    }
+  };
+
   /* ================= SMART SEARCH ================= */
   const STOP = new Set(
     "the a an of to in on is are i my me do does how can what why and or with for it this that your you have help".split(" ")
@@ -440,7 +451,7 @@ const chips = [
     const raw = location.hash.replace(/^#/, "");
 
     if (raw.startsWith("q/")) {
-      renderSearch(decodeURIComponent(raw.slice(2)));
+      renderSearch(safeDecode(raw.slice(2)));
     } else if (raw.startsWith("p/")) {
       const parts = raw.slice(2).split("/");
       if (parts.length === 1) renderProduct(parts[0]);

@@ -1,6 +1,7 @@
 {
-  "_readme": "Live data source for the Network Status page (/status). Edit this file to change what visitors see - the page fetches it and refreshes every ~60s, so NO site rebuild is required. Every 'status' must be one of: operational | maintenance | degraded | outage. Set 'updated' to the current time in ISO 8601 (e.g. 2026-07-02T14:30:00-04:00). 'services' = products; 'areas' = service cities. The top banner follows the most severe service/area automatically; optionally add a top-level 'overall' to force it. To post an incident, add an object to 'incidents' with: title, status, body, time (ISO).",
-  "updated": "2026-07-02T09:00:00-04:00",
+  "_readme": "LIVE data source for the Network Status page (/status). The page fetches this file and refreshes every ~60s, so editing it updates the board with NO site rebuild. This is telMAX's own published board: telMAX does not operate a separate public status API, so this file is the single source of truth. HOW TO USE: (1) Set 'updated' to the current time in ISO 8601 with the Eastern offset, e.g. 2026-07-14T14:30:00-04:00. (2) Every 'status' must be one of: operational | maintenance | degraded | outage. (3) 'services' = products; 'areas' = service cities. The banner and overall-uptime metric follow the most severe service/area automatically unless you set a top-level 'overall'. (4) To post a CURRENT problem, add an object to 'incidents' with: title, status, body, time (ISO) and optional 'services' (array of service ids) + 'started' (ISO). (5) When it is resolved, move it into 'history' with: title, status (peak severity), body, started (ISO), resolved (ISO) and optional 'services'. The 90-day uptime bars are derived from 'incidents' + 'history', so a resolved incident with a date range shows up automatically.",
+  "updated": "2026-07-14T09:00:00-04:00",
+  "window_days": 90,
   "services": [
     { "id": "internet", "name": "MAXfibre Internet", "note": "Pure fibre network", "status": "operational" },
     { "id": "tv", "name": "MAXview TV", "note": "Live TV, apps and Cloud-PVR", "status": "operational" },
@@ -16,5 +17,6 @@
     { "name": "Richmond Hill", "status": "operational" },
     { "name": "Stouffville", "status": "operational" }
   ],
-  "incidents": []
+  "incidents": [],
+  "history": []
 }

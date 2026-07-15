@@ -10,7 +10,16 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "node test/chatbot.test.mjs && node test/signup.test.mjs"
+    "status:server": "node server/server.mjs",
+    "status:once": "node server/server.mjs --once",
+    "reports": "node server/reports-view.mjs",
+    "reports:excel": "node server/reports-export.mjs",
+    "cf:login": "npx --yes wrangler login",
+    "cf:kv:create": "npx --yes wrangler kv namespace create STATUS_KV --config server/cloudflare/wrangler.toml",
+    "cf:dev": "npx --yes wrangler dev --config server/cloudflare/wrangler.toml --test-scheduled",
+    "cf:deploy": "npx --yes wrangler deploy --config server/cloudflare/wrangler.toml",
+    "cf:tail": "npx --yes wrangler tail --config server/cloudflare/wrangler.toml",
+    "test": "node test/chatbot.test.mjs && node test/signup.test.mjs && node test/status-monitor.test.mjs && node test/status-worker.test.mjs && node test/reports.test.mjs && node test/xlsx.test.mjs"
   },
   "dependencies": {
     "astro": "^6.3.6"

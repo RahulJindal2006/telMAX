@@ -23,7 +23,7 @@ const {
 
 /* The newsletter band is hidden on support, account and funnel pages. */
 const path = (Astro.url.pathname.replace(/\/$/, "") || "/").toLowerCase();
-const NO_NEWSLETTER = ["/support", "/my-telmax", "/forgot-password", "/get-started"];
+const NO_NEWSLETTER = ["/support", "/my-telmax", "/forgot-password", "/get-started", "/report-outage"];
 const showNewsletter = !NO_NEWSLETTER.includes(path);
 ---
 
@@ -81,7 +81,10 @@ const showNewsletter = !NO_NEWSLETTER.includes(path);
               }
             }
           },
-          { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
+          // Start the reveal just before an element enters the viewport
+          // (positive bottom margin) so, with the short fade, it's already
+          // settled by the time it's on screen - no "pops in late" lag.
+          { threshold: 0.05, rootMargin: "0px 0px 8% 0px" },
         );
         targets.forEach((el) => io.observe(el));
       } else {
