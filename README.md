@@ -5,6 +5,8 @@ A redesign proposal for [telmax.com](https://www.telmax.com/), built with
 so in a bar at the top, and the page `/about-this-concept` lists what on the
 site is real, what is simulated and what going live would take.
 
+Live at [telmaxfuture.vercel.app](https://telmaxfuture.vercel.app/).
+
 `REDESIGN-NOTES.md` lists what the November 2026 redesign changed, what it
 removed and what was measured.
 
