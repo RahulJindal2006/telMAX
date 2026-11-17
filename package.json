@@ -19,7 +19,7 @@
     "cf:dev": "npx --yes wrangler dev --config server/cloudflare/wrangler.toml --test-scheduled",
     "cf:deploy": "npx --yes wrangler deploy --config server/cloudflare/wrangler.toml",
     "cf:tail": "npx --yes wrangler tail --config server/cloudflare/wrangler.toml",
-    "test": "node test/chatbot.test.mjs && node test/signup.test.mjs && node test/status-monitor.test.mjs && node test/status-worker.test.mjs && node test/reports.test.mjs && node test/xlsx.test.mjs"
+    "test": "node test/chatbot.test.mjs && node test/signup.test.mjs && node test/support-search.test.mjs && node test/status-monitor.test.mjs && node test/status-worker.test.mjs && node test/reports.test.mjs && node test/xlsx.test.mjs"
   },
   "dependencies": {
     "astro": "^6.3.6"
