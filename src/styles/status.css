@@ -49,11 +49,6 @@
   mask: var(--st-m);
 }
 
-/* ---- The sample-data note ---- */
-.status-sample {
-  margin-bottom: 20px;
-}
-
 /* ---- The headline ---- */
 .status-overall {
   display: grid;

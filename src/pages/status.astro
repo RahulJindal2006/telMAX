@@ -536,9 +536,6 @@ const checkSteps = [
     function render(data) {
       const m = buildModel(data);
       const stale = isStale(data);
-      const sample = stale
-        ? `<p class="note note--concept status-sample"><span><strong>Sample board.</strong> The status file was last written on ${esc(fmtLong(data.updated))}, so nothing below is live. Start the monitor in this project's <code>server</code> folder and the board follows it.</span></p>`
-        : "";
       const ur = data.userReports || emptyUR();
       const ov = OVERALL[m.overallKey] || OVERALL.operational;
 
@@ -646,7 +643,6 @@ const checkSteps = [
       </section>`;
 
       app.innerHTML = `
-        ${sample}
         <div class="status-overall is-${m.overallKey}">
           <span class="status-ind" aria-hidden="true"></span>
           <div class="status-overall__text">
