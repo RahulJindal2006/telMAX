@@ -1,0 +1,63 @@
+---
+/**
+ * The strip at the very top of every page that says what this site is.
+ * It shows whenever CONCEPT.on is true (src/data/site.js), and that file
+ * explains when it may be turned off.
+ */
+import { CONCEPT, SITE } from "../data/site.js";
+---
+
+{
+  CONCEPT.on && (
+    <aside class="concept-bar" aria-label="About this site">
+      <div class="wrap concept-bar__in">
+        <p>
+          <strong>Concept redesign by {CONCEPT.by}.</strong>
+          <span>This is not telMAX's website. Nothing you type here is sent or ordered.</span>
+        </p>
+        <span class="concept-bar__links">
+          <a href="/about-this-concept">What this is</a>
+          <a class="out" href={SITE.official} rel="noopener">telmax.com</a>
+        </span>
+      </div>
+    </aside>
+  )
+}
+
+<style>
+  .concept-bar {
+    background: var(--grey);
+    color: var(--cream);
+    font-size: var(--t-micro);
+    line-height: 1.4;
+  }
+  .concept-bar__in {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 24px;
+    padding-block: 9px;
+  }
+  .concept-bar p {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 8px;
+  }
+  .concept-bar__links {
+    display: flex;
+    gap: 18px;
+    white-space: nowrap;
+  }
+  .concept-bar a {
+    font-weight: 650;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .concept-bar a:hover {
+    color: var(--lime);
+  }
+  .concept-bar :focus-visible {
+    outline-color: var(--lime);
+  }
+</style>

@@ -1,0 +1,130 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageTop from "../components/PageTop.astro";
+import Tiers from "../components/Tiers.astro";
+import AddressCheck from "../components/AddressCheck.astro";
+import { PHONE } from "../data/catalog.js";
+import { SITE } from "../data/site.js";
+import photo from "../assets/photos/phone-header-bg.jpg";
+
+const plans = PHONE.plans.map((p) => ({
+  name: p.name,
+  text: p.text,
+  price: p.price,
+  cta: { label: "Add to a plan", href: "/get-started" },
+}));
+
+const points = [
+  {
+    icon: "phone-ring",
+    title: "Unlimited calling",
+    text: "Across Canada on MAXtalk, and across Canada and the continental USA on MAXtalk Plus.",
+  },
+  {
+    icon: "line-bubble-message",
+    title: "Calling features included",
+    text: "The popular ones are part of the plan. You switch them on and off with star codes.",
+    link: { label: "Star code guide (PDF)", href: SITE.starCodes },
+  },
+  {
+    icon: "globe",
+    title: "International calls",
+    text: "Competitive rates beyond Canada and the USA.",
+  },
+];
+---
+
+<Layout
+  title="Home phone"
+  description="MAXtalk home phone from telMAX: unlimited calling across Canada, or Canada and the continental USA, on the same fibre as your internet."
+>
+  <PageTop
+    title="Home phone"
+    lead="Unlimited calling on the same fibre as your internet, and on the same bill."
+    photo={photo}
+    alt="A woman on the phone in a bright kitchen"
+    focus="right"
+  >
+    <a href="#plans" class="btn btn--primary">See the plans</a>
+  </PageTop>
+
+  <section class="band" id="plans">
+    <div class="wrap">
+      <div class="head">
+        <h2>Two plans</h2>
+        <p class="lead">{PHONE.condition}</p>
+      </div>
+      <div class="two">
+        <Tiers items={plans} />
+      </div>
+    </div>
+  </section>
+
+  <section class="band ruled">
+    <div class="wrap">
+      <ul class="cols points" style="--n:3">
+        {
+          points.map((p) => (
+            <li>
+              <span class="icon" style={`--src:url('/images/icons/${p.icon}.svg');--size:32px`} />
+              <h3>{p.title}</h3>
+              <p class="soft">{p.text}</p>
+              {p.link && (
+                <a class="link out small" href={p.link.href} rel="noopener">
+                  {p.link.label}
+                </a>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band ruled">
+    <div class="wrap split">
+      <h2>Before you rely on it</h2>
+      <div class="stack" style="--stack:18px">
+        <p class="note">
+          <span>
+            <strong>Power and 911.</strong> Home phone runs over your internet connection. During a
+            power or internet outage it will not work, and that includes calls to 911. Keep a charged
+            mobile phone for emergencies.
+          </span>
+        </p>
+        <p class="soft">
+          Moving your number over, voicemail and no-dial-tone fixes are covered in the
+          <a class="link" href="/support#p/home-phone">support centre</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band on-lime">
+    <div class="wrap split split--even">
+      <h2 class="end__h">Home phone rides on MAXfibre.</h2>
+      <AddressCheck id="end" label="Check your address first" />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .two {
+    max-width: 760px;
+  }
+  .points {
+    gap: clamp(28px, 4vw, 48px) var(--gap);
+  }
+  .points li {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    justify-items: start;
+  }
+  .points h3 {
+    margin-top: 6px;
+  }
+  .end__h {
+    font-size: var(--t-h1);
+  }
+</style>

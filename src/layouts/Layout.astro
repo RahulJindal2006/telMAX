@@ -1,0 +1,133 @@
+---
+/**
+ * The frame around every page: <head>, the concept notice, the header,
+ * the footer, the assistant and (on phones) the bar pinned to the bottom.
+ *
+ * Props
+ *   title        the page's own title; the site name is added after it
+ *   description  one sentence for search engines and link previews
+ */
+import "../styles/global.css";
+import ConceptBar from "../components/ConceptBar.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Chatbot from "../components/Chatbot.astro";
+import { CONCEPT, CONTACT } from "../data/site.js";
+import figtree from "../assets/fonts/figtree-latin.woff2?url";
+import fraunces from "../assets/fonts/fraunces-soft-latin.woff2?url";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Pure fibre internet for the GTA",
+  description = "telMAX pure fibre internet, TV and home phone: the same speed up and down, up to 8 Gbps, on a network telMAX built and owns.",
+} = Astro.props;
+
+const siteName = CONCEPT.on ? "telMAX concept redesign" : "telMAX";
+const fullTitle = `${title} | ${siteName}`;
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+/* The "check availability" bar on phones belongs on the pages that sell a
+   home service. Someone reading the status board or the help centre came
+   for something else. */
+const noBar = !["/", "/internet", "/tv", "/home-phone", "/deals", "/refer-a-friend", "/about"].includes(path);
+---
+
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {/* A concept on a domain telMAX does not own must not be indexed beside the real site. */}
+    {CONCEPT.on && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#1b3d38" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" as="font" type="font/woff2" href={figtree} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={fraunces} crossorigin />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to the page</a>
+    <ConceptBar />
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    {
+      !noBar && (
+        <nav class="sticky-check" aria-label="Quick actions" hidden>
+          <a href="/get-started" class="btn btn--go">Check availability</a>
+          <a href={CONTACT.support.tel} class="btn btn--line" aria-label={`Call telMAX at ${CONTACT.support.phone}`}>
+            Call
+          </a>
+        </nav>
+      )
+    }
+    <Chatbot />
+
+    <script>
+      // Inline messages on the few forms that remain, instead of the browser's own bubbles.
+      import { enhanceForms } from "../scripts/forms.js";
+      import { rememberPlan } from "../scripts/address.js";
+      enhanceForms();
+
+      // The bar pinned to a phone's screen offers "Check availability". While an
+      // address check, or a page's own button for it, is on screen, the bar
+      // would only repeat it.
+      const bar = document.querySelector<HTMLElement>(".sticky-check");
+      if (bar) {
+        const checks = document.querySelectorAll('[data-address-check], main a.btn--go[href="/get-started"]');
+        if (checks.length && "IntersectionObserver" in window) {
+          const onScreen = new Set<Element>();
+          const watch = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((e) => (e.isIntersecting ? onScreen.add(e.target) : onScreen.delete(e.target)));
+              bar.hidden = onScreen.size > 0;
+            },
+            { threshold: 0.15 },
+          );
+          checks.forEach((c) => watch.observe(c));
+        } else {
+          bar.hidden = false;
+        }
+      }
+
+      // "Choose 2.0" on any page: the sign-up flow opens with that plan marked.
+      document.addEventListener("click", (e) => {
+        const link = (e.target as Element).closest<HTMLElement>("[data-pick-plan]");
+        if (link && link.dataset.pickPlan) rememberPlan(link.dataset.pickPlan);
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  /* The bar pinned to the bottom of a phone screen. */
+  .sticky-check {
+    display: none;
+  }
+  @media (max-width: 520px) {
+    .sticky-check {
+      position: fixed;
+      inset: auto 0 0;
+      z-index: 90;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+      background: var(--cream);
+      border-top: 1px solid var(--line-firm);
+    }
+  }
+</style>

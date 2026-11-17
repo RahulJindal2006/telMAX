@@ -1,0 +1,147 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageTop from "../components/PageTop.astro";
+import Tiers from "../components/Tiers.astro";
+import AddressCheck from "../components/AddressCheck.astro";
+import { TV, money } from "../data/catalog.js";
+import { SITE, listOf } from "../data/site.js";
+import photo from "../assets/photos/tv-service-bg.jpg";
+
+const packages = TV.packages.map((p) => ({
+  name: p.name,
+  figure: p.channels,
+  unit: "channels",
+  price: p.price,
+  cta: { label: "Add to a plan", href: "/get-started" },
+}));
+---
+
+<Layout
+  title="TV and streaming"
+  description="MAXview TV from telMAX: three packages, 132 channels in all, with catch-up TV, cloud recording and the MAXview app."
+>
+  <PageTop
+    title="TV and streaming"
+    lead={`${TV.totalChannels} channels in all, including ${listOf(TV.named)}. Pick a package, then add what you love.`}
+    photo={photo}
+    alt="A woman on her sofa with a bowl of popcorn, watching television"
+    focus="centre"
+  >
+    <a href="#packages" class="btn btn--primary">See the packages</a>
+    <a href={SITE.channelGuide} class="btn btn--line out" rel="noopener">Every channel (PDF)</a>
+  </PageTop>
+
+  <section class="band" id="packages">
+    <div class="wrap">
+      <div class="head">
+        <h2>Three packages</h2>
+        <p class="lead">{TV.condition}</p>
+      </div>
+      <Tiers items={packages} />
+    </div>
+  </section>
+
+  <section class="band ruled">
+    <div class="wrap split">
+      <div>
+        <h2>Add what you love</h2>
+        <p class="lead" style="margin-top:16px">
+          Top up any package with single channels or a themed pack. Each needs a qualifying
+          internet plan.
+        </p>
+      </div>
+      <ul class="rows addons">
+        {
+          TV.addons.map((a) => (
+            <li>
+              <span>
+                <strong>{a.name}</strong>
+                <span class="soft small">{a.detail}</span>
+              </span>
+              <span class="price">
+                {`$${a.price}`}
+                <small>/{a.unit || "mo"}</small>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band ruled">
+    <div class="wrap">
+      <div class="head">
+        <h2>Built into every package</h2>
+      </div>
+      <ul class="cols feats" style="--n:3">
+        {
+          TV.features.map((f) => (
+            <li>
+              <span class="icon" style={`--src:url('/images/icons/${f.icon}.svg');--size:32px`} />
+              <h3>{f.title}</h3>
+              <p class="soft">{f.text}</p>
+            </li>
+          ))
+        }
+        <li class="feats__app">
+          <h3>Get the MAXview app</h3>
+          <p class="cluster">
+            <a class="link out" href={SITE.apps.maxview.ios} rel="noopener">App Store</a>
+            <a class="link out" href={SITE.apps.maxview.android} rel="noopener">Google Play</a>
+          </p>
+        </li>
+      </ul>
+      <p class="small soft" style="margin-top:32px">
+        Setting up the app, TV boxes and recording are covered in the
+        <a class="link" href="/support#p/tv">support centre</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="band on-lime">
+    <div class="wrap split split--even">
+      <h2 class="end__h">TV rides on MAXfibre.</h2>
+      <AddressCheck id="end" label="Check your address first" />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .addons li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+  }
+  .addons strong {
+    display: block;
+    font-size: 1.125rem;
+  }
+  .addons .price {
+    font-size: 1.5rem;
+  }
+  .feats {
+    gap: clamp(28px, 4vw, 48px) var(--gap);
+  }
+  .feats li {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+  }
+  .feats h3 {
+    margin-top: 6px;
+  }
+  .feats__app {
+    padding: 20px 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-panel);
+    background: var(--white);
+  }
+  .feats__app h3 {
+    margin-top: 0;
+  }
+  .end__h {
+    font-size: var(--t-h1);
+  }
+</style>

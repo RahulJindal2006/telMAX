@@ -1,0 +1,117 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageTop from "../components/PageTop.astro";
+import { SITE, CONTACT, CONCEPT } from "../data/site.js";
+---
+
+<Layout
+  title="Contact"
+  description="How to reach telMAX: residential support, business sales and support, and Resident Relations."
+>
+  <PageTop
+    title="Contact telMAX"
+    lead="Pick the line that fits. Each one goes to telMAX's own team."
+  />
+
+  <section class="band">
+    <div class="wrap">
+      <ul class="rows ways">
+        <li>
+          <div>
+            <h2>{CONTACT.support.label}</h2>
+            <p class="soft">Questions about your internet, TV, home phone or bill.</p>
+          </div>
+          <div class="ways__how">
+            <a class="ways__big" href={CONTACT.support.tel}>{CONTACT.support.phone}</a>
+            <a class="link" href={`mailto:${CONTACT.support.email}`}>{CONTACT.support.email}</a>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h2>{CONTACT.business.label}</h2>
+            <p class="soft">Fibre, phone and TV for your business, quoted to fit.</p>
+          </div>
+          <div class="ways__how">
+            <a class="ways__big" href={CONTACT.business.tel}>{CONTACT.business.phone}</a>
+            <a class="link" href={`mailto:${CONTACT.business.email}`}>{CONTACT.business.email}</a>
+            <a class="link out" href={SITE.businessQuote} rel="noopener">Request a call back</a>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h2>{CONTACT.residents.label}</h2>
+            <p class="soft">
+              A compliment, a concern or an idea about telMAX in your neighbourhood, including
+              construction.
+            </p>
+          </div>
+          <div class="ways__how">
+            <a class="link" href={`mailto:${CONTACT.residents.email}`}>{CONTACT.residents.email}</a>
+            <a class="link out" href={SITE.residentRelations} rel="noopener">Resident Relations at telmax.com</a>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h2>Something not working?</h2>
+            <p class="soft">Check for a known problem first, then tell telMAX about yours.</p>
+          </div>
+          <div class="ways__how">
+            <a class="link" href="/status">Network status</a>
+            <a class="link" href="/report-outage">Report an outage</a>
+            <a class="link" href="/support">Support centre</a>
+          </div>
+        </li>
+      </ul>
+      {
+        CONCEPT.on && (
+          <p class="note note--concept" style="margin-top:36px;max-width:44rem">
+            <span>
+              This concept site has no contact form, because it could not deliver your message. The
+              numbers and addresses above are telMAX's real ones.
+            </span>
+          </p>
+        )
+      }
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .ways li {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 14px clamp(32px, 6vw, 96px);
+    padding-block: clamp(24px, 3vw, 36px);
+  }
+  .ways h2 {
+    font-size: clamp(1.5rem, 1.4vw + 1rem, 2rem);
+  }
+  .ways p {
+    max-width: 26rem;
+    margin-top: 8px;
+  }
+  .ways__how {
+    display: grid;
+    gap: 8px;
+    justify-items: start;
+    align-content: start;
+  }
+  .ways__big {
+    font-size: clamp(1.625rem, 2vw + 1rem, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    text-decoration: none;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  .ways__big:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.18em;
+  }
+  @media (max-width: 760px) {
+    .ways li {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,339 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageTop from "../components/PageTop.astro";
+import { SERVICE_OPTIONS, DURATION_OPTIONS } from "../../server/reports.mjs";
+import { CONTACT, CONCEPT } from "../data/site.js";
+
+/* Where the form sends a report.
+
+   Set PUBLIC_REPORT_ENDPOINT at build time to the monitor backend, for
+   example the Cloudflare Worker:
+     PUBLIC_REPORT_ENDPOINT="https://telmax-status.<you>.workers.dev/report"
+
+   With no endpoint the form sends nothing: it checks the entries, shows
+   what a customer would see next and says plainly that nothing left the
+   page. That is how the public concept site runs. */
+const endpoint = import.meta.env.PUBLIC_REPORT_ENDPOINT || "";
+---
+
+<Layout
+  title="Report an outage"
+  description="Tell telMAX about a service problem at your address: what is affected and for how long."
+>
+  <PageTop
+    title="Report an outage"
+    lead="A few details are enough. The more you can say, the faster the problem is found."
+  />
+
+  <section class="band--tight">
+    <div class="wrap ro">
+      <div>
+        {
+          CONCEPT.on && (
+            <p class="note note--concept ro-concept">
+              <span>
+                {endpoint ? (
+                  <Fragment>
+                    <strong>This form is a demo.</strong> It sends to this concept's own test backend,
+                    not to telMAX. Do not enter real details. For a real outage call{" "}
+                    <a class="link" href={CONTACT.support.tel}>{CONTACT.support.phone}</a>.
+                  </Fragment>
+                ) : (
+                  <Fragment>
+                    <strong>This form is a demo.</strong> It checks what you type and shows what
+                    happens next, but it sends nothing. For a real outage call{" "}
+                    <a class="link" href={CONTACT.support.tel}>{CONTACT.support.phone}</a>.
+                  </Fragment>
+                )}
+              </span>
+            </p>
+          )
+        }
+
+        <form id="ro-form" class="form ro-form" data-endpoint={endpoint || undefined} novalidate>
+          <div class="field-row">
+            <label>
+              Full name
+              <input name="name" type="text" autocomplete="name" required />
+            </label>
+            <label>
+              Email address
+              <input name="email" type="email" autocomplete="email" required />
+            </label>
+          </div>
+
+          <div class="field-row">
+            <label>
+              <span>Phone number <span class="ro-opt">optional</span></span>
+              <input name="phone" type="tel" autocomplete="tel" maxlength="30" />
+            </label>
+            <label>
+              Service address
+              <input name="address" type="text" autocomplete="street-address" placeholder="Street, city" required />
+            </label>
+          </div>
+
+          <label>
+            Which service is affected?
+            <select name="service" required>
+              <option value="">Choose a service</option>
+              {SERVICE_OPTIONS.map((o) => <option value={o.value}>{o.label}</option>)}
+            </select>
+          </label>
+
+          <label>
+            What is happening?
+            <textarea
+              name="description"
+              rows="5"
+              maxlength="4000"
+              required
+              placeholder="For example: no internet at all, the TV app will not load, no dial tone, it drops every few minutes"
+            ></textarea>
+          </label>
+
+          <label>
+            How long has it been happening?
+            <select name="duration" required>
+              <option value="">Choose one</option>
+              {DURATION_OPTIONS.map((o) => <option value={o.value}>{o.label}</option>)}
+            </select>
+          </label>
+
+          <p class="ro-error" id="ro-error" role="alert" hidden></p>
+
+          <div>
+            <button type="submit" class="btn btn--primary btn--lg" id="ro-submit">Send the report</button>
+          </div>
+          <p class="micro soft">
+            In an emergency call 911 from a mobile phone. During a power or internet outage, telMAX
+            Home Phone will not work, and that includes 911.
+          </p>
+        </form>
+
+        <div class="ro-success" id="ro-success" tabindex="-1" hidden>
+          {/* Shown only when the form sent nothing: the screen below is then a sample. */}
+          <p id="ro-sample" hidden><span class="tag tag--mauve">Sample confirmation</span></p>
+          <h2>Your report is logged.</h2>
+          <p>
+            Your reference is <strong id="ro-ref" class="num"></strong>.
+            <span id="ro-after">
+              telMAX reviews each report and follows up by email. If it is urgent, call
+              <a class="link" href={CONTACT.support.tel}>{CONTACT.support.phone}</a>.
+            </span>
+          </p>
+          <p class="note note--concept" id="ro-demo" hidden>
+            <span>
+              That is what a customer would see. On this concept site the report was not sent or kept,
+              and the reference is made up.
+            </span>
+          </p>
+          <div class="cluster">
+            <a href="/status" class="btn btn--primary">See network status</a>
+            <a href="/support#p/internet/troubleshooting" class="btn btn--line">Troubleshooting</a>
+          </div>
+        </div>
+      </div>
+
+      <aside class="ro-aside">
+        <h2>Before you send</h2>
+        <ul class="rows ro-list">
+          <li>Look at the <a class="link" href="/status">status board</a> for a known outage in your area.</li>
+          <li>Restart the fibre box (ONT) and your eero: unplug both for about 15 seconds, plug the fibre box in first, then the eero.</li>
+          <li>A red <strong>LOS</strong> or alarm light on the fibre box means a problem on the line. Mention it in the report.</li>
+        </ul>
+        <h2 class="ro-talk">Rather talk?</h2>
+        <p><a class="ro-big" href={CONTACT.support.tel}>{CONTACT.support.phone}</a></p>
+        <p><a class="link" href={`mailto:${CONTACT.support.email}`}>{CONTACT.support.email}</a></p>
+      </aside>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .ro {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    gap: clamp(32px, 6vw, 88px);
+    align-items: start;
+  }
+  .ro-concept {
+    margin-bottom: 24px;
+  }
+  .ro-opt {
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+  .ro-error {
+    padding: 12px 14px;
+    border-radius: var(--r-ctl);
+    background: var(--down-pale);
+    color: var(--down);
+    font-size: var(--t-small);
+    font-weight: 650;
+  }
+  .ro-success h2 {
+    font-size: var(--t-h2);
+  }
+  .ro-success > * + * {
+    margin-top: 16px;
+  }
+  .ro-aside h2 {
+    margin-bottom: 12px;
+    font-family: var(--sans);
+    font-size: var(--t-h3);
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    line-height: 1.25;
+  }
+  .ro-list {
+    font-size: var(--t-small);
+  }
+  .ro-list li {
+    padding-block: 14px;
+  }
+  .ro-talk {
+    margin-top: 36px;
+  }
+  .ro-big {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  .ro-aside p + p {
+    margin-top: 6px;
+  }
+  @media (max-width: 900px) {
+    .ro {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById("ro-form") as HTMLFormElement | null;
+  if (form) {
+    // No endpoint means demo mode: the entries are checked, nothing is sent.
+    const endpoint = form.dataset.endpoint || "";
+    const demoEl = document.getElementById("ro-demo");
+    const afterEl = document.getElementById("ro-after");
+
+    const done = (reference: string, demo: boolean) => {
+      if (refEl) refEl.textContent = reference;
+      if (demoEl) demoEl.hidden = !demo;
+      const sampleEl = document.getElementById("ro-sample");
+      if (sampleEl) sampleEl.hidden = !demo;
+      if (afterEl) afterEl.hidden = demo;
+      form.hidden = true;
+      if (successEl) {
+        successEl.hidden = false;
+        successEl.focus({ preventScroll: true });
+        successEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    };
+    const errEl = document.getElementById("ro-error");
+    const successEl = document.getElementById("ro-success");
+    const refEl = document.getElementById("ro-ref");
+    const submitBtn = document.getElementById("ro-submit") as HTMLButtonElement | null;
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const fields = [...form.querySelectorAll("input, select, textarea")].filter(
+      (f) => (f as HTMLInputElement).type !== "hidden",
+    ) as (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)[];
+
+    const labelOf = (f: Element) => f.closest("label") || f.parentElement;
+    function clearError(f: Element) {
+      f.removeAttribute("aria-invalid");
+      labelOf(f)?.querySelector(".field-error")?.remove();
+    }
+    function setError(f: Element, message: string) {
+      f.setAttribute("aria-invalid", "true");
+      const label = labelOf(f);
+      if (!label) return;
+      let note = label.querySelector(".field-error");
+      if (!note) {
+        note = document.createElement("small");
+        note.className = "field-error";
+        label.appendChild(note);
+      }
+      note.textContent = message;
+    }
+    const showError = (msg: string) => {
+      if (!errEl) return;
+      errEl.textContent = msg;
+      errEl.hidden = false;
+    };
+
+    function validate(f: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
+      const v = (f.value || "").trim();
+      if (f.name === "email") {
+        if (!v) return "Please enter your email address.";
+        if (!EMAIL_RE.test(v)) return "Please enter a valid email address.";
+        return null;
+      }
+      if (f.name === "description") return v.length < 5 ? "Please describe the issue (a few words is fine)." : null;
+      if ((f as HTMLInputElement).required && !v) return "Please complete this field.";
+      return null;
+    }
+
+    fields.forEach((f) =>
+      f.addEventListener("input", () => { clearError(f); if (errEl) errEl.hidden = true; }, { passive: true }),
+    );
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (errEl) errEl.hidden = true;
+
+      let firstInvalid: Element | null = null;
+      for (const f of fields) {
+        const message = validate(f);
+        if (message) { setError(f, message); if (!firstInvalid) firstInvalid = f; }
+        else clearError(f);
+      }
+      if (firstInvalid) { (firstInvalid as HTMLElement).focus(); return; }
+
+      const payload = {
+        name: (form.elements.namedItem("name") as HTMLInputElement).value,
+        email: (form.elements.namedItem("email") as HTMLInputElement).value,
+        phone: (form.elements.namedItem("phone") as HTMLInputElement).value,
+        address: (form.elements.namedItem("address") as HTMLInputElement).value,
+        service: (form.elements.namedItem("service") as HTMLSelectElement).value,
+        description: (form.elements.namedItem("description") as HTMLTextAreaElement).value,
+        duration: (form.elements.namedItem("duration") as HTMLSelectElement).value,
+      };
+
+      if (!endpoint) {
+        // The same shape of reference the backend issues, so the screen reads true to life.
+        const stamp = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+        done(`R-${stamp}-SAMPLE`, true);
+        return;
+      }
+
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Sending…"; }
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.ok) {
+          done(data.id || "", false);
+          return;
+        }
+        showError(
+          data.error ||
+            "The report could not be sent just now. Try again, or call 1-844-483-5629.",
+        );
+      } catch {
+        showError(
+          "The reporting service could not be reached. Check your connection and try again, or call 1-844-483-5629.",
+        );
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Send the report"; }
+      }
+    });
+  }
+</script>

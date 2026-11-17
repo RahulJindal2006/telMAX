@@ -1,0 +1,327 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { supportData } from "../data/support.js";
+import { allArticles, articleCount } from "../scripts/support-search.js";
+import { SITE, CONTACT, CONCEPT } from "../data/site.js";
+import "../styles/support.css";
+
+const popular = allArticles.filter((a) => a.popular).slice(0, 8);
+const quick = ["Internet is slow", "Reset my eero", "Pay my bill", "Transfer my number"];
+---
+
+<Layout
+  title="Support"
+  description="Answers for telMAX internet, WiFi, TV, home phone, billing and installation. Search, or browse by product."
+>
+  <!-- Search first -->
+  <section class="s-top on-green">
+    <div class="wrap">
+      <h1>How can we help?</h1>
+      <form id="support-search-form" class="s-search" role="search">
+        <label class="sr-only" for="support-search">Search the support centre</label>
+        <span class="s-search__icon" aria-hidden="true"></span>
+        <input
+          id="support-search"
+          type="search"
+          placeholder="Try “TV not working” or “no dial tone”"
+          autocomplete="off"
+          enterkeyhint="search"
+        />
+        <button type="submit" class="btn btn--go">Search</button>
+      </form>
+      <p class="s-quick">
+        <span>Often asked:</span>
+        {quick.map((c) => <a class="link" href={`#q/${encodeURIComponent(c)}`}>{c}</a>)}
+      </p>
+    </div>
+  </section>
+
+  <!-- The help centre. Rendered here for visitors without scripts; the script takes over. -->
+  <section class="band--tight s-app" id="support-app">
+    <div class="wrap">
+      <nav id="support-crumbs" class="s-crumbs" aria-label="You are here">
+        <span aria-current="page">Support</span>
+      </nav>
+
+      <div id="support-root" aria-live="polite">
+        <div class="s-head">
+          <h2>Browse by product</h2>
+        </div>
+        <ul class="s-products">
+          {
+            supportData.map((p) => (
+              <li>
+                <a class="s-product" href={`#p/${p.id}`}>
+                  <span class="icon" style={`--src:url('/images/icons/${p.icon}.svg');--size:30px`} />
+                  <span class="s-product__text">
+                    <strong>{p.name}</strong>
+                    <span>{p.blurb}</span>
+                  </span>
+                  <span class="s-product__n num">{articleCount(p)} answers</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="s-head s-head--sub">
+          <h2>Popular questions</h2>
+        </div>
+        <ul class="s-links">
+          {
+            popular.map((a) => (
+              <li>
+                <a href={`#p/${a.productId}/${a.categoryId}/${a.idx}`}>{a.q}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      {
+        CONCEPT.on && (
+          <p class="note note--concept s-note">
+            These answers were written for this concept. For telMAX's own wording, see
+            <a class="link out" href={SITE.support} rel="noopener">telmax.com/support</a>.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- People, and the printable guides -->
+  <section class="band on-green" id="contact-support">
+    <div class="wrap split">
+      <div>
+        <h2>Talk to telMAX</h2>
+        <p class="lead" style="margin-top:16px">The support team is local, and so is the network.</p>
+      </div>
+      <ul class="rows s-reach">
+        <li>
+          <span class="soft">Call</span>
+          <a class="s-reach__big" href={CONTACT.support.tel}>{CONTACT.support.phone}</a>
+        </li>
+        <li>
+          <span class="soft">Email</span>
+          <a class="link" href={`mailto:${CONTACT.support.email}`}>{CONTACT.support.email}</a>
+        </li>
+        <li>
+          <span class="soft">Your account</span>
+          <a class="link out" href={SITE.portal} rel="noopener">My telMAX</a>
+        </li>
+        <li id="resident-relations">
+          <span class="soft">In your neighbourhood</span>
+          <span>
+            Construction or property concern? Email
+            <a class="link" href={`mailto:${CONTACT.residents.email}`}>{CONTACT.residents.email}</a>
+            or go to
+            <a class="link out" href={SITE.residentRelations} rel="noopener">Resident Relations</a>.
+          </span>
+        </li>
+        <li>
+          <span class="soft">Guides to print</span>
+          <span class="s-guides">
+            {SITE.guides.map((g) => <a class="link out" href={g.href} rel="noopener">{g.name}</a>)}
+          </span>
+        </li>
+      </ul>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { supportData } from "../data/support.js";
+  import {
+    allArticles,
+    productById,
+    categoryById,
+    articleCount,
+    searchSupport,
+  } from "../scripts/support-search.js";
+
+  const root = document.getElementById("support-root")!;
+  const crumbs = document.getElementById("support-crumbs")!;
+  const appEl = document.getElementById("support-app")!;
+  const searchForm = document.getElementById("support-search-form") as HTMLFormElement;
+  const searchInput = document.getElementById("support-search") as HTMLInputElement;
+
+  const esc = (s: unknown) =>
+    String(s).replace(
+      /[&<>"']/g,
+      (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[m]!,
+    );
+
+  // A hand-typed or pasted address can hold a broken escape ("#q/50%off"), which makes
+  // decodeURIComponent throw. Fall back to the raw text instead of a blank view.
+  const safeDecode = (s: string) => {
+    try {
+      return decodeURIComponent(s);
+    } catch (e) {
+      return s;
+    }
+  };
+
+  /* ---- Pieces ---- */
+  function setCrumbs(parts: { label: string; hash?: string }[]) {
+    crumbs.innerHTML = parts
+      .map((p, i) =>
+        i === parts.length - 1
+          ? `<span aria-current="page">${esc(p.label)}</span>`
+          : `<a href="${p.hash}">${esc(p.label)}</a>`,
+      )
+      .join('<span class="s-crumbs__sep" aria-hidden="true">/</span>');
+  }
+
+  const productRow = (p: any) => `
+    <li><a class="s-product" href="#p/${p.id}">
+      <span class="icon" style="--src:url('/images/icons/${p.icon}.svg');--size:30px"></span>
+      <span class="s-product__text"><strong>${esc(p.name)}</strong><span>${esc(p.blurb)}</span></span>
+      <span class="s-product__n num">${articleCount(p)} answers</span>
+    </a></li>`;
+
+  const articleHTML = (a: any, open: boolean, where = "") => `
+    <details${open ? " open" : ""}>
+      <summary>${esc(a.q)}</summary>
+      <p>${esc(a.a)}</p>
+      ${where}
+    </details>`;
+
+  const stuck = (lead: string) => `
+    <p class="s-stuck">${lead} <a class="link" href="#contact-support" data-scroll>Talk to telMAX</a></p>`;
+
+  /* ---- Views ---- */
+  function renderHome() {
+    setCrumbs([{ label: "Support" }]);
+    const pop = allArticles.filter((a: any) => a.popular).slice(0, 8);
+    root.innerHTML = `
+      <div class="s-head"><h2>Browse by product</h2></div>
+      <ul class="s-products">${supportData.map(productRow).join("")}</ul>
+      <div class="s-head s-head--sub"><h2>Popular questions</h2></div>
+      <ul class="s-links">${pop
+        .map((a: any) => `<li><a href="#p/${a.productId}/${a.categoryId}/${a.idx}">${esc(a.q)}</a></li>`)
+        .join("")}</ul>`;
+  }
+
+  function renderProduct(pid: string) {
+    const p = productById(pid);
+    if (!p) return renderHome();
+    setCrumbs([{ label: "Support", hash: "#" }, { label: p.name }]);
+    root.innerHTML = `
+      <div class="s-head"><h2>${esc(p.name)}</h2><p class="soft">${esc(p.blurb)}</p></div>
+      <ul class="s-products">${p.categories
+        .map((c: any) => {
+          const n = c.articles.length;
+          return `<li><a class="s-product" href="#p/${p.id}/${c.id}">
+            <span class="icon" style="--src:url('/images/icons/${c.icon}.svg');--size:30px"></span>
+            <span class="s-product__text"><strong>${esc(c.name)}</strong></span>
+            <span class="s-product__n num">${n} answer${n === 1 ? "" : "s"}</span>
+          </a></li>`;
+        })
+        .join("")}</ul>`;
+  }
+
+  function renderCategory(pid: string, cid: string, openIdx?: number) {
+    const p = productById(pid);
+    if (!p) return renderHome();
+    const c = categoryById(p, cid);
+    if (!c) return renderProduct(pid);
+    setCrumbs([{ label: "Support", hash: "#" }, { label: p.name, hash: "#p/" + p.id }, { label: c.name }]);
+    // the most asked questions first
+    const ordered = c.articles
+      .map((a: any, i: number) => ({ a, i }))
+      .sort((x: any, y: any) => (y.a.popular ? 1 : 0) - (x.a.popular ? 1 : 0));
+    root.innerHTML = `
+      <div class="s-head"><h2>${esc(c.name)}</h2><p class="soft">${esc(p.name)}</p></div>
+      <div class="faq s-answers">${ordered.map(({ a, i }: any) => articleHTML(a, openIdx === i)).join("")}</div>
+      ${stuck("Not here?")}`;
+  }
+
+  function renderSearch(query: string) {
+    setCrumbs([{ label: "Support", hash: "#" }, { label: "Search" }]);
+    if (document.activeElement !== searchInput) searchInput.value = query;
+    const { results, product, trouble } = searchSupport(query);
+
+    if (!results.length) {
+      root.innerHTML = `
+        <div class="s-head">
+          <h2>Nothing for “${esc(query)}”</h2>
+          <p class="soft">Try fewer or simpler words, or browse by product.</p>
+        </div>
+        <ul class="s-products">${supportData.map(productRow).join("")}</ul>
+        ${stuck("Still stuck?")}`;
+      return;
+    }
+
+    // say what the search understood from a vague question
+    const read = [product ? productById(product).name : "", trouble ? "Troubleshooting" : ""].filter(Boolean);
+    root.innerHTML = `
+      <div class="s-head">
+        <h2>${results.length} answer${results.length === 1 ? "" : "s"} for “${esc(query)}”</h2>
+        ${read.length ? `<p class="soft">Reading that as: ${read.map((r) => `<span class="tag tag--quiet">${esc(r)}</span>`).join(" ")}</p>` : ""}
+      </div>
+      <div class="faq s-answers">${results
+        .map((a: any, i: number) =>
+          articleHTML(
+            a,
+            i === 0,
+            `<p class="s-where"><a class="link" href="#p/${a.productId}/${a.categoryId}">${esc(a.productName)} / ${esc(a.categoryName)}</a></p>`,
+          ),
+        )
+        .join("")}</div>
+      ${stuck("Not what you needed?")}`;
+  }
+
+  /* ---- Router ---- */
+  let firstLoad = true;
+
+  function route(scroll = true) {
+    const raw = location.hash.replace(/^#/, "");
+    if (raw.startsWith("q/")) {
+      renderSearch(safeDecode(raw.slice(2)));
+    } else if (raw.startsWith("p/")) {
+      const parts = raw.slice(2).split("/");
+      if (parts.length === 1) renderProduct(parts[0]);
+      else if (parts.length === 2) renderCategory(parts[0], parts[1]);
+      else renderCategory(parts[0], parts[1], parseInt(parts[2], 10));
+    } else {
+      renderHome();
+    }
+
+    if (!firstLoad && scroll) {
+      const y = appEl.getBoundingClientRect().top + window.scrollY - 88;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+    firstLoad = false;
+  }
+
+  window.addEventListener("hashchange", () => route());
+
+  searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = searchInput.value.trim();
+    const next = q ? "#q/" + encodeURIComponent(q) : "#";
+    if (location.hash === next || (!q && !location.hash)) route();
+    else location.hash = next;
+  });
+
+  // Answers appear as you type. The address is replaced, not added to, so Back
+  // does not have to step through every letter.
+  let typing: ReturnType<typeof setTimeout>;
+  searchInput.addEventListener("input", () => {
+    clearTimeout(typing);
+    typing = setTimeout(() => {
+      const q = searchInput.value.trim();
+      if (q.length === 1) return;
+      history.replaceState(null, "", q ? "#q/" + encodeURIComponent(q) : location.pathname);
+      route(false);
+    }, 180);
+  });
+
+  // "Talk to telMAX" moves down the page without disturbing the view above.
+  document.addEventListener("click", (e) => {
+    const link = (e.target as Element).closest("a[data-scroll]");
+    if (!link) return;
+    e.preventDefault();
+    document.getElementById("contact-support")?.scrollIntoView({ behavior: "smooth" });
+  });
+
+  route();
+</script>

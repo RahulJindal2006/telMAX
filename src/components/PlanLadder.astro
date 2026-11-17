@@ -1,0 +1,290 @@
+---
+/**
+ * The internet plans as one ladder: four speeds side by side, each with
+ * a bar drawn to scale, its price, and what the price becomes with the
+ * network access fee. Plans and prices come from src/data/catalog.js.
+ */
+import { INTERNET, FEES, money, withFee } from "../data/catalog.js";
+
+const top = Math.max(...INTERNET.plans.map((p) => p.mbps));
+/* "2 Gbps" as its number and its unit, so the number can be set large. */
+const parts = (speed: string) => speed.split(" ");
+/* The sign-up flow knows the first three plans by these ids. */
+const flowId: Record<string, string> = { "500": "i500", "2000": "i2000", "4000": "i4000" };
+---
+
+<div class="ladder" style={`--n:${INTERNET.plans.length}`}>
+  {
+    INTERNET.plans.map((p) => (
+      <article class:list={["tier", { "tier--popular": p.popular }]}>
+        <p class="tier__flag">{p.popular ? "Most popular" : ""}</p>
+        <h3 class="tier__name">{p.name}</h3>
+        <p class="tier__speed num">
+          {p.upTo && <span class="tier__upto">up to</span>}
+          <span class="tier__n">{parts(p.speed)[0]}</span>
+          <span class="tier__unit">{parts(p.speed)[1]}</span>
+        </p>
+        <p class="tier__both">
+          <span class="tier__arrows" aria-hidden="true" />
+          the same down and up
+        </p>
+        <div class="tier__bar" aria-hidden="true">
+          <span style={`width:${(p.mbps / top) * 100}%`} />
+        </div>
+        <p class="tier__fit">
+          {p.fit}
+          {p.extra && <span class="tier__extra">{p.extra}</span>}
+        </p>
+        <p class="tier__price">
+          {p.from && <span class="tier__from">from</span>}
+          <span class="price">
+            {money(p.price)}
+            <small>/mo</small>
+          </span>
+        </p>
+        <p class="tier__total micro">
+          {p.from
+            ? "telMAX quotes this plan to fit your home"
+            : `${money(withFee(p.price))} with the $${FEES.networkAccess} network fee, before tax`}
+        </p>
+        {flowId[p.id] ? (
+          <a
+            href="/get-started"
+            class:list={["btn", "btn--wide", p.popular ? "btn--primary" : "btn--line"]}
+            data-pick-plan={flowId[p.id]}
+          >
+            Choose {p.name.replace("MAXfibre ", "")}
+            <span class="sr-only"> ({p.name})</span>
+          </a>
+        ) : (
+          <a href="/contact" class="btn btn--wide btn--line">
+            Ask about ADVANCED
+          </a>
+        )}
+      </article>
+    ))
+  }
+</div>
+
+<style>
+  .ladder {
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    border: 1px solid var(--line-firm);
+    border-radius: var(--r-panel);
+    background: var(--white);
+    overflow: hidden;
+  }
+  .tier {
+    display: grid;
+    grid-template-rows: auto auto auto auto auto 1fr auto auto auto;
+    padding: 0 clamp(18px, 2vw, 28px) clamp(20px, 2vw, 28px);
+    border-left: 1px solid var(--line);
+  }
+  .tier:first-child {
+    border-left: 0;
+  }
+  /* The band across the top of every column; only one says anything. */
+  .tier__flag {
+    min-height: 34px;
+    margin: 0 calc(-1 * clamp(18px, 2vw, 28px)) 22px;
+    padding: 7px clamp(18px, 2vw, 28px);
+    font-size: var(--t-micro);
+    font-weight: 700;
+    line-height: 20px;
+  }
+  .tier--popular .tier__flag {
+    background: var(--lime);
+  }
+  .tier__name {
+    font-size: 1.0625rem;
+  }
+  .tier__speed {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 8px;
+    margin-top: 14px;
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+  .tier__n {
+    font-size: clamp(3rem, 4.4vw, 4.25rem);
+  }
+  .tier__unit {
+    font-size: 1.375rem;
+    letter-spacing: -0.01em;
+  }
+  .tier__upto {
+    flex-basis: 100%;
+    margin-bottom: 6px;
+    font-size: var(--t-micro);
+    font-weight: 650;
+    letter-spacing: 0;
+    line-height: 1;
+    color: var(--ink-soft);
+  }
+  /* Plans without "up to" keep the same height, so the figures line up. */
+  .tier__speed:not(:has(.tier__upto)) {
+    padding-top: calc(var(--t-micro) + 6px);
+  }
+  .tier__both {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: var(--t-small);
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .tier__arrows {
+    flex: none;
+    width: 24px;
+    height: 14px;
+    background: currentColor;
+    -webkit-mask: url("/images/icons/updown.svg") center / contain no-repeat;
+    mask: url("/images/icons/updown.svg") center / contain no-repeat;
+  }
+  .tier__bar {
+    height: 8px;
+    margin-top: 18px;
+    border-radius: 4px;
+    background: var(--cream-deep);
+  }
+  .tier__bar span {
+    display: block;
+    height: 100%;
+    min-width: 8px;
+    border-radius: 4px;
+    background: var(--green);
+  }
+  .tier__fit {
+    margin-top: 18px;
+    font-size: var(--t-small);
+    line-height: 1.45;
+  }
+  .tier__extra {
+    display: block;
+    margin-top: 6px;
+    color: var(--ink-soft);
+  }
+  .tier__price {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .tier__price .price {
+    font-size: 2.125rem;
+  }
+  .tier__from {
+    font-size: var(--t-small);
+    font-weight: 650;
+    color: var(--ink-soft);
+  }
+  .tier__total {
+    min-height: 3em;
+    margin-top: 8px;
+    color: var(--ink-soft);
+  }
+  .tier .btn {
+    margin-top: 16px;
+  }
+
+  @media (max-width: 1000px) {
+    .ladder {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .tier:nth-child(odd) {
+      border-left: 0;
+    }
+    .tier:nth-child(n + 3) {
+      border-top: 1px solid var(--line);
+    }
+  }
+  /* On a phone each plan is one compact block: name and speed on the
+     left, price on the right, then the bar, the fit and the button. */
+  @media (max-width: 620px) {
+    .ladder {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .tier {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-rows: none;
+      grid-template-areas:
+        "flag flag"
+        "name price"
+        "speed total"
+        "both both"
+        "bar bar"
+        "fit fit"
+        "go go";
+      column-gap: 16px;
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .tier:first-child {
+      border-top: 0;
+    }
+    .tier__flag {
+      grid-area: flag;
+    }
+    /* stacked, an empty band is only dead space */
+    .tier:not(.tier--popular) .tier__flag {
+      min-height: 0;
+      padding-block: 0;
+      margin-bottom: 20px;
+    }
+    .tier__name {
+      grid-area: name;
+      align-self: end;
+    }
+    .tier__speed {
+      grid-area: speed;
+      margin-top: 8px;
+    }
+    .tier__speed:not(:has(.tier__upto)) {
+      padding-top: 0;
+    }
+    .tier__n {
+      font-size: 2.75rem;
+    }
+    .tier__both {
+      grid-area: both;
+      margin-top: 8px;
+    }
+    .tier__bar {
+      grid-area: bar;
+      margin-top: 14px;
+    }
+    .tier__fit {
+      grid-area: fit;
+      margin-top: 12px;
+    }
+    .tier__price {
+      grid-area: price;
+      align-self: end;
+      justify-content: flex-end;
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+    .tier__price .price {
+      font-size: 1.625rem;
+    }
+    .tier__total {
+      grid-area: total;
+      justify-self: end;
+      max-width: 10.5em;
+      min-height: 0;
+      margin-top: 6px;
+      text-align: right;
+    }
+    .tier .btn {
+      grid-area: go;
+    }
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageTop from "../components/PageTop.astro";
+import { SITE, CONCEPT } from "../data/site.js";
+
+const can = [
+  { icon: "credit-card", title: "Your bill", text: "Check your balance, pay online and update how you pay." },
+  { icon: "user-circle", title: "Your account", text: "Keep your details current and add an authorized person." },
+  { icon: "circle-sign-check", title: "New here?", text: "Customers register on the same portal the first time they sign in." },
+];
+---
+
+<Layout
+  title="My telMAX"
+  description="My telMAX is telMAX's account portal: your bill, your details and your services."
+>
+  <PageTop
+    title="My telMAX"
+    lead="Your account lives on telMAX's secure portal. Sign in there, or register if you have not yet."
+  >
+    <a href={SITE.portal} class="btn btn--primary out" rel="noopener">Sign in at My telMAX</a>
+    <a href={SITE.portalBusiness} class="btn btn--line out" rel="noopener">Business sign-in</a>
+  </PageTop>
+
+  <section class="band">
+    <div class="wrap">
+      <ul class="cols can" style="--n:3">
+        {
+          can.map((c) => (
+            <li>
+              <span class="icon" style={`--src:url('/images/icons/${c.icon}.svg');--size:32px`} />
+              <h2>{c.title}</h2>
+              <p class="soft">{c.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+      {
+        CONCEPT.on && (
+          <p class="note note--concept" style="margin-top:40px;max-width:44rem">
+            <span>
+              There is no sign-in box on this concept site, on purpose. A password for your telMAX
+              account should only ever be typed on telMAX's own portal.
+            </span>
+          </p>
+        )
+      }
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .can li {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+  }
+  .can h2 {
+    margin-top: 6px;
+    font-family: var(--sans);
+    font-size: var(--t-h3);
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    line-height: 1.25;
+  }
+</style>

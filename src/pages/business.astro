@@ -1,0 +1,252 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageTop from "../components/PageTop.astro";
+import { BUSINESS } from "../data/catalog.js";
+import { SITE, CONTACT, BUSINESS_AREAS, listOf } from "../data/site.js";
+import photo from "../assets/photos/business-hero.jpg";
+---
+
+<Layout
+  title="Business"
+  description="telMAX for business: pure fibre internet up to 10 Gbps, dedicated internet access, MAXvoice phone and business TV, each quoted to fit."
+>
+  <PageTop
+    title="Fibre built for business"
+    lead={`The same speed up and down, up to ${BUSINESS.topSpeed}, on the network telMAX owns. Every plan is quoted to fit the business.`}
+    photo={photo}
+    alt="Three colleagues going over paperwork at an office table"
+    focus="centre"
+    green
+  >
+    <a href={SITE.businessQuote} class="btn btn--go out" rel="noopener">Request a call back</a>
+    <a href={CONTACT.business.tel} class="btn btn--line">{CONTACT.business.phone}</a>
+  </PageTop>
+
+  <section class="band">
+    <div class="wrap split">
+      <div>
+        <h2>Internet</h2>
+        <p class="lead" style="margin-top:16px">Two ways to connect, both pure fibre.</p>
+      </div>
+      <ul class="rows offer">
+        {
+          BUSINESS.internet.map((i) => (
+            <li>
+              <span>
+                <h3>{i.name}</h3>
+                <p class="soft">{i.text}</p>
+              </span>
+              <a class="link out" href={i.href} rel="noopener">Details</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band ruled">
+    <div class="wrap">
+      <div class="head">
+        <h2>MAXvoice business phone</h2>
+        <p class="lead">Three tiers. Each one carries everything in the tier before it.</p>
+      </div>
+      <div class="voice">
+        {
+          BUSINESS.voice.map((v) => (
+            <article>
+              <h3>{v.name}</h3>
+              <p class="soft small">{v.fit}</p>
+              <ul class="ticks">
+                {v.features.map((f) => <li>{f}</li>)}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="band ruled">
+    <div class="wrap split">
+      <div>
+        <h2>Business TV</h2>
+        <p class="lead" style="margin-top:16px">Three packages, by channel count.</p>
+      </div>
+      <ul class="rows offer">
+        {
+          BUSINESS.tv.map((t) => (
+            <li>
+              <span>
+                <h3>{t.name}</h3>
+                <p class="soft">{t.text}</p>
+              </span>
+              <span class="offer__n num">{t.channels} <small>channels</small></span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band on-green">
+    <div class="wrap split">
+      <div>
+        <h2>Why businesses choose telMAX</h2>
+        <p class="up num">
+          <span>{BUSINESS.uptime}</span>
+          network uptime
+        </p>
+      </div>
+      <dl class="rows defs">
+        {
+          BUSINESS.difference.map((d) => (
+            <div>
+              <dt>{d.title}</dt>
+              <dd class="soft">{d.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap split">
+      <div>
+        <h2>Security you can trust</h2>
+        <p class="lead" style="margin-top:16px">
+          A modern fibre network has security advantages that cable and DSL do not.
+        </p>
+      </div>
+      <dl class="rows defs">
+        {
+          BUSINESS.security.map((s) => (
+            <div>
+              <dt>{s.title}</dt>
+              <dd class="soft">{s.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="band on-lime">
+    <div class="wrap talk">
+      <div>
+        <h2>Talk to the business team</h2>
+        <p class="lead" style="margin-top:12px">
+          Serving {listOf(BUSINESS_AREAS.now)}. Coming soon to {listOf(BUSINESS_AREAS.soon)}.
+        </p>
+      </div>
+      <div class="talk__how">
+        <a class="talk__big" href={CONTACT.business.tel}>{CONTACT.business.phone}</a>
+        <a class="link" href={`mailto:${CONTACT.business.email}`}>{CONTACT.business.email}</a>
+        <a class="btn btn--primary out" href={SITE.businessQuote} rel="noopener">Request a call back</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .offer li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px 24px;
+    align-items: center;
+  }
+  .offer p {
+    margin-top: 6px;
+  }
+  .offer__n {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .offer__n small {
+    font-size: var(--t-small);
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--ink-soft);
+  }
+  .voice {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border: 1px solid var(--line-firm);
+    border-radius: var(--r-panel);
+    background: var(--white);
+    overflow: hidden;
+  }
+  .voice article {
+    padding: clamp(20px, 2.4vw, 32px);
+    border-left: 1px solid var(--line);
+  }
+  .voice article:first-child {
+    border-left: 0;
+  }
+  .voice .ticks {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: var(--t-small);
+  }
+  .voice p {
+    margin-top: 4px;
+  }
+  .defs dt {
+    font-size: var(--t-h3);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .defs dd {
+    max-width: 34rem;
+    margin-top: 6px;
+  }
+  .up {
+    margin-top: clamp(24px, 3vw, 40px);
+    font-size: var(--t-small);
+    font-weight: 650;
+    color: var(--ink-soft);
+  }
+  .up span {
+    display: block;
+    font-size: clamp(2.25rem, 3vw + 1rem, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--lime);
+  }
+  .talk {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 24px clamp(32px, 6vw, 96px);
+    align-items: center;
+  }
+  .talk__how {
+    display: grid;
+    gap: 12px;
+    justify-items: start;
+  }
+  .talk__big {
+    font-size: clamp(1.75rem, 2.4vw + 1rem, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    text-decoration: none;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  @media (max-width: 900px) {
+    .voice,
+    .talk {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .voice article {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .voice article:first-child {
+      border-top: 0;
+    }
+  }
+</style>

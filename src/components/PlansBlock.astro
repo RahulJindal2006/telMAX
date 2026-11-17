@@ -1,0 +1,49 @@
+---
+/**
+ * The internet plans, complete: the ladder, what every plan includes,
+ * and the fine print. Used on the home page and the internet page.
+ */
+import PlanLadder from "./PlanLadder.astro";
+import { INTERNET } from "../data/catalog.js";
+---
+
+<PlanLadder />
+<div class="incl">
+  <h3>Every plan includes</h3>
+  <ul class="ticks incl__list">
+    {INTERNET.included.map((i) => <li><span><strong>{i.title}.</strong> {i.text}</span></li>)}
+  </ul>
+</div>
+<div class="fine">
+  {INTERNET.fine.map((f) => <p>{f}</p>)}
+  <p>{INTERNET.includedNote}</p>
+</div>
+
+<style>
+  .incl {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    gap: 16px var(--gap);
+    margin-top: clamp(28px, 4vw, 48px);
+  }
+  .incl__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px var(--gap);
+    font-size: var(--t-small);
+  }
+  .fine {
+    margin-top: clamp(24px, 3vw, 36px);
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+  @media (max-width: 900px) {
+    .incl {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .incl__list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

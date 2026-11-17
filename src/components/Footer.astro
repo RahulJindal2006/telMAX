@@ -1,0 +1,244 @@
+---
+/**
+ * The site footer. Link groups are the `groups` array; contact details
+ * and outside addresses come from src/data/site.js.
+ */
+import { SITE, CONTACT, CONCEPT, AREAS, listOf } from "../data/site.js";
+
+const groups = [
+  {
+    title: "Shop",
+    links: [
+      { label: "Internet", href: "/internet" },
+      { label: "TV & Streaming", href: "/tv" },
+      { label: "Home Phone", href: "/home-phone" },
+      { label: "Deals", href: "/deals" },
+      { label: "Refer a friend", href: "/refer-a-friend" },
+      { label: "Business", href: "/business" },
+    ],
+  },
+  {
+    title: "Help",
+    links: [
+      { label: "Support centre", href: "/support" },
+      { label: "Network status", href: "/status" },
+      { label: "Report an outage", href: "/report-outage" },
+      { label: "Contact", href: "/contact" },
+      { label: "Resident Relations", href: SITE.residentRelations, out: true },
+    ],
+  },
+  {
+    title: "telMAX",
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Careers", href: SITE.careers, out: true },
+      { label: "My telMAX", href: SITE.portal, out: true },
+      ...(CONCEPT.on ? [{ label: "About this concept", href: "/about-this-concept" }] : []),
+    ],
+  },
+];
+---
+
+<footer class="site-footer on-green">
+  <div class="wrap">
+    <div class="foot-top">
+      <p class="foot-line display">{SITE.tagline}</p>
+      <a href="/status" class="foot-net" data-net>
+        <span class="foot-net__dot" aria-hidden="true"></span>
+        <span data-net-text>Network status</span>
+      </a>
+    </div>
+
+    <div class="foot-grid">
+      {
+        groups.map((g) => (
+          <nav aria-label={g.title}>
+            <h2 class="foot-h">{g.title}</h2>
+            <ul>
+              {g.links.map((l) => (
+                <li>
+                  <a href={l.href} class={l.out ? "out" : undefined} rel={l.out ? "noopener" : undefined}>
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+      <div>
+        <h2 class="foot-h">Reach telMAX</h2>
+        <ul>
+          <li>
+            <span class="foot-k">Support</span>
+            <a href={CONTACT.support.tel}>{CONTACT.support.phone}</a>
+          </li>
+          <li><a href={`mailto:${CONTACT.support.email}`}>{CONTACT.support.email}</a></li>
+          <li>
+            <span class="foot-k">Business</span>
+            <a href={CONTACT.business.tel}>{CONTACT.business.phone}</a>
+          </li>
+          <li><a href={`mailto:${CONTACT.business.email}`}>{CONTACT.business.email}</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="foot-areas">Serving {listOf(AREAS)}.</p>
+
+    <div class="foot-end">
+      <p>
+        {
+          CONCEPT.on
+            ? "telMAX, MAXfibre, MAXview and MAXtalk are telMAX's names and marks. This concept site is not run by telMAX."
+            : `© ${new Date().getFullYear()} telMAX Inc.`
+        }
+      </p>
+      <ul class="foot-legal">
+        {SITE.social.map((s) => <li><a class="out" href={s.href} rel="noopener">{s.name}</a></li>)}
+        <li><a class="out" href={SITE.legal.privacy} rel="noopener">Privacy</a></li>
+        <li><a class="out" href={SITE.legal.terms} rel="noopener">Terms</a></li>
+        <li><a class="out" href={SITE.legal.accessibility} rel="noopener">Accessibility</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: clamp(48px, 7vw, 96px) 28px;
+  }
+  .foot-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px 40px;
+    padding-bottom: clamp(32px, 5vw, 56px);
+    border-bottom: 1px solid var(--line);
+  }
+  .foot-line {
+    max-width: 14em;
+    font-size: clamp(2rem, 3.6vw + 0.6rem, 3.5rem);
+    line-height: 1.04;
+  }
+  .foot-net {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1px solid var(--line-firm);
+    border-radius: var(--r-ctl);
+    font-size: var(--t-small);
+    font-weight: 650;
+    text-decoration: none;
+  }
+  .foot-net:hover {
+    border-color: var(--cream);
+  }
+  .foot-net__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--line-firm);
+  }
+  .foot-net[data-state="operational"] .foot-net__dot {
+    border-color: var(--lime);
+    background: var(--lime);
+  }
+  .foot-net[data-state="maintenance"] .foot-net__dot {
+    border-color: var(--mauve);
+    background: var(--mauve);
+    border-radius: 2px;
+  }
+  .foot-net[data-state="degraded"] .foot-net__dot,
+  .foot-net[data-state="outage"] .foot-net__dot {
+    border-color: #ff9d94;
+    background: #ff9d94;
+    border-radius: 0;
+    transform: rotate(45deg);
+  }
+
+  .foot-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.3fr);
+    gap: 36px var(--gap);
+    padding-block: clamp(32px, 5vw, 56px);
+  }
+  .foot-h {
+    margin-bottom: 14px;
+    font-family: var(--sans);
+    font-size: var(--t-small);
+    font-weight: 700;
+    letter-spacing: 0;
+    color: var(--ink-soft);
+  }
+  .foot-grid ul {
+    display: grid;
+    gap: 2px;
+  }
+  .foot-grid a {
+    display: inline-block;
+    padding: 5px 0;
+    font-size: var(--t-small);
+    font-weight: 600;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .foot-grid a:hover,
+  .foot-legal a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+  .foot-k {
+    display: inline-block;
+    min-width: 5.2em;
+    font-size: var(--t-small);
+    color: var(--ink-soft);
+  }
+
+  .foot-areas {
+    padding-block: 18px;
+    border-top: 1px solid var(--line);
+    font-size: var(--t-small);
+    color: var(--ink-soft);
+  }
+  .foot-end {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 32px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: var(--t-micro);
+    color: var(--ink-soft);
+  }
+  .foot-end p {
+    max-width: 40rem;
+  }
+  .foot-legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+  }
+  .foot-legal a {
+    color: var(--cream);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  @media (max-width: 900px) {
+    .foot-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 520px) {
+    /* room for the bar pinned to the bottom of a phone screen */
+    .site-footer {
+      padding-bottom: 96px;
+    }
+    /* an email address needs the whole line */
+    .foot-grid > :last-child {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

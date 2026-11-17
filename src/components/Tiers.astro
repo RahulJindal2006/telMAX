@@ -1,0 +1,113 @@
+---
+/**
+ * A short set of options side by side in one frame: TV packages, phone
+ * plans. Each has a name, one large figure, a line of text, a price and
+ * a button.
+ *
+ * Props
+ *   items   [{ name, figure, unit, text, price, cta: { label, href } }]
+ */
+import { money } from "../data/catalog.js";
+
+interface Item {
+  name: string;
+  figure?: string;
+  unit?: string;
+  text?: string;
+  price: number;
+  cta: { label: string; href: string };
+}
+interface Props {
+  items: Item[];
+}
+const { items } = Astro.props;
+---
+
+<div class="tiers" style={`--n:${items.length}`}>
+  {
+    items.map((t) => (
+      <article class="t">
+        <h3 class="t__name">{t.name}</h3>
+        {t.figure && (
+          <p class="t__fig num">
+            <span>{t.figure}</span> {t.unit}
+          </p>
+        )}
+        {t.text && <p class="t__text">{t.text}</p>}
+        <p class="t__price">
+          <span class="price">
+            {money(t.price)}
+            <small>/mo</small>
+          </span>
+        </p>
+        <a href={t.cta.href} class="btn btn--line btn--wide">
+          {t.cta.label}
+          <span class="sr-only"> ({t.name})</span>
+        </a>
+      </article>
+    ))
+  }
+</div>
+
+<style>
+  .tiers {
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    border: 1px solid var(--line-firm);
+    border-radius: var(--r-panel);
+    background: var(--white);
+    overflow: hidden;
+  }
+  .t {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    padding: clamp(20px, 2.4vw, 32px);
+    border-left: 1px solid var(--line);
+  }
+  .t:first-child {
+    border-left: 0;
+  }
+  .t__name {
+    font-size: 1.0625rem;
+  }
+  .t__fig {
+    margin-top: 14px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .t__fig span {
+    font-size: clamp(2.75rem, 4vw, 3.75rem);
+    letter-spacing: -0.03em;
+  }
+  .t__text {
+    margin-top: 14px;
+    font-size: var(--t-small);
+    line-height: 1.45;
+    color: var(--ink-soft);
+  }
+  .t__price {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .t__price .price {
+    font-size: 2.125rem;
+  }
+  .t .btn {
+    margin-top: 18px;
+  }
+  @media (max-width: 760px) {
+    .tiers {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .t {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .t:first-child {
+      border-top: 0;
+    }
+  }
+</style>

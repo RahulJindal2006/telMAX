@@ -1,0 +1,449 @@
+---
+/**
+ * The help assistant: a labelled button at the bottom right that opens a
+ * panel. Markup is static; the behaviour is in src/scripts/chatbot.mjs.
+ * Styles are global because the panel's contents are drawn by script,
+ * which Astro's scoped styles do not reach.
+ */
+---
+
+<div class="cb" id="telmax-chatbot">
+  <div class="cb-panel" role="dialog" aria-label="telMAX help assistant" tabindex="-1" hidden>
+    <div class="cb-header">
+      <button class="cb-back" type="button" aria-label="Go back" hidden>
+        <span class="cb-back__icon" aria-hidden="true"></span>
+      </button>
+      <div class="cb-ident">
+        <strong>Max</strong>
+        <span class="cb-ident__status">Answers from the help centre</span>
+      </div>
+      <button class="cb-close" type="button" aria-label="Close the assistant">
+        <span class="cb-close__icon" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="cb-body" aria-live="polite"></div>
+    <p class="cb-foot">Max is automated and never asks for your personal details.</p>
+  </div>
+
+  <button class="cb-fab" type="button" aria-expanded="false" aria-controls="telmax-chatbot">
+    <span class="cb-fab__icon" aria-hidden="true"></span>
+    <span class="cb-fab__label">Ask a question</span>
+  </button>
+</div>
+
+<script>
+  import { initChatbot } from "../scripts/chatbot.mjs";
+  const root = document.getElementById("telmax-chatbot");
+  if (root) {
+    initChatbot(root);
+    // At the top of a page the button says what it is. Once the visitor is
+    // reading, it draws back to its icon so it covers less of the page.
+    const settle = () => root.classList.toggle("cb--compact", window.scrollY > 120);
+    window.addEventListener("scroll", settle, { passive: true });
+    settle();
+  }
+</script>
+
+<style is:global>
+  .cb {
+    position: fixed;
+    right: clamp(12px, 2vw, 24px);
+    bottom: clamp(12px, 2vw, 24px);
+    z-index: 95;
+    display: grid;
+    justify-items: end;
+    gap: 12px;
+    pointer-events: none;
+  }
+  .cb > * {
+    pointer-events: auto;
+  }
+
+  /* ---- The button ---- */
+  .cb-fab {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 10px 18px 10px 14px;
+    border: 1.5px solid var(--green);
+    border-radius: var(--r-ctl);
+    background: var(--green);
+    color: var(--cream);
+    font-size: var(--t-small);
+    font-weight: 700;
+    box-shadow: var(--pop);
+  }
+  .cb-fab:hover {
+    background: var(--green-lift);
+  }
+  .cb-fab__icon {
+    width: 22px;
+    height: 22px;
+    background: currentColor;
+    -webkit-mask: url("/images/icons/line-bubble-message.svg") center / contain no-repeat;
+    mask: url("/images/icons/line-bubble-message.svg") center / contain no-repeat;
+  }
+  .cb-fab__label {
+    max-width: 12em;
+    overflow: hidden;
+    white-space: nowrap;
+    transition:
+      max-width 0.22s var(--ease),
+      opacity 0.15s;
+  }
+  .cb-fab {
+    transition:
+      gap 0.22s var(--ease),
+      padding 0.22s var(--ease),
+      background-color 0.15s;
+  }
+  .cb--compact .cb-fab {
+    gap: 0;
+    padding-inline: 13px;
+  }
+  .cb--compact .cb-fab__label {
+    max-width: 0;
+    opacity: 0;
+  }
+  .cb-open .cb-fab {
+    display: none;
+  }
+
+  /* ---- The panel ---- */
+  .cb-panel {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    width: min(400px, calc(100vw - 24px));
+    height: min(620px, calc(100dvh - 120px));
+    border: 1px solid var(--line-firm);
+    border-radius: var(--r-panel);
+    background: var(--cream);
+    color: var(--green);
+    box-shadow: var(--pop);
+    overflow: hidden;
+  }
+  .cb-panel:focus {
+    outline: none;
+  }
+  .cb-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    min-height: 60px;
+    padding: 8px 10px 8px 18px;
+    background: var(--green);
+    color: var(--cream);
+  }
+  .cb-header:has(.cb-back:not([hidden])) {
+    padding-left: 10px;
+  }
+  .cb-ident strong {
+    display: block;
+    font-size: 1.0625rem;
+    line-height: 1.2;
+  }
+  .cb-ident__status {
+    display: block;
+    font-size: var(--t-micro);
+    color: rgba(249, 249, 235, 0.8);
+  }
+  .cb-back,
+  .cb-close {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: inherit;
+  }
+  .cb-back:hover,
+  .cb-close:hover {
+    background: rgba(249, 249, 235, 0.14);
+  }
+  .cb-back:focus-visible,
+  .cb-close:focus-visible {
+    outline-color: var(--lime);
+  }
+  .cb-back__icon,
+  .cb-close__icon {
+    width: 20px;
+    height: 20px;
+    background: currentColor;
+  }
+  .cb-back__icon {
+    -webkit-mask: url("/images/icons/arrow-left.svg") center / contain no-repeat;
+    mask: url("/images/icons/arrow-left.svg") center / contain no-repeat;
+  }
+  .cb-close__icon {
+    -webkit-mask: url("/images/icons/close.svg") center / contain no-repeat;
+    mask: url("/images/icons/close.svg") center / contain no-repeat;
+  }
+
+  .cb-body {
+    display: grid;
+    gap: 14px;
+    align-content: start;
+    padding: 18px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .cb-foot {
+    padding: 10px 18px;
+    border-top: 1px solid var(--line);
+    font-size: var(--t-micro);
+    line-height: 1.4;
+    color: var(--ink-soft);
+  }
+
+  /* ---- What Max says ---- */
+  .cb-turn {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+  }
+  .cb-turn__av {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--lime);
+    position: relative;
+  }
+  .cb-turn__av::after {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    background: var(--green);
+    -webkit-mask: url("/images/icons/line-bubble-message.svg") center / contain no-repeat;
+    mask: url("/images/icons/line-bubble-message.svg") center / contain no-repeat;
+  }
+  .cb-turn__msgs {
+    display: grid;
+    gap: 6px;
+    justify-items: start;
+  }
+  .cb-bubble {
+    padding: 10px 14px;
+    border-radius: 4px 14px 14px 14px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    font-size: var(--t-small);
+    line-height: 1.45;
+  }
+  /* What the visitor asked */
+  .cb-asked {
+    justify-self: end;
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 14px 4px 14px 14px;
+    background: var(--green);
+    color: var(--cream);
+    font-size: var(--t-small);
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  /* ---- The question box ---- */
+  .cb-ask {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 48px;
+    gap: 8px;
+  }
+  .cb-input {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--green);
+    border-radius: var(--r-ctl);
+    background: var(--white);
+    color: var(--green);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  .cb-input::placeholder {
+    color: #5b736e;
+    opacity: 1;
+  }
+  .cb-send {
+    display: grid;
+    place-items: center;
+    border: 1.5px solid var(--green);
+    border-radius: var(--r-ctl);
+    background: var(--lime);
+    color: var(--green);
+  }
+  .cb-send:hover {
+    background: var(--lime-deep);
+  }
+  .cb-send__icon {
+    width: 22px;
+    height: 22px;
+    background: currentColor;
+    -webkit-mask: url("/images/icons/arrow-right.svg") center / contain no-repeat;
+    mask: url("/images/icons/arrow-right.svg") center / contain no-repeat;
+  }
+
+  /* ---- Choices ---- */
+  .cb-choices {
+    display: grid;
+    border-top: 1px solid var(--line);
+  }
+  .cb-choice {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18px;
+    gap: 12px;
+    align-items: center;
+    min-height: 48px;
+    padding: 10px 4px;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: none;
+    color: inherit;
+    text-align: left;
+    text-decoration: none;
+    font-size: var(--t-small);
+    font-weight: 650;
+    line-height: 1.35;
+  }
+  .cb-choice:hover {
+    background: var(--cream-deep);
+  }
+  .cb-choice__arrow {
+    width: 18px;
+    height: 18px;
+    background: currentColor;
+    -webkit-mask: url("/images/icons/arrow-right.svg") center / contain no-repeat;
+    mask: url("/images/icons/arrow-right.svg") center / contain no-repeat;
+  }
+  .cb-choice__arrow--out {
+    -webkit-mask-image: url("/images/icons/out.svg");
+    mask-image: url("/images/icons/out.svg");
+    -webkit-mask-size: 13px;
+    mask-size: 13px;
+  }
+
+  /* ---- Answers ---- */
+  .cb-answers {
+    border-top: 1px solid var(--line);
+  }
+  .cb-answer {
+    border-bottom: 1px solid var(--line);
+  }
+  .cb-answer summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18px;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 4px;
+    cursor: pointer;
+    list-style: none;
+    font-size: var(--t-small);
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .cb-answer summary::-webkit-details-marker {
+    display: none;
+  }
+  .cb-answer summary::after {
+    content: "";
+    width: 18px;
+    height: 18px;
+    background: currentColor;
+    -webkit-mask: url("/images/icons/chevron-down.svg") center / contain no-repeat;
+    mask: url("/images/icons/chevron-down.svg") center / contain no-repeat;
+  }
+  .cb-answer[open] summary::after {
+    transform: rotate(180deg);
+  }
+  .cb-answer p {
+    padding: 0 4px 10px;
+    font-size: var(--t-small);
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .cb-answer__more {
+    display: inline-block;
+    margin: 0 4px 14px;
+    font-size: var(--t-micro);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* ---- Contact rows ---- */
+  .cb-contact {
+    display: grid;
+    border-top: 1px solid var(--line);
+  }
+  .cb-contact__row {
+    display: grid;
+    gap: 2px;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+  }
+  .cb-contact__row:hover {
+    background: var(--cream-deep);
+  }
+  .cb-contact__k {
+    font-size: var(--t-micro);
+    color: var(--ink-soft);
+  }
+  .cb-contact__v {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums lining-nums;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 520px) {
+    .cb {
+      right: 12px;
+      bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    }
+    /* above the bar pinned to the bottom of a phone screen, when it is showing */
+    body:has(.sticky-check:not([hidden])) .cb {
+      bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+    }
+    /* In the order flow every button spans the screen, so a floating one
+       would always sit on top of the next step. Help is in the menu there. */
+    body:has(#signup-wizard) .cb:not(.cb-open) {
+      display: none;
+    }
+    /* On a phone the button is its icon alone, so it covers as little as it can.
+       The words stay for screen readers. */
+    .cb-fab {
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      min-height: 0;
+      padding: 0;
+    }
+    .cb-fab__icon {
+      width: 26px;
+      height: 26px;
+    }
+    .cb-fab__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .cb-open {
+      inset: 0;
+      z-index: 200;
+      justify-items: stretch;
+    }
+    .cb-open .cb-panel {
+      width: 100%;
+      height: 100dvh;
+      border: 0;
+      border-radius: 0;
+    }
+  }
+</style>

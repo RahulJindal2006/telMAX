@@ -1,0 +1,231 @@
+/* =====================================================================
+   The support centre (src/pages/support.astro).
+   The answers themselves use the shared .faq style from global.css.
+   ===================================================================== */
+
+/* ---- Search band ---- */
+.s-top {
+  padding-block: clamp(40px, 6vw, 88px);
+}
+.s-top h1 {
+  max-width: 14em;
+}
+.s-search {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  max-width: 46rem;
+  margin-top: clamp(22px, 3vw, 36px);
+}
+.s-search input {
+  width: 100%;
+  min-height: 60px;
+  padding: 12px 18px 12px 54px;
+  border: 1.5px solid var(--white);
+  border-radius: var(--r-ctl);
+  background: var(--white);
+  color: var(--green);
+  font-size: 1.125rem;
+  font-weight: 500;
+  appearance: none;
+}
+.s-search input::placeholder {
+  color: #5b736e;
+  opacity: 1;
+}
+.s-search input::-webkit-search-cancel-button {
+  appearance: none;
+}
+.s-search__icon {
+  position: absolute;
+  left: 18px;
+  top: 18px; /* centred in the 60px box, wherever the button sits */
+  width: 24px;
+  height: 24px;
+  background: var(--green);
+  -webkit-mask: url("/images/icons/search.svg") center / contain no-repeat;
+  mask: url("/images/icons/search.svg") center / contain no-repeat;
+  pointer-events: none;
+}
+.s-search .btn {
+  min-height: 60px;
+  padding-inline: 28px;
+}
+.s-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin-top: 18px;
+  font-size: var(--t-small);
+}
+.s-quick span {
+  color: var(--ink-soft);
+}
+
+/* ---- The app ---- */
+.s-app {
+  min-height: 420px;
+}
+.s-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-bottom: clamp(20px, 3vw, 32px);
+  font-size: var(--t-small);
+  font-weight: 650;
+}
+.s-crumbs a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.s-crumbs [aria-current] {
+  color: var(--ink-soft);
+}
+.s-crumbs__sep {
+  color: var(--ink-soft);
+}
+.s-head {
+  margin-bottom: clamp(16px, 2vw, 24px);
+}
+.s-head h2 {
+  font-size: clamp(1.75rem, 1.8vw + 1rem, 2.375rem);
+}
+.s-head p {
+  margin-top: 8px;
+}
+.s-head--sub {
+  margin-top: clamp(40px, 5vw, 72px);
+}
+
+/* Products and categories: one list, two columns, a line between rows */
+.s-products {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(24px, 4vw, 64px);
+}
+.s-product {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  min-height: 92px;
+  padding-block: 18px;
+  border-top: 1px solid var(--line);
+  text-decoration: none;
+}
+.s-products li:nth-last-child(-n + 2) .s-product {
+  border-bottom: 1px solid var(--line);
+}
+.s-product__text strong {
+  display: block;
+  font-size: 1.1875rem;
+  line-height: 1.3;
+}
+.s-product__text span {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--t-small);
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.s-product__n {
+  font-size: var(--t-small);
+  font-weight: 650;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.s-product:hover strong {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+.s-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(24px, 4vw, 64px);
+}
+.s-links a {
+  display: block;
+  padding-block: 15px;
+  border-top: 1px solid var(--line);
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+}
+.s-links li:nth-last-child(-n + 2) a {
+  border-bottom: 1px solid var(--line);
+}
+.s-links a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.s-answers {
+  max-width: 52rem;
+}
+.s-where {
+  padding-top: 0 !important;
+  font-size: var(--t-small);
+}
+.s-stuck {
+  margin-top: 28px;
+  color: var(--ink-soft);
+}
+
+.s-note {
+  max-width: 40rem;
+  margin-top: clamp(32px, 4vw, 56px);
+}
+
+/* ---- Talk to telMAX ---- */
+.s-reach li {
+  display: grid;
+  grid-template-columns: 11rem minmax(0, 1fr);
+  gap: 4px 20px;
+  align-items: baseline;
+}
+.s-reach__big {
+  font-size: clamp(1.625rem, 2vw + 1rem, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-decoration: none;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.s-reach__big:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.18em;
+}
+.s-guides {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
+@media (max-width: 760px) {
+  .s-products,
+  .s-links {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .s-products li:nth-last-child(2) .s-product,
+  .s-links li:nth-last-child(2) a {
+    border-bottom: 0;
+  }
+  .s-reach li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 560px) {
+  .s-search {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .s-product {
+    grid-template-columns: 30px minmax(0, 1fr);
+  }
+  .s-product__n {
+    grid-column: 2;
+  }
+}

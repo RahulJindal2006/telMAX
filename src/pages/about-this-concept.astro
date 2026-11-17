@@ -1,0 +1,233 @@
+---
+/**
+ * What this site is, for anyone who lands on it and for the people at
+ * telMAX it is meant for: what is real, what is simulated, what it adds,
+ * and what it would take to put it live.
+ *
+ * Keep it true. If something on the site changes from simulated to real,
+ * move its line.
+ */
+import Layout from "../layouts/Layout.astro";
+import PageTop from "../components/PageTop.astro";
+import { CONCEPT, SITE, AREAS } from "../data/site.js";
+
+const real = [
+  {
+    title: "Plans, prices and speeds",
+    text: `Internet, TV, home phone and business details were read from telmax.com on ${CONCEPT.factsChecked} and are kept in one file, so a price is changed in one place.`,
+  },
+  {
+    title: "Every way to reach telMAX",
+    text: "The phone numbers and email addresses are telMAX's own. Sign-in, the shop, careers and the policies link to telMAX's own pages.",
+  },
+  {
+    title: "The address lookup",
+    text: `It suggests real Canadian addresses and checks the community against the ${AREAS.length} that telMAX serves.`,
+  },
+  {
+    title: "Awards and news",
+    text: "Each item links to the release or article it comes from.",
+  },
+];
+
+const simulated = [
+  {
+    title: "The order flow",
+    text: "It places no order and makes no account. Every total is worked out from real prices, but the installation dates are samples, and the check is by community, not by street.",
+  },
+  {
+    title: "Bundle prices",
+    text: "TV and phone bundles use prices seen in telMAX's shop in July 2026. The flow says so beside them.",
+  },
+  {
+    title: "The email code",
+    text: "No email is sent. The code is shown on screen.",
+  },
+  {
+    title: "The outage report",
+    text: "It checks what is typed and shows a sample reference. Nothing is sent until an address for telMAX's system is set.",
+  },
+  {
+    title: "The status board",
+    text: "It shows sample data, and says so, until its monitor is running. The monitor is in this project and reads telMAX's public pages.",
+  },
+  {
+    title: "The help answers",
+    text: "They were written for this concept. telMAX's own articles would replace them.",
+  },
+];
+
+const adds = [
+  {
+    title: "An answer on the first screen",
+    text: "The home page opens with the address check, and the answer appears in place.",
+  },
+  {
+    title: "The price you will pay",
+    text: "Every plan shows its price with the network fee beside it, and the order flow keeps the monthly total with tax on screen.",
+  },
+  {
+    title: "Upload, made visible",
+    text: "A small tool shows how long a real upload takes on each plan against the connection you have today.",
+  },
+  {
+    title: "An order flow that forgives",
+    text: "Five steps. The browser's Back button steps back, every choice is kept, and it works from the keyboard.",
+  },
+  {
+    title: "Help that starts with the question",
+    text: "Search comes first on the support page. The assistant answers from the same articles and never asks for personal details.",
+  },
+  {
+    title: "Network status, always in reach",
+    text: "The header links to a status board with 90 days of history, and it never claims to be live when its data is old.",
+  },
+];
+
+const live = [
+  "An address check that knows each street, from telMAX's serviceability records.",
+  "The order flow connected to telMAX's ordering and installation systems.",
+  "The outage report and the keep-me-posted form connected to telMAX's support tools.",
+  "telMAX's own help articles in place of the ones written here.",
+  "The status monitor running on telMAX's network data.",
+  "telMAX's licensed brand typefaces in place of the two free stand-ins.",
+];
+
+const sources = [
+  ["Home", SITE.official],
+  ["Internet", "https://www.telmax.com/internet/"],
+  ["TV and streaming", "https://www.telmax.com/tv-and-streaming/"],
+  ["Home phone", "https://www.telmax.com/home-phone/"],
+  ["Deals", "https://www.telmax.com/max-deals/"],
+  ["Business", "https://www.telmax.com/business/"],
+  ["About", "https://www.telmax.com/about-telmax/"],
+  ["Support", SITE.support],
+];
+---
+
+<Layout
+  title="About this concept"
+  description="What this redesign of telMAX's website is: what on it is real, what is simulated, what it adds, and what putting it live would take."
+>
+  <PageTop
+    title="About this concept"
+    lead={`A proposal for telMAX's website, designed and built by ${CONCEPT.by}. It is not telMAX's website, and nothing typed into it reaches telMAX.`}
+  >
+    <a href={SITE.official} class="btn btn--primary out" rel="noopener">Go to telmax.com</a>
+    <a href="/" class="btn btn--line">See the home page</a>
+  </PageTop>
+
+  <section class="band">
+    <div class="wrap split">
+      <div>
+        <h2>What is real</h2>
+        <p class="lead" style="margin-top:16px">Checked against telmax.com on {CONCEPT.factsChecked}.</p>
+      </div>
+      <dl class="rows defs">
+        {real.map((r) => <div><dt>{r.title}</dt><dd class="soft">{r.text}</dd></div>)}
+      </dl>
+    </div>
+  </section>
+
+  <section class="band ruled">
+    <div class="wrap split">
+      <div>
+        <h2>What is simulated</h2>
+        <p class="lead" style="margin-top:16px">Each of these says so where it happens.</p>
+      </div>
+      <dl class="rows defs">
+        {simulated.map((r) => <div><dt>{r.title}</dt><dd class="soft">{r.text}</dd></div>)}
+      </dl>
+    </div>
+  </section>
+
+  <section class="band on-green">
+    <div class="wrap split">
+      <h2>What it adds</h2>
+      <dl class="rows defs">
+        {adds.map((r) => <div><dt>{r.title}</dt><dd class="soft">{r.text}</dd></div>)}
+      </dl>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap split">
+      <div>
+        <h2>What going live would take</h2>
+        <p class="lead" style="margin-top:16px">
+          The pages are built. These are the connections only telMAX can make.
+        </p>
+      </div>
+      <ul class="ticks live">
+        {live.map((l) => <li>{l}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="band ruled">
+    <div class="wrap split">
+      <div>
+        <h2>How it is built</h2>
+      </div>
+      <div class="stack built" style="--stack:14px">
+        <p>
+          A static site made with Astro: each page is plain HTML with a little script, so it
+          loads fast and works on any host.
+        </p>
+        <p>
+          The fonts and pictures are served from the site itself, and there are no trackers or
+          cookies. Two things reach outside it: the address lookup asks OpenStreetMap's Photon
+          service for suggestions as you type, and the status page checks that telmax.com answers
+          from your connection.
+        </p>
+        <p>
+          Colours are telMAX's own. The two typefaces are free stand-ins for the brand's
+          licensed ones.
+        </p>
+        <p>
+          The order flow, the help search, the assistant and the status monitor are covered by
+          automated tests that run with one command.
+        </p>
+        <div class="sources">
+          <h3>Pages of telmax.com read for the facts</h3>
+          <ul>
+            {sources.map(([name, href]) => <li><a class="link out" href={href} rel="noopener">{name}</a></li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .defs dt {
+    font-size: var(--t-h3);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .defs dd {
+    max-width: 36rem;
+    margin-top: 6px;
+  }
+  .live {
+    gap: 14px;
+    max-width: 38rem;
+    font-weight: 550;
+  }
+  .built {
+    max-width: 38rem;
+  }
+  .sources {
+    padding-top: 10px;
+  }
+  .sources h3 {
+    font-size: var(--t-small);
+  }
+  .sources ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    margin-top: 8px;
+    font-size: var(--t-small);
+  }
+</style>

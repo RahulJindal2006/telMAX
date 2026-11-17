@@ -1,0 +1,78 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageTop from "../components/PageTop.astro";
+import { SITE, CONCEPT } from "../data/site.js";
+
+/* A real sequence, so it is numbered. Source: telmax.com, "Earn $50 each per referral". */
+const steps = [
+  { title: "Share your link", text: "Every telMAX customer has a referral link to pass on." },
+  { title: "Your friend joins telMAX", text: "They sign up for pure fibre through your link." },
+  { title: "You both get $50", text: "A $50 account credit for you and a $50 credit for your friend." },
+];
+---
+
+<Layout
+  title="Refer a friend"
+  description="Refer a friend to telMAX and you each get a $50 account credit."
+>
+  <PageTop
+    title="Refer a friend. You each get $50."
+    lead="Like your telMAX service? Pass it on. Every friend who joins earns both of you an account credit."
+  >
+    <a href={SITE.referral} class="btn btn--primary out" rel="noopener">Get your link at telmax.com</a>
+  </PageTop>
+
+  <section class="band">
+    <div class="wrap">
+      <ol class="cols steps" style="--n:3">
+        {
+          steps.map((s, i) => (
+            <li>
+              <span class="steps__n num" aria-hidden="true">{i + 1}</span>
+              <h2>{s.title}</h2>
+              <p class="soft">{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+      {
+        CONCEPT.on && (
+          <p class="note note--concept" style="margin-top:40px;max-width:44rem">
+            <span>
+              Referral links are issued by telMAX's own system, so this concept site sends you to
+              telmax.com for yours. It collects nothing here.
+            </span>
+          </p>
+        )
+      }
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .steps {
+    counter-reset: step;
+  }
+  .steps li {
+    padding-top: 20px;
+    border-top: 2px solid var(--green);
+  }
+  .steps__n {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .steps h2 {
+    margin-top: 14px;
+    font-family: var(--sans);
+    font-size: var(--t-h3);
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    line-height: 1.25;
+  }
+  .steps p {
+    margin-top: 6px;
+  }
+</style>

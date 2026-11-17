@@ -1,0 +1,516 @@
+---
+import Layout from "../layouts/Layout.astro";
+import AddressCheck from "../components/AddressCheck.astro";
+import PlansBlock from "../components/PlansBlock.astro";
+import UploadTool from "../components/UploadTool.astro";
+import Photo from "../components/Photo.astro";
+import { INTERNET, TV, PHONE, PROMO, DIFFERENCE, NEWS, money } from "../data/catalog.js";
+import { SITE } from "../data/site.js";
+import { listOf } from "../data/site.js";
+/* The upright version of the home photograph: the wide one loses the face in a tall frame. */
+import heroPhoto from "../assets/photos/hero-home-mobile.webp";
+import localPhoto from "../assets/photos/difference-local.jpg";
+
+const popular = INTERNET.plans.find((p) => p.popular) || INTERNET.plans[0];
+const awards = NEWS.filter((n) => n.award);
+const tvFrom = Math.min(...TV.packages.map((p) => p.price));
+const phoneFrom = Math.min(...PHONE.plans.map((p) => p.price));
+---
+
+<Layout>
+  <!-- Hero: the claim, then the one question every visitor has -->
+  <section class="hero on-green">
+    <div class="wrap hero__grid">
+      <div class="hero__copy">
+        {
+          PROMO && (
+            <p class="hero__promo">
+              <span class="tag">{PROMO.name}</span>
+              <span>
+                {PROMO.line}. <a class="link" href="/deals">See the deals</a>
+              </span>
+            </p>
+          )
+        }
+        <h1 class="hero__h">We didn't borrow our network. We built it.</h1>
+        <p class="lead">
+          Pure fibre to your door, on a network telMAX owns from end to end. The same speed up and
+          down, up to {INTERNET.topSpeed}.
+        </p>
+        <div class="hero__check">
+          <AddressCheck id="hero" label="Is telMAX at your address?" />
+        </div>
+      </div>
+
+      <figure class="hero__fig">
+        <Photo
+          src={heroPhoto}
+          alt="A man in glasses smiling at his laptop"
+          ratio={4 / 5}
+          focus="top"
+          sizes="(max-width: 900px) 100vw, 480px"
+          eager
+        />
+        <figcaption>
+          <a href="/internet#plans" class="plate">
+            <span class="plate__k">Most popular</span>
+            <span class="plate__name">{popular.name}</span>
+            <span class="speed plate__speed">
+              <span class="speed__dir">{popular.speed}</span>
+              <span class="speed__dir speed__dir--up">{popular.speed}</span>
+            </span>
+            <span class="plate__price num">{money(popular.price)} a month</span>
+          </a>
+        </figcaption>
+      </figure>
+    </div>
+
+    <!-- Light in glass, both ways at once -->
+    <div class="fibre" aria-hidden="true"><i></i><i></i></div>
+  </section>
+
+  <!-- Four plain statements -->
+  <section class="facts">
+    <div class="wrap">
+      <ul class="facts__row">
+        <li>
+          <strong>The same speed both ways</strong>
+          <span>Up to {INTERNET.topSpeed}, down and up.</span>
+        </li>
+        <li>
+          <strong>Pure fibre all the way</strong>
+          <span>No copper on the last stretch to your home.</span>
+        </li>
+        <li>
+          <strong>A network telMAX owns</strong>
+          <span>Designed, built and run by telMAX, founded in {SITE.founded}.</span>
+        </li>
+        <li class="facts__award">
+          <img src="/images/badges/pc-mag-2025.webp" alt="PCMag Fastest ISPs Canada 2025, 4 years in a row" width="420" height="228" loading="lazy" />
+          <span>
+            <strong>Fastest ISP in Canada</strong>
+            <span>PCMag 2025, the fourth year in a row.</span>
+          </span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Plans -->
+  <section class="band" id="plans">
+    <div class="wrap">
+      <div class="head">
+        <h2>Choose your speed</h2>
+        <p class="lead">Four plans. On every one, upload matches download.</p>
+      </div>
+      <PlansBlock />
+    </div>
+  </section>
+
+  <!-- What symmetrical means, worked out -->
+  <section class="band ruled">
+    <div class="wrap">
+      <div class="head">
+        <h2>Upload as fast as you download.</h2>
+        <p class="lead">
+          Cable and DSL plans usually send far slower than they receive. Every MAXfibre plan does
+          both at the same speed. Here is what that does to a long upload.
+        </p>
+      </div>
+      <UploadTool />
+    </div>
+  </section>
+
+  <!-- TV and phone -->
+  <section class="band ruled">
+    <div class="wrap split">
+      <div>
+        <h2>Add TV and home phone</h2>
+        <p class="lead" style="margin-top:16px">Both run over the same fibre and go on the same bill.</p>
+      </div>
+      <div class="rows">
+        <a class="more-row" href="/tv">
+          <span>
+            <h3>MAXview TV</h3>
+            <p class="soft">
+              {TV.totalChannels} channels in all, including {listOf(TV.named)}. Packages from {money(tvFrom)}
+              a month.
+            </p>
+          </span>
+          <span class="more-row__go">TV packages</span>
+        </a>
+        <a class="more-row" href="/home-phone">
+          <span>
+            <h3>MAXtalk home phone</h3>
+            <p class="soft">Unlimited calling across Canada from {money(phoneFrom)} a month.</p>
+          </span>
+          <span class="more-row__go">Phone plans</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- What sets telMAX apart -->
+  <section class="band ruled">
+    <div class="wrap split">
+      <div class="apart__lead">
+        <h2>What sets telMAX apart</h2>
+        <Photo
+          src={localPhoto}
+          alt="A technician in a hard hat checking network equipment"
+          ratio={5 / 4}
+          focus="top"
+          sizes="(max-width: 900px) 100vw, 440px"
+        />
+      </div>
+      <dl class="rows apart">
+        {
+          DIFFERENCE.map((d) => (
+            <div>
+              <dt>{d.title}</dt>
+              <dd class="soft">{d.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- Recognition -->
+  <section class="band ruled">
+    <div class="wrap split">
+      <div>
+        <h2>Measured, not claimed</h2>
+        <p class="lead" style="margin-top:16px">
+          PCMag tests internet providers across Canada every year. These are its results for telMAX.
+        </p>
+        <div class="badges">
+          <img src="/images/badges/pc-mag-2025.webp" alt="PCMag Fastest ISPs Canada 2025, 4 years in a row" width="420" height="228" loading="lazy" />
+          <img src="/images/badges/pc-mag-gaming.webp" alt="PCMag Best Gaming ISPs Canada 2025" width="420" height="228" loading="lazy" />
+        </div>
+      </div>
+      <ul class="rows news">
+        {
+          awards.map((n) => (
+            <li>
+              <span class="news__date">{n.date}</span>
+              <span>
+                {n.text}
+                <a class="link out news__src" href={n.href} rel="noopener">Source</a>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Referral -->
+  <section class="band--tight ruled">
+    <div class="wrap refer">
+      <div>
+        <h2>Refer a friend. You each get $50.</h2>
+        <p class="lead" style="margin-top:12px">
+          Share your link. When your friend joins telMAX, you both get a $50 account credit.
+        </p>
+      </div>
+      <a href="/refer-a-friend" class="btn btn--line btn--lg">How referrals work</a>
+    </div>
+  </section>
+
+  <!-- Close on the same question the page opened with -->
+  <section class="band on-lime">
+    <div class="wrap split split--even">
+      <h2 class="end__h">Ready when you are.</h2>
+      <AddressCheck id="end" label="Check your address" />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* ---- Hero ---- */
+  .hero {
+    position: relative;
+    padding-block: clamp(36px, 5vw, 72px) 0;
+    overflow: hidden;
+  }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(28px, 5vw, 80px);
+    align-items: center;
+  }
+  .hero__grid > * {
+    min-width: 0;
+  }
+  .hero__promo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-bottom: clamp(20px, 3vw, 32px);
+    font-size: var(--t-small);
+    font-weight: 600;
+  }
+  .hero__h {
+    font-size: var(--t-hero);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    font-variation-settings: "opsz" 144;
+  }
+  .hero .lead {
+    margin-top: clamp(18px, 2.4vw, 28px);
+  }
+  .hero__check {
+    margin-top: clamp(26px, 3.4vw, 40px);
+  }
+  .hero__fig {
+    position: relative;
+  }
+  .hero__fig :global(.photo) {
+    max-height: 600px;
+  }
+  .plate {
+    position: absolute;
+    left: clamp(-36px, -3vw, -16px);
+    bottom: clamp(18px, 3vw, 36px);
+    display: grid;
+    gap: 2px;
+    padding: 16px 20px 18px;
+    border-radius: var(--r-ctl);
+    background: var(--cream);
+    color: var(--green);
+    text-decoration: none;
+    box-shadow: var(--pop);
+  }
+  .plate:hover .plate__name {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .plate__k {
+    justify-self: start;
+    padding: 2px 8px;
+    border-radius: var(--r-tag);
+    background: var(--lime);
+    font-size: var(--t-micro);
+    font-weight: 700;
+  }
+  .plate__name {
+    margin-top: 8px;
+    font-size: var(--t-small);
+    font-weight: 700;
+  }
+  .plate__speed {
+    font-size: 1.625rem;
+  }
+  .plate__price {
+    margin-top: 4px;
+    font-size: var(--t-small);
+    font-weight: 600;
+    color: #3d5b55;
+  }
+
+  /* The line of fibre under the hero, with a pulse of light each way. */
+  .fibre {
+    position: relative;
+    height: 2px;
+    margin-top: clamp(36px, 5vw, 72px);
+    background: rgba(249, 249, 235, 0.16);
+  }
+  .fibre i {
+    position: absolute;
+    top: 0;
+    width: 140px;
+    height: 2px;
+  }
+  .fibre i:first-child {
+    background: linear-gradient(90deg, transparent, var(--lime));
+    animation: fibre-down 3.4s linear infinite;
+  }
+  .fibre i:last-child {
+    background: linear-gradient(270deg, transparent, var(--mauve));
+    animation: fibre-up 3.4s linear infinite;
+  }
+  @keyframes fibre-down {
+    from {
+      left: -140px;
+    }
+    to {
+      left: 100%;
+    }
+  }
+  @keyframes fibre-up {
+    from {
+      left: 100%;
+    }
+    to {
+      left: -140px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fibre i {
+      display: none;
+    }
+  }
+
+  /* ---- Facts ---- */
+  .facts {
+    border-bottom: 1px solid var(--line);
+  }
+  .facts__row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.25fr);
+  }
+  .facts__row > li {
+    padding: clamp(22px, 2.6vw, 34px) clamp(16px, 2vw, 28px);
+    border-left: 1px solid var(--line);
+    font-size: var(--t-small);
+    line-height: 1.45;
+  }
+  .facts__row > li:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .facts__row strong {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 1.0625rem;
+    line-height: 1.3;
+  }
+  .facts__row span {
+    color: var(--ink-soft);
+  }
+  .facts__award {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 16px;
+    align-items: center;
+  }
+  .facts__award strong {
+    color: var(--ink);
+  }
+
+  /* ---- TV and phone ---- */
+  .more-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 24px;
+    align-items: center;
+    padding-block: 24px;
+    text-decoration: none;
+  }
+  .more-row p {
+    margin-top: 6px;
+  }
+  .more-row__go {
+    padding: 9px 14px;
+    border: 1.5px solid var(--line-firm);
+    border-radius: var(--r-ctl);
+    font-size: var(--t-small);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .more-row:hover .more-row__go {
+    border-color: var(--green);
+    background: var(--green);
+    color: var(--cream);
+  }
+
+  /* ---- Apart ---- */
+  .apart__lead :global(.photo) {
+    max-width: 440px;
+    margin-top: clamp(24px, 3vw, 40px);
+  }
+  .apart dt {
+    font-size: var(--t-h3);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .apart dd {
+    max-width: 34rem;
+    margin-top: 6px;
+  }
+
+  /* ---- Recognition ---- */
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: clamp(24px, 3vw, 36px);
+  }
+  .badges img {
+    width: 150px;
+  }
+  .news li {
+    display: grid;
+    grid-template-columns: 9.5rem minmax(0, 1fr);
+    gap: 4px 20px;
+  }
+  .news__date {
+    font-weight: 700;
+  }
+  .news__src {
+    margin-left: 8px;
+    font-size: var(--t-small);
+    white-space: nowrap;
+  }
+
+  /* ---- Referral and close ---- */
+  .refer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px 48px;
+  }
+  .end__h {
+    font-size: var(--t-h1);
+  }
+
+  @media (max-width: 900px) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .hero__fig :global(.photo) {
+      aspect-ratio: 4 / 3 !important;
+      max-height: none;
+      object-position: top;
+    }
+    .plate {
+      left: 14px;
+      bottom: 14px;
+    }
+    .facts__row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .facts__row > li {
+      padding-inline: 0 16px;
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .facts__row > li:nth-child(-n + 2) {
+      border-top: 0;
+    }
+  }
+  @media (max-width: 560px) {
+    /* the plan ladder is two swipes away: the photo stays clear */
+    .plate {
+      display: none;
+    }
+    .facts__row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .facts__row > li:nth-child(2) {
+      border-top: 1px solid var(--line);
+    }
+    .news li {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .more-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .more-row__go {
+      justify-self: start;
+    }
+  }
+</style>

@@ -1,0 +1,173 @@
+---
+/**
+ * "Is telMAX at my address?" Type an address, pick a suggestion, get the
+ * answer in place. A serviced address can go straight on to the sign-up
+ * flow, which receives it already checked.
+ *
+ * Props
+ *   id      a short unique name: a page can hold two of these
+ *   label   the visible label above the box
+ */
+import { AREAS, listOf } from "../data/site.js";
+import "../styles/address.css";
+
+interface Props {
+  id: string;
+  label?: string;
+}
+const { id, label = "Check your address" } = Astro.props;
+---
+
+<div class="check" data-address-check>
+  <label class="check__label" for={`${id}-addr`}>{label}</label>
+  <div class="check__row">
+    <div class="sw-ac check__box">
+      <span class="sw-ac__icon" aria-hidden="true"></span>
+      <input
+        id={`${id}-addr`}
+        class="sw-ac__input"
+        type="text"
+        placeholder="Start typing your street address"
+        autocomplete="off"
+        autocapitalize="words"
+        spellcheck="false"
+      />
+      <div class="sw-ac__list" id={`${id}-list`} hidden></div>
+    </div>
+    <button type="button" class="btn btn--go check__go">Check availability</button>
+  </div>
+  <p class="check__hint" role="alert" hidden></p>
+  <div class="check__result" aria-live="polite" hidden></div>
+  <p class="check__areas">Serving {listOf(AREAS)}.</p>
+</div>
+
+<style is:global>
+  .check {
+    max-width: 38rem;
+  }
+  .check__label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: var(--t-small);
+    font-weight: 700;
+  }
+  .check__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+  .check__go {
+    min-height: 56px;
+  }
+  .check__hint {
+    margin-top: 10px;
+    font-size: var(--t-small);
+    font-weight: 650;
+    color: var(--down);
+  }
+  .on-green .check__hint {
+    color: #ffb4ad;
+  }
+  .check__areas {
+    margin-top: 12px;
+    font-size: var(--t-small);
+    color: var(--ink-soft);
+  }
+  .check__result {
+    margin-top: 14px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-ctl);
+    background: var(--white);
+    color: var(--green);
+    /* the roles inside the answer are always the light-page ones */
+    --ink: var(--green);
+    --line-firm: rgba(27, 61, 56, 0.42);
+    --well: var(--cream-deep);
+    --ring: var(--green);
+  }
+  .on-green .check__result {
+    border-color: transparent;
+    background: var(--cream);
+  }
+  .on-green .check__result .btn--primary {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--cream);
+  }
+  .check__result strong {
+    display: block;
+    font-size: 1.125rem;
+    line-height: 1.3;
+  }
+  .check__result p {
+    margin-top: 4px;
+    font-size: var(--t-small);
+    color: #3d5b55;
+  }
+  .check__result .cluster {
+    margin-top: 14px;
+  }
+
+  @media (max-width: 560px) {
+    .check__row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+
+<script>
+  import { attachAddressBox, isServiced, rememberAddress, esc } from "../scripts/address.js";
+  document.querySelectorAll<HTMLElement>("[data-address-check]").forEach((root) => {
+    const input = root.querySelector<HTMLInputElement>(".sw-ac__input")!;
+    const list = root.querySelector<HTMLElement>(".sw-ac__list")!;
+    const go = root.querySelector<HTMLButtonElement>(".check__go")!;
+    const hint = root.querySelector<HTMLElement>(".check__hint")!;
+    const result = root.querySelector<HTMLElement>(".check__result")!;
+    let chosen: { city: string; label: string } | null = null;
+
+    const answer = () => {
+      if (!chosen) {
+        hint.textContent = "Choose your address from the suggestions.";
+        hint.hidden = false;
+        input.focus();
+        return;
+      }
+      hint.hidden = true;
+      if (isServiced(chosen.city)) {
+        rememberAddress(chosen);
+        result.innerHTML = `
+          <strong>Yes. telMAX pure fibre serves ${esc(chosen.city)}.</strong>
+          <p>${esc(chosen.label)}</p>
+          <div class="cluster">
+            <a class="btn btn--primary" href="/get-started">Choose a plan</a>
+            <a class="btn btn--line" href="/internet#plans">Compare speeds first</a>
+          </div>`;
+      } else {
+        result.innerHTML = `
+          <strong>Not yet. telMAX is not in ${esc(chosen.city)}.</strong>
+          <p>The network is still growing. The communities it serves today are listed below.</p>`;
+      }
+      result.hidden = false;
+    };
+
+    const box = attachAddressBox({
+      input,
+      list,
+      onType() {
+        chosen = null;
+        hint.hidden = true;
+        result.hidden = true;
+      },
+      onPick(address: { city: string; label: string }) {
+        chosen = address;
+        answer();
+      },
+    });
+
+    go.addEventListener("click", answer);
+    document.addEventListener("click", (e) => {
+      if (!(e.target as Element).closest(".sw-ac")) box.close();
+    });
+  });
+</script>

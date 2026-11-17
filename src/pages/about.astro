@@ -1,0 +1,210 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageTop from "../components/PageTop.astro";
+import Photo from "../components/Photo.astro";
+import { NEWS, INTERNET } from "../data/catalog.js";
+import { SITE, AREAS, listOf } from "../data/site.js";
+import fibre from "../assets/photos/difference-fibre.jpg";
+import local from "../assets/photos/difference-local.jpg";
+
+/* Source for everything on this page: telmax.com/about-telmax */
+const principles = [
+  { title: "Exceptional connectivity", text: "A network built to deliver the speeds it promises." },
+  { title: "Transparent service", text: "Straightforward pricing with no hidden fees, on a fixed term or month to month." },
+  { title: "Community investment", text: "Putting something back into the neighbourhoods the network serves." },
+];
+
+const values = [
+  { title: "Performance and commitment", text: "Delivering results through accountability and follow-through." },
+  { title: "Agility and collaboration", text: "Adapting quickly and working together, with open communication." },
+  { title: "Customer centricity", text: "Making decisions from the customer's side of the table." },
+  { title: "Trust and integrity", text: "Acting with respect and transparency, and presuming good intent." },
+];
+
+/* A real sequence: this is the order a neighbourhood is built in. */
+const build = [
+  { title: "Planning", text: "The network is designed and permits are arranged with the municipality." },
+  { title: "Preparation", text: "Crews prepare protected pathways for the fibre. Expect some drilling and noise." },
+  { title: "Building", text: "Fibre and ground-level boxes go in, reaching every home on the street." },
+  { title: "Restoration", text: "Affected areas are put back as they were, then inspected by the municipality." },
+  { title: "Connect", text: "Once you sign up, the line is run to your home and a device turns light into internet." },
+];
+---
+
+<Layout
+  title="About telMAX"
+  description="telMAX was founded in 2016 in the Greater Toronto Area and builds, owns and runs its own pure fibre network."
+>
+  <PageTop
+    title="A network built on purpose"
+    lead={`telMAX was founded in ${SITE.founded} in the Greater Toronto Area with one aim: to be Canada's fastest fibre internet provider. It builds, owns and runs its own network.`}
+    photo={fibre}
+    alt="Strands of optical fibre, lit at the tips"
+    focus="centre"
+  />
+
+  <section class="band">
+    <div class="wrap split">
+      <div>
+        <h2>Its own fibre, to your door</h2>
+        <Photo
+          src={local}
+          alt="A technician in a hard hat checking network equipment"
+          ratio={5 / 4}
+          focus="top"
+          sizes="(max-width: 900px) 100vw, 440px"
+          class="about__photo"
+        />
+      </div>
+      <div class="stack" style="--stack:20px">
+        <p class="lead">
+          Many providers sell service as "fibre-powered" while the last stretch to the house is
+          still a copper phone line or a TV cable. telMAX built a pure fibre network of its own, and
+          the fibre runs all the way into your home.
+        </p>
+        <p>
+          That is why it can deliver up to {INTERNET.topSpeed} to a home, the same up and down.
+        </p>
+        <p>Today the network serves {listOf(AREAS)}.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band ruled">
+    <div class="wrap split">
+      <h2>Three principles</h2>
+      <dl class="rows defs">
+        {principles.map((p) => <div><dt>{p.title}</dt><dd class="soft">{p.text}</dd></div>)}
+      </dl>
+    </div>
+  </section>
+
+  <section class="band ruled">
+    <div class="wrap split">
+      <h2>The values behind the work</h2>
+      <dl class="rows defs">
+        {values.map((v) => <div><dt>{v.title}</dt><dd class="soft">{v.text}</dd></div>)}
+      </dl>
+    </div>
+  </section>
+
+  <section class="band on-green">
+    <div class="wrap">
+      <div class="head">
+        <h2>How a neighbourhood gets fibre</h2>
+        <p class="lead">Five stages, in this order.</p>
+      </div>
+      <ol class="build">
+        {
+          build.map((b, i) => (
+            <li>
+              <span class="build__n num" aria-hidden="true">{i + 1}</span>
+              <h3>{b.title}</h3>
+              <p class="soft">{b.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap split">
+      <div>
+        <h2>Lately</h2>
+        <div class="badges">
+          <img src="/images/badges/pc-mag-2025.webp" alt="PCMag Fastest ISPs Canada 2025, 4 years in a row" width="420" height="228" loading="lazy" />
+          <img src="/images/badges/pc-mag-gaming.webp" alt="PCMag Best Gaming ISPs Canada 2025" width="420" height="228" loading="lazy" />
+        </div>
+      </div>
+      <ul class="rows news">
+        {
+          NEWS.map((n) => (
+            <li>
+              <span class="news__date">{n.date}</span>
+              <span>
+                {n.text}
+                <a class="link out news__src" href={n.href} rel="noopener">Source</a>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* :global because the <img> is drawn by the Photo component, which this
+     page's scoped styles do not reach */
+  :global(.about__photo) {
+    max-width: 440px;
+    margin-top: clamp(24px, 3vw, 40px);
+  }
+  .defs dt {
+    font-size: var(--t-h3);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .defs dd {
+    max-width: 34rem;
+    margin-top: 6px;
+  }
+  .build {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--gap);
+  }
+  .build li {
+    padding-top: 18px;
+    border-top: 2px solid var(--lime);
+  }
+  .build__n {
+    display: block;
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--lime);
+  }
+  .build h3 {
+    margin-top: 12px;
+  }
+  .build p {
+    margin-top: 6px;
+    font-size: var(--t-small);
+  }
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: clamp(24px, 3vw, 36px);
+  }
+  .badges img {
+    width: 150px;
+  }
+  .news li {
+    display: grid;
+    grid-template-columns: 9.5rem minmax(0, 1fr);
+    gap: 4px 20px;
+  }
+  .news__date {
+    font-weight: 700;
+  }
+  .news__src {
+    margin-left: 8px;
+    font-size: var(--t-small);
+    white-space: nowrap;
+  }
+  @media (max-width: 1000px) {
+    .build {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 560px) {
+    .build,
+    .news li {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

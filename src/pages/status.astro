@@ -1,0 +1,694 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageTop from "../components/PageTop.astro";
+import { CONTACT, CONCEPT, AREAS } from "../data/site.js";
+import statusFile from "../../public/status.json";
+import "../styles/status.css";
+
+/*
+ * Network Status page.
+ * ------------------------------------------------------------------
+ * DATA SOURCE (honest): telMAX does not operate a public status API or a
+ * separate status host (there is no status.telmax.com). So this board is
+ * telMAX's OWN published status, driven by public/status.json - the single
+ * source of truth. The block below is the server-rendered, no-JS fallback;
+ * on load a client script fetches /status.json, re-renders the board with the
+ * live values and refreshes every 60s. Edit public/status.json to change what
+ * visitors see - no rebuild required.
+ *
+ * The board also runs a small, clearly-labelled browser-side reachability
+ * check against telmax.com. That is a connectivity signal only (can the
+ * visitor reach the public site) - NOT authoritative service health, which is
+ * why it lives in a muted chip and never drives the status pills.
+ */
+/* Where the board reads its data. Defaults to the static/published
+   public/status.json. Set PUBLIC_STATUS_SRC (build env) to the live monitor
+   endpoint - e.g. the Cloudflare Worker URL - to stream from it instead. */
+const statusSrc = import.meta.env.PUBLIC_STATUS_SRC || "";
+
+const LABEL = {
+  operational: "Operational",
+  maintenance: "Maintenance",
+  degraded: "Degraded",
+  outage: "Outage",
+};
+
+const services = [
+  { name: "MAXfibre Internet", note: "Pure fibre network", status: "operational" },
+  { name: "MAXview TV", note: "Live TV, apps and Cloud-PVR", status: "operational" },
+  { name: "MAXtalk Home Phone", note: "Calling and voicemail", status: "operational" },
+  { name: "My telMAX", note: "Account portal and billing", status: "operational" },
+];
+
+const areas = AREAS.map((name) => ({ name, status: "operational" }));
+
+const updated = new Date(statusFile.updated).toLocaleString("en-CA", {
+  dateStyle: "long",
+  timeStyle: "short",
+  timeZone: "America/Toronto",
+});
+
+/* 90-day window for the server-rendered uptime strips (all operational as the
+   no-JS baseline; the live script overlays any real incidents from status.json). */
+const N = 90;
+const day0 = new Date();
+day0.setHours(0, 0, 0, 0);
+const days = Array.from(
+  { length: N },
+  (_, i) => new Date(day0.getTime() - (N - 1 - i) * 86400000),
+);
+const fmtDayTitle = (d) =>
+  d.toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" });
+
+const checkSteps = [
+  {
+    icon: "wifi",
+    title: "Check this page first",
+    text: "A known outage in your area shows on the board above. No alert usually means the problem is inside your home.",
+  },
+  {
+    icon: "wrench",
+    title: "Reboot your equipment",
+    text: "Unplug the fibre box (ONT) and your eero for about 15 seconds, plug the fibre box back in first, let it settle, then power the eero on.",
+  },
+  {
+    icon: "phone-ring",
+    title: "Still down? Tell us",
+    text: "If your equipment looks healthy and nothing is flagged above, report it so telMAX can look into the line to your home.",
+  },
+];
+---
+
+<Layout
+  title="Network status"
+  description="How telMAX internet, TV, home phone and My telMAX are running, by service and by area, with 90 days of history."
+>
+  <PageTop
+    title="Network status"
+    lead="How telMAX's services are running right now, by service and by area, with 90 days of history."
+  >
+    <a href="/report-outage" class="btn btn--primary">Report an outage</a>
+    <a href="#try" class="btn btn--line">Something not working?</a>
+  </PageTop>
+
+  <section class="band--tight">
+    <div class="wrap">
+      {/* Reads /status.json by default. Set PUBLIC_STATUS_SRC at build time
+          (e.g. the Cloudflare Worker URL) to stream from the live monitor. */}
+      <div id="status-app" class="status-app" data-status-src={statusSrc || undefined}>
+        <!-- Server-rendered fallback (all operational). JS replaces this with live data. -->
+        <div class="status-overall is-operational">
+          <span class="status-ind" aria-hidden="true"></span>
+          <div class="status-overall__text">
+            <strong>All systems operational</strong>
+            <span>No outages are currently reported across the telMAX network.</span>
+          </div>
+          <div class="status-overall__meta">
+            <span class="status-live is-sample">Status file</span>
+            <span
+              class="status-reach is-checking"
+              id="status-reach"
+              title="A live check from your browser that telmax.com is reachable. It reflects connectivity, not telMAX service health."
+            >
+              <span class="status-reach__dot" aria-hidden="true"></span>
+              <span class="status-reach__txt">Checking telmax.com…</span>
+            </span>
+            <span class="status-updated-time">Updated {updated} (ET)</span>
+          </div>
+        </div>
+
+        <div class="status-metrics">
+          <div class="status-metric">
+            <div class="status-metric__k">Current status</div>
+            <div class="status-metric__v is-operational">
+              <span class="st-dot" aria-hidden="true"></span>All systems go
+            </div>
+            <div class="status-metric__sub">Across all services & areas</div>
+          </div>
+          <div class="status-metric">
+            <div class="status-metric__k">Uptime · {N} days</div>
+            <div class="status-metric__v">100.00%</div>
+            <div class="status-metric__sub">From published incidents</div>
+          </div>
+          <div class="status-metric">
+            <div class="status-metric__k">Services operational</div>
+            <div class="status-metric__v">{services.length}/{services.length}</div>
+            <div class="status-metric__sub">{areas.length} service areas monitored</div>
+          </div>
+          <div class="status-metric">
+            <div class="status-metric__k">Active incidents</div>
+            <div class="status-metric__v">0</div>
+            <div class="status-metric__sub">Network monitored 24/7</div>
+          </div>
+          <div class="status-metric">
+            <div class="status-metric__k">User reports · 60 min</div>
+            <div class="status-metric__v">0</div>
+            <div class="status-metric__sub">Reported by customers</div>
+          </div>
+        </div>
+
+        <div class="status-legend" aria-hidden="true">
+          <span class="status-legend__item"><span class="st-dot is-operational"></span>Operational</span>
+          <span class="status-legend__item"><span class="st-dot is-maintenance"></span>Maintenance</span>
+          <span class="status-legend__item"><span class="st-dot is-degraded"></span>Degraded</span>
+          <span class="status-legend__item"><span class="st-dot is-outage"></span>Outage</span>
+        </div>
+
+        <section class="status-sec">
+          <div class="status-sec__head">
+            <h2 class="status-sec__title">Services</h2>
+            <span class="status-sec__cap">Uptime over the last {N} days</span>
+          </div>
+          <div class="status-list">
+            {
+              services.map((s) => (
+                <div class="status-row">
+                  <div class="status-row__top">
+                    <span class="status-svc">
+                      <span class="status-svc__name">{s.name}</span>
+                      <span class="status-svc__note">{s.note}</span>
+                    </span>
+                    <span class={`st-pill is-${s.status}`}>
+                      <span class="st-dot" aria-hidden="true" />
+                      {LABEL[s.status]}
+                    </span>
+                  </div>
+                  <div class="status-uptime">
+                    <div class="uptime-bars">
+                      {days.map((d) => (
+                        <span
+                          class="uptime-bar is-operational"
+                          title={`${fmtDayTitle(d)}: operational`}
+                        />
+                      ))}
+                    </div>
+                    <div class="uptime-cap">
+                      <span>{N} days ago</span>
+                      <span class="uptime-cap__pct">100.00% uptime</span>
+                      <span>Today</span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </section>
+
+        <section class="status-sec">
+          <div class="status-sec__head">
+            <h2 class="status-sec__title">Service areas</h2>
+          </div>
+          <div class="status-areas">
+            {
+              areas.map((a) => (
+                <div class={`status-area is-${a.status}`}>
+                  <span class="status-area__head">
+                    <span class="st-dot" aria-hidden="true" />
+                    <span class="status-area__name">{a.name}</span>
+                  </span>
+                  <span class="status-area__label">{LABEL[a.status]}</span>
+                </div>
+              ))
+            }
+          </div>
+        </section>
+
+        <section class="status-sec">
+          <div class="status-sec__head">
+            <h2 class="status-sec__title">Reported by customers</h2>
+            <span class="status-sec__cap">Submitted via this site · last 60 min</span>
+          </div>
+          <div class="status-empty status-empty--reports">No problems reported by customers in the last 60 minutes.</div>
+        </section>
+
+        <section class="status-sec">
+          <div class="status-sec__head">
+            <h2 class="status-sec__title">Past incidents</h2>
+            <span class="status-sec__cap">Last {N} days</span>
+          </div>
+          <div class="status-empty">No incidents reported in the last {N} days.</div>
+        </section>
+
+        <p class="status-note">
+          Seeing a problem that isn't listed? <a href="/report-outage">Report an outage</a>.
+        </p>
+      </div>
+
+      <p class="status-source">
+        The board reads a published status file and refreshes about every minute. The file is
+        written by the monitor in this project's <code>server</code> folder, which checks whether
+        telMAX's public endpoints answer and how fast. The "telmax.com reachable" line is a check
+        from your own browser: it shows your connection to telMAX's site, not the health of a service.
+      </p>
+    </div>
+  </section>
+
+  <section class="band ruled" id="try">
+    <div class="wrap">
+      <div class="head">
+        <h2>Something not working?</h2>
+        <p class="lead">Three things to try, in this order.</p>
+      </div>
+      <ol class="cols try" style="--n:3">
+        {
+          checkSteps.map((c, i) => (
+            <li>
+              <span class="try__n num" aria-hidden="true">{i + 1}</span>
+              <h3>{c.title}</h3>
+              <p class="soft">{c.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="status-hint soft">
+        Step-by-step help is in the
+        <a href="/support#p/internet/troubleshooting">support centre</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="band on-green" id="report">
+    <div class="wrap split">
+      <div>
+        <h2>Still down? Tell telMAX.</h2>
+        <p class="lead" style="margin-top:16px">
+          If your equipment looks healthy and nothing is flagged above, report it.
+        </p>
+        <p style="margin-top:24px">
+          <a href="/report-outage" class="btn btn--go btn--lg">Report an outage</a>
+        </p>
+      </div>
+      <ul class="rows reach">
+        <li>
+          <span class="soft">Call</span>
+          <a class="reach__big" href={CONTACT.support.tel}>{CONTACT.support.phone}</a>
+        </li>
+        <li>
+          <span class="soft">Email</span>
+          <a class="link" href={`mailto:${CONTACT.support.email}`}>{CONTACT.support.email}</a>
+        </li>
+        <li>
+          <span class="soft">Home phone</span>
+          <span>
+            During a power or internet outage, home phone will not work, and that includes 911.
+            Keep a charged mobile phone for emergencies.
+          </span>
+        </li>
+      </ul>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .try li {
+    padding-top: 18px;
+    border-top: 2px solid var(--green);
+  }
+  .try__n {
+    display: block;
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .try h3 {
+    margin-top: 12px;
+  }
+  .try p {
+    margin-top: 6px;
+  }
+  .status-hint {
+    margin-top: 28px;
+  }
+  .reach li {
+    display: grid;
+    grid-template-columns: 8rem minmax(0, 1fr);
+    gap: 4px 20px;
+    align-items: baseline;
+  }
+  .reach__big {
+    font-size: clamp(1.625rem, 2vw + 1rem, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    text-decoration: none;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  @media (max-width: 560px) {
+    .reach li {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+
+<script>
+  // Live status board. Fetches /status.json, re-renders with real values and
+  // refreshes every 60s. The server-rendered board is the no-JS fallback.
+  const app = document.getElementById("status-app");
+  if (app) {
+    const ORDER = ["operational", "maintenance", "degraded", "outage"];
+    const LABEL = { operational: "Operational", maintenance: "Maintenance", degraded: "Degraded", outage: "Outage" };
+    const SHORT = { operational: "All systems go", maintenance: "Maintenance", degraded: "Degraded", outage: "Outage" };
+    const OVERALL = {
+      operational: { banner: "All systems operational", sub: "No outages are currently reported across the telMAX network." },
+      maintenance: { banner: "Scheduled maintenance underway", sub: "Some services may be briefly affected during planned maintenance." },
+      degraded: { banner: "Some services are experiencing issues", sub: "We're aware of a problem affecting one or more services or areas and are working on it." },
+      outage: { banner: "Service disruption", sub: "We're investigating an outage affecting one or more services or areas." },
+    };
+    const key = (k) => (LABEL[k] ? k : "operational");
+    const worseOf = (a, b) => (ORDER.indexOf(key(b)) > ORDER.indexOf(key(a)) ? key(b) : key(a));
+    const esc = (s) =>
+      String(s == null ? "" : s).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+
+    const fmt = (iso) => { const d = new Date(iso); return isNaN(d.getTime()) ? "" : d.toLocaleString("en-CA", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Toronto" }); };
+    const fmtDate = (iso) => { const d = new Date(iso); return isNaN(d.getTime()) ? "" : d.toLocaleDateString("en-CA", { dateStyle: "long", timeZone: "America/Toronto" }); };
+    const fmtLong = (iso) => { const d = iso ? new Date(iso) : new Date(); return (isNaN(d.getTime()) ? new Date() : d).toLocaleString("en-CA", { dateStyle: "long", timeStyle: "short", timeZone: "America/Toronto" }); };
+    const fmtDayTitle = (d) => d.toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" });
+
+    const DAY = 86400000;
+    const startOfDay = (v) => { const d = new Date(v); d.setHours(0, 0, 0, 0); return d; };
+    const toDay = (v) => { if (!v) return null; const d = new Date(v); return isNaN(d.getTime()) ? null : startOfDay(d).getTime(); };
+
+    /* ---- Reachability chip: live, browser-side, connectivity only ---- */
+    let reach = "checking";
+    const reachText = () =>
+      reach === "up" ? "telmax.com reachable"
+      : reach === "down" ? "telmax.com unreachable from here"
+      : "Checking telmax.com…";
+    function applyReach() {
+      const el = document.getElementById("status-reach");
+      if (!el) return;
+      el.className = `status-reach is-${reach}`;
+      const txt = el.querySelector(".status-reach__txt");
+      if (txt) txt.textContent = reachText();
+    }
+    async function probeReach() {
+      reach = "checking";
+      applyReach();
+      try {
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 8000);
+        // no-cors resolves (opaque) whenever telMAX's server responds at all -
+        // a true reachability signal that won't false-negative on a 404.
+        await fetch("https://www.telmax.com/favicon.ico?_=" + Date.now(), {
+          mode: "no-cors",
+          cache: "no-store",
+          signal: ctrl.signal,
+        });
+        clearTimeout(t);
+        reach = "up";
+      } catch (e) {
+        reach = "down";
+      }
+      applyReach();
+    }
+
+    function reachChip() {
+      return `<span class="status-reach is-${reach}" id="status-reach"
+        title="A live check from your browser that telmax.com is reachable. It reflects connectivity, not telMAX service health.">
+        <span class="status-reach__dot" aria-hidden="true"></span>
+        <span class="status-reach__txt">${reachText()}</span>
+      </span>`;
+    }
+
+    /* ---- Build the 90-day model from incidents + history ---- */
+    function buildModel(data) {
+      const N = Number.isFinite(+data.window_days) && +data.window_days > 0 ? Math.min(180, Math.floor(+data.window_days)) : 90;
+      const services = Array.isArray(data.services) ? data.services : [];
+      const areas = Array.isArray(data.areas) ? data.areas : [];
+      const incidents = (Array.isArray(data.incidents) ? data.incidents : []).filter(Boolean);
+      const history = (Array.isArray(data.history) ? data.history : []).filter(Boolean);
+
+      const today = startOfDay(new Date()).getTime();
+      const days = [];
+      for (let i = N - 1; i >= 0; i--) days.push(today - i * DAY);
+
+      // Normalise every incident/history entry into a dated event with a range.
+      const events = [];
+      incidents.forEach((inc) => {
+        const start = toDay(inc.started || inc.time);
+        if (start != null) events.push({ start, end: today, status: key(inc.status), services: inc.services });
+      });
+      history.forEach((h) => {
+        const start = toDay(h.started || h.date || h.resolved);
+        const end = toDay(h.resolved || h.date || h.started);
+        if (start != null) events.push({ start, end: end != null ? end : start, status: key(h.status), services: h.services });
+      });
+      const hits = (ev, sid) => !Array.isArray(ev.services) || ev.services.length === 0 || ev.services.includes(sid);
+      const dayStatus = (sid, dayMs) => {
+        let worst = "operational";
+        for (const ev of events) {
+          if (dayMs >= ev.start && dayMs <= ev.end && hits(ev, sid)) worst = worseOf(worst, ev.status);
+        }
+        return worst;
+      };
+
+      const cellsByService = {};
+      services.forEach((s) => { cellsByService[s.id] = days.map((d) => dayStatus(s.id, d)); });
+
+      let downCells = 0;
+      services.forEach((s) => { downCells += cellsByService[s.id].filter((x) => x !== "operational").length; });
+      const totalCells = services.length * N || 1;
+      const overallPct = ((totalCells - downCells) / totalCells) * 100;
+
+      let worst = "operational";
+      services.concat(areas).forEach((x) => { worst = worseOf(worst, x.status); });
+      const overallKey = LABEL[data.overall] ? data.overall : worst;
+      const opsCount = services.filter((s) => key(s.status) === "operational").length;
+
+      return { N, days, services, areas, incidents, history, cellsByService, overallPct, overallKey, opsCount };
+    }
+
+    /* ---- Fragment builders ---- */
+    const scopeTags = (ids, services) => {
+      if (!Array.isArray(ids) || !ids.length) return "";
+      const names = ids.map((id) => { const s = services.find((x) => x.id === id); return s ? s.name : id; });
+      return `<div class="status-incident__scope">${names.map((n) => `<span class="status-scope-tag">${esc(n)}</span>`).join("")}</div>`;
+    };
+
+    function uptimeStrip(cells, N, days) {
+      const down = cells.filter((x) => x !== "operational").length;
+      const pct = ((N - down) / N) * 100;
+      const bars = days
+        .map((d, i) => `<span class="uptime-bar is-${cells[i]}" title="${esc(fmtDayTitle(new Date(d)))}: ${esc(LABEL[cells[i]].toLowerCase())}"></span>`)
+        .join("");
+      return `<div class="status-uptime">
+        <div class="uptime-bars">${bars}</div>
+        <div class="uptime-cap"><span>${N} days ago</span><span class="uptime-cap__pct">${pct.toFixed(2)}% uptime</span><span>Today</span></div>
+      </div>`;
+    }
+
+    /* ---- First-party "Downdetector" signal (from our own report form) ---- */
+    const UR_LABEL = { none: "Normal", elevated: "Elevated reports", spike: "Many reports" };
+    const UR_CLASS = { none: "is-operational", elevated: "is-degraded", spike: "is-outage" };
+    const emptyUR = () => ({ windowMinutes: 60, total: 0, level: "none", buckets: [], services: [] });
+
+    function urChip(ur, id) {
+      const s = (ur.services || []).find((x) => x.id === id);
+      // Only flag a service row when reports are actually elevated - a single
+      // stray report shouldn't put a warning on every service.
+      if (!s || !s.count || s.level === "none") return "";
+      return `<span class="status-report-chip ${UR_CLASS[s.level]}" title="${s.count} customer report${s.count === 1 ? "" : "s"} in the last ${ur.windowMinutes || 60} min">&#9650; ${s.count} reports</span>`;
+    }
+
+    function userReportsSection(ur) {
+      const win = ur.windowMinutes || 60;
+      const total = ur.total || 0;
+      const lvl = ur.level || "none";
+      const head = `<div class="status-sec__head"><h2 class="status-sec__title">Reported by customers</h2><span class="status-sec__cap">Submitted via this site · last ${win} min</span></div>`;
+      if (!total) {
+        return `<section class="status-sec">${head}<div class="status-empty status-empty--reports">No problems reported by customers in the last ${win} minutes.</div></section>`;
+      }
+      const max = Math.max(1, ...(ur.buckets || [0]));
+      const bars = (ur.buckets || [])
+        .map((c) => {
+          const pct = c === 0 ? 6 : Math.round(10 + 90 * (c / max));
+          return `<span class="ur-bar ${c ? UR_CLASS[lvl] : "is-none"}" style="height:${pct}%" title="${c} report${c === 1 ? "" : "s"}"></span>`;
+        })
+        .join("");
+      const rows = (ur.services || [])
+        .filter((s) => s.count > 0)
+        .sort((a, b) => b.count - a.count)
+        .map(
+          (s) =>
+            `<div class="ur-row ${UR_CLASS[s.level]}"><span class="ur-row__name"><span class="st-dot" aria-hidden="true"></span>${esc(s.name)}</span><span class="ur-row__count">${s.count} report${s.count === 1 ? "" : "s"}${s.level !== "none" ? ` <em>${UR_LABEL[s.level]}</em>` : ""}</span></div>`,
+        )
+        .join("");
+      return `<section class="status-sec">${head}
+        <div class="status-reports ${UR_CLASS[lvl]}">
+          <div class="ur-top">
+            <div class="ur-headline"><strong>${total}</strong> report${total === 1 ? "" : "s"} in the last ${win} min${lvl !== "none" ? ` <span class="ur-badge ${UR_CLASS[lvl]}">${esc(UR_LABEL[lvl])}</span>` : ""}</div>
+            <div class="ur-spark" aria-hidden="true">${bars}</div>
+          </div>
+          ${rows ? `<div class="ur-list">${rows}</div>` : ""}
+          <p class="ur-note">Unverified reports from customers using the “Report an outage” form on this site - a heads-up signal, not a confirmed service status.</p>
+        </div>
+      </section>`;
+    }
+
+    /* A status file older than this was not written by a running monitor. */
+    const FRESH_MS = 15 * 60 * 1000;
+    const isStale = (data) => {
+      const t = new Date(data.updated).getTime();
+      return !Number.isFinite(t) || Date.now() - t > FRESH_MS || t - Date.now() > FRESH_MS;
+    };
+
+    function render(data) {
+      const m = buildModel(data);
+      const stale = isStale(data);
+      const sample = stale
+        ? `<p class="note note--concept status-sample"><span><strong>Sample board.</strong> The status file was last written on ${esc(fmtLong(data.updated))}, so nothing below is live. Start the monitor in this project's <code>server</code> folder and the board follows it.</span></p>`
+        : "";
+      const ur = data.userReports || emptyUR();
+      const ov = OVERALL[m.overallKey] || OVERALL.operational;
+
+      const metrics = `
+        <div class="status-metrics">
+          <div class="status-metric">
+            <div class="status-metric__k">Current status</div>
+            <div class="status-metric__v is-${m.overallKey}"><span class="st-dot" aria-hidden="true"></span>${esc(SHORT[m.overallKey])}</div>
+            <div class="status-metric__sub">Across all services & areas</div>
+          </div>
+          <div class="status-metric">
+            <div class="status-metric__k">Uptime · ${m.N} days</div>
+            <div class="status-metric__v">${m.overallPct.toFixed(2)}%</div>
+            <div class="status-metric__sub">From published incidents</div>
+          </div>
+          <div class="status-metric">
+            <div class="status-metric__k">Services operational</div>
+            <div class="status-metric__v">${m.opsCount}/${m.services.length}</div>
+            <div class="status-metric__sub">${m.areas.length} service areas monitored</div>
+          </div>
+          <div class="status-metric">
+            <div class="status-metric__k">Active incidents</div>
+            <div class="status-metric__v">${m.incidents.length}</div>
+            <div class="status-metric__sub">Network monitored 24/7</div>
+          </div>
+          <div class="status-metric">
+            <div class="status-metric__k">User reports · ${ur.windowMinutes || 60} min</div>
+            <div class="status-metric__v ${ur.level && ur.level !== "none" ? UR_CLASS[ur.level] : ""}">${ur.level && ur.level !== "none" ? '<span class="st-dot" aria-hidden="true"></span>' : ""}${ur.total || 0}</div>
+            <div class="status-metric__sub">${ur.level && ur.level !== "none" ? esc(UR_LABEL[ur.level]) : "Reported by customers"}</div>
+          </div>
+        </div>`;
+
+      const legend = `<div class="status-legend" aria-hidden="true">${ORDER
+        .map((k) => `<span class="status-legend__item"><span class="st-dot is-${k}"></span>${LABEL[k]}</span>`)
+        .join("")}</div>`;
+
+      const incidentsHTML = m.incidents.length
+        ? `<section class="status-sec"><div class="status-sec__head"><h2 class="status-sec__title">Active incidents</h2></div><div class="status-incidents">${m.incidents
+            .map((inc) => {
+              const k = key(inc.status);
+              return `<div class="status-incident is-${k}">
+                <div class="status-incident__head">
+                  <span class="st-pill is-${k}"><span class="st-dot" aria-hidden="true"></span>${esc(LABEL[k])}</span>
+                  <strong>${esc(inc.title || "")}</strong>
+                </div>
+                ${inc.body ? `<p>${esc(inc.body)}</p>` : ""}
+                ${scopeTags(inc.services, m.services)}
+                ${inc.time ? `<span class="status-incident__time">Updated ${esc(fmt(inc.time))}</span>` : ""}
+              </div>`;
+            })
+            .join("")}</div></section>`
+        : "";
+
+      const servicesHTML = `<section class="status-sec">
+        <div class="status-sec__head"><h2 class="status-sec__title">Services</h2><span class="status-sec__cap">Uptime over the last ${m.N} days</span></div>
+        <div class="status-list">${m.services
+          .map((s) => {
+            const k = key(s.status);
+            return `<div class="status-row">
+              <div class="status-row__top">
+                <span class="status-svc"><span class="status-svc__name">${esc(s.name)}</span>${s.note ? `<span class="status-svc__note">${esc(s.note)}</span>` : ""}</span>
+                <span class="status-row__meta">${urChip(ur, s.id)}<span class="st-pill is-${k}"><span class="st-dot" aria-hidden="true"></span>${esc(LABEL[k])}</span></span>
+              </div>
+              ${uptimeStrip(m.cellsByService[s.id] || m.days.map(() => "operational"), m.N, m.days)}
+            </div>`;
+          })
+          .join("")}</div></section>`;
+
+      const areasHTML = m.areas.length
+        ? `<section class="status-sec"><div class="status-sec__head"><h2 class="status-sec__title">Service areas</h2></div><div class="status-areas">${m.areas
+            .map((a) => {
+              const k = key(a.status);
+              return `<div class="status-area is-${k}">
+                <span class="status-area__head"><span class="st-dot" aria-hidden="true"></span><span class="status-area__name">${esc(a.name)}</span></span>
+                <span class="status-area__label">${esc(LABEL[k])}</span>
+              </div>`;
+            })
+            .join("")}</div></section>`
+        : "";
+
+      const hist = m.history.slice().sort((a, b) => (toDay(b.resolved || b.date || b.started) || 0) - (toDay(a.resolved || a.date || a.started) || 0));
+      const historyHTML = `<section class="status-sec">
+        <div class="status-sec__head"><h2 class="status-sec__title">Past incidents</h2><span class="status-sec__cap">Last ${m.N} days</span></div>
+        ${
+          hist.length
+            ? `<div class="status-history">${hist
+                .map((h) => {
+                  const k = key(h.status);
+                  const when = h.resolved || h.date || h.started;
+                  const timeline = [
+                    h.started ? `Started ${esc(fmt(h.started))}` : "",
+                    h.resolved ? `Resolved ${esc(fmt(h.resolved))}` : "",
+                  ].filter(Boolean).join(" · ");
+                  return `<div class="status-hist">
+                    <div class="status-hist__date">${esc(fmtDate(when))}</div>
+                    <div class="status-hist__head"><span class="st-pill is-${k}"><span class="st-dot" aria-hidden="true"></span>${esc(LABEL[k])}</span><strong>${esc(h.title || "")}</strong></div>
+                    ${h.body ? `<p>${esc(h.body)}</p>` : ""}
+                    ${scopeTags(h.services, m.services)}
+                    ${timeline ? `<span class="status-hist__time">${timeline}</span>` : ""}
+                  </div>`;
+                })
+                .join("")}</div>`
+            : `<div class="status-empty">No incidents reported in the last ${m.N} days.</div>`
+        }
+      </section>`;
+
+      app.innerHTML = `
+        ${sample}
+        <div class="status-overall is-${m.overallKey}">
+          <span class="status-ind" aria-hidden="true"></span>
+          <div class="status-overall__text">
+            <strong>${esc(ov.banner)}</strong>
+            <span>${esc(ov.sub)}</span>
+          </div>
+          <div class="status-overall__meta">
+            <span class="status-live${stale ? " is-sample" : ""}">${stale ? "Sample" : "Live"}</span>
+            ${reachChip()}
+            <span class="status-updated-time">Updated ${esc(fmtLong(data.updated))} (ET)</span>
+          </div>
+        </div>
+        ${metrics}
+        ${legend}
+        ${incidentsHTML}
+        ${servicesHTML}
+        ${areasHTML}
+        ${userReportsSection(ur)}
+        ${historyHTML}
+        <p class="status-note">Seeing a problem that isn't listed? <a href="/report-outage">Report an outage</a>.</p>`;
+    }
+
+    // Data source: the static file by default, or the live monitor endpoint if
+    // #status-app has data-status-src="http://host:8787/status.json" set. Either
+    // way the shape is identical - the monitor publishes public/status.json too.
+    const SRC = app.dataset.statusSrc || "/status.json";
+    async function load() {
+      try {
+        const sep = SRC.includes("?") ? "&" : "?";
+        const res = await fetch(`${SRC}${sep}t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) return;
+        render(await res.json());
+      } catch (e) {
+        /* keep the current board (server fallback or last good render) */
+      }
+    }
+
+    probeReach();
+    load();
+    setInterval(() => { if (!document.hidden) load(); }, 60000);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) { load(); probeReach(); }
+    });
+  }
+</script>

@@ -1,0 +1,44 @@
+---
+/**
+ * The top of every page except the home page: the page's heading, one or
+ * two sentences, and room for buttons (the default slot).
+ *
+ * Props
+ *   title   the <h1>
+ *   lead    the sentence under it
+ *   photo   an imported photograph (optional), with `alt` and `focus`
+ *   green   true to set the block on telMAX's green
+ */
+import Photo from "./Photo.astro";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  title: string;
+  lead?: string;
+  photo?: ImageMetadata;
+  alt?: string;
+  focus?: string;
+  green?: boolean;
+}
+const { title, lead, photo, alt = "", focus, green = false } = Astro.props;
+---
+
+<section class:list={["page-top", { "on-green": green, "page-top--plain": !green }]}>
+  <div class:list={["wrap", { "page-top__grid": photo }]}>
+    <div class="page-top__copy">
+      <h1>{title}</h1>
+      {lead && <p class="lead">{lead}</p>}
+      {Astro.slots.has("default") && <div class="cluster"><slot /></div>}
+    </div>
+    {photo && <Photo src={photo} alt={alt} ratio={4 / 3} focus={focus} sizes="(max-width: 900px) 100vw, 480px" eager />}
+  </div>
+</section>
+
+<style>
+  .page-top--plain {
+    border-bottom: 1px solid var(--line);
+  }
+  .page-top__copy {
+    max-width: 46rem;
+  }
+</style>

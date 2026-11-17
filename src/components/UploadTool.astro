@@ -1,0 +1,215 @@
+---
+/**
+ * "Upload as fast as you download": pick something to send, say how fast
+ * your upload is today, and see the wait on each MAXfibre plan.
+ *
+ * It is arithmetic and nothing else: size divided by line speed. The
+ * speeds are the plans in src/data/catalog.js; the comparison speed is
+ * whatever the visitor types.
+ */
+import { INTERNET } from "../data/catalog.js";
+import { uploadRows, rowsHTML } from "../scripts/upload.js";
+
+const jobs = [
+  { gb: 50, label: "50 GB photo library" },
+  { gb: 10, label: "10 GB video" },
+  { gb: 2, label: "2 GB of work files" },
+];
+const plans = INTERNET.plans.map((p) => ({ name: p.name, mbps: p.mbps, speed: p.speed, upTo: !!p.upTo }));
+const START_SPEED = 30;
+/* Drawn at build time, so the picture is there before any script runs. */
+const first = rowsHTML(uploadRows(jobs[0].gb, START_SPEED, plans));
+---
+
+<div class="up" data-upload-tool data-plans={JSON.stringify(plans)}>
+  <div class="up__ask">
+    <fieldset class="up__set">
+      <legend>What are you sending?</legend>
+      <div class="up__jobs">
+        {
+          jobs.map((j, i) => (
+            <button type="button" class="up__job" data-gb={j.gb} aria-pressed={i === 0 ? "true" : "false"}>
+              {j.label}
+            </button>
+          ))
+        }
+      </div>
+    </fieldset>
+    <label class="up__mine">
+      <span>Your upload speed today</span>
+      <span class="up__field">
+        <input class="input num" type="number" inputmode="decimal" min="1" max="10000" step="1" value={START_SPEED} data-mine />
+        <span aria-hidden="true">Mbps</span>
+      </span>
+      <small>{START_SPEED} is only a starting number. Yours is on your plan or a speed test.</small>
+    </label>
+  </div>
+
+  <div class="up__out">
+    <ul class="up__rows" aria-live="polite" data-rows set:html={first} />
+    <p class="micro soft">
+      Worked out from file size and line speed alone. Real uploads also depend on your devices and
+      on the service you are sending to.
+    </p>
+  </div>
+</div>
+
+<style is:global>
+  .up {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: clamp(28px, 5vw, 72px);
+    align-items: start;
+  }
+  .up__set {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .up__set legend,
+  .up__mine > span:first-child {
+    display: block;
+    margin-bottom: 10px;
+    padding: 0;
+    font-size: var(--t-small);
+    font-weight: 700;
+  }
+  .up__jobs {
+    display: grid;
+    gap: 8px;
+  }
+  .up__job {
+    min-height: 48px;
+    padding: 10px 16px;
+    border: 1.5px solid var(--line-firm);
+    border-radius: var(--r-ctl);
+    background: none;
+    text-align: left;
+    font-weight: 650;
+  }
+  .up__job:hover {
+    border-color: var(--ink);
+  }
+  .up__job[aria-pressed="true"] {
+    border-color: var(--green);
+    background: var(--green);
+    color: var(--cream);
+  }
+  .up__mine {
+    display: block;
+    margin-top: 26px;
+  }
+  .up__field {
+    display: grid;
+    grid-template-columns: 7.5rem auto;
+    gap: 10px;
+    align-items: center;
+    justify-content: start;
+    font-weight: 650;
+  }
+  .up__mine small {
+    display: block;
+    margin-top: 8px;
+    font-size: var(--t-micro);
+    color: var(--ink-soft);
+  }
+
+  .up__rows {
+    border-top: 1px solid var(--line);
+  }
+  .up__row {
+    display: grid;
+    grid-template-columns: minmax(0, 11rem) minmax(0, 1fr) minmax(6.5rem, auto);
+    gap: 6px 18px;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .up__who {
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .up__who small {
+    display: block;
+    font-size: var(--t-micro);
+    font-weight: 550;
+    color: var(--ink-soft);
+  }
+  .up__bar {
+    height: 14px;
+    border-radius: 3px;
+    background: var(--well);
+  }
+  .up__bar span {
+    display: block;
+    height: 100%;
+    min-width: 3px;
+    border-radius: 3px;
+    background: var(--green);
+    transition: width 0.35s var(--ease);
+  }
+  .up__row--mine .up__bar span {
+    background: var(--mauve);
+  }
+  .up__time {
+    text-align: right;
+    font-size: 1.125rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+  .up__out .micro {
+    margin-top: 14px;
+    max-width: 38rem;
+  }
+  @media (max-width: 900px) {
+    .up {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .up__jobs {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .up__job {
+      text-align: center;
+    }
+  }
+  @media (max-width: 560px) {
+    .up__jobs {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .up__job {
+      text-align: left;
+    }
+    .up__row {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .up__bar {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+</style>
+
+<script>
+  import { uploadRows, rowsHTML, ownSpeed } from "../scripts/upload.js";
+
+  document.querySelectorAll<HTMLElement>("[data-upload-tool]").forEach((root) => {
+    const plans = JSON.parse(root.dataset.plans || "[]");
+    const rows = root.querySelector<HTMLElement>("[data-rows]")!;
+    const mine = root.querySelector<HTMLInputElement>("[data-mine]")!;
+    const jobs = [...root.querySelectorAll<HTMLButtonElement>(".up__job")];
+    let gb = Number(jobs[0]?.dataset.gb || 50);
+
+    const draw = () => {
+      rows.innerHTML = rowsHTML(uploadRows(gb, ownSpeed(mine.value), plans));
+    };
+    jobs.forEach((b) =>
+      b.addEventListener("click", () => {
+        gb = Number(b.dataset.gb);
+        jobs.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+        draw();
+      }),
+    );
+    mine.addEventListener("input", draw);
+  });
+</script>

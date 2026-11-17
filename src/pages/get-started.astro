@@ -1,0 +1,61 @@
+---
+/**
+ * "Get started": the five-step flow from an address to an installation
+ * date. This page is only the frame (title, the row of steps, an empty
+ * body); src/scripts/signup.js draws each step into it.
+ */
+import Layout from "../layouts/Layout.astro";
+import { STEPS, firstScreen } from "../scripts/signup.js";
+import { CONCEPT, SITE, CONTACT } from "../data/site.js";
+import "../styles/address.css";
+import "../styles/signup.css";
+---
+
+<Layout
+  title="Get started"
+  description="Check telMAX pure fibre at your address, choose a plan, and pick an installation date. Your monthly total is on screen the whole way."
+>
+  <section class="sw-section" id="signup-wizard">
+    <div class="wrap">
+      <div class="sw-intro">
+        <h1>Build your plan</h1>
+        <p class="lead">Five steps, with your monthly total on screen the whole way.</p>
+        {
+          CONCEPT.on && (
+            <p class="note note--concept sw-intro__note">
+              A working prototype of the order flow. It places no order and keeps nothing you type.
+            </p>
+          )
+        }
+      </div>
+
+      <p class="sw-now" id="sw-now" aria-live="polite">Step 1 of {STEPS.length}: {STEPS[0].label}</p>
+      <ol class="sw-steps" id="sw-steps">
+        {
+          STEPS.map((step, i) => (
+            <li class:list={["sw-step", i === 0 ? "is-active" : "is-todo"]} data-step={i + 1}>
+              <button type="button" class="sw-step__btn" disabled>
+                <span class="sw-step__n">{i + 1}</span>
+                <span class="sw-step__label">{step.label}</span>
+              </button>
+            </li>
+          ))
+        }
+      </ol>
+
+      <noscript>
+        <p class="note sw-noscript">
+          This step-by-step flow needs JavaScript. You can order from
+          <a class="link" href={SITE.shop}>telMAX's shop</a> or call {CONTACT.support.phone}.
+        </p>
+      </noscript>
+      {/* Step 1 is already in the page; the script takes over from here. */}
+      <div class="sw-body" id="sw-body" set:html={firstScreen()} />
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { initSignup } from "../scripts/signup.js";
+  initSignup();
+</script>

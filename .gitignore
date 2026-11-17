@@ -1,0 +1,34 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+
+# status monitor runtime state (regenerated at runtime)
+server/state.json
+# submitted outage reports (contains personal info - never commit)
+server/reports.jsonl
+server/reports.xlsx
+
+# office/spreadsheet lock + temp files
+~$*
+*.tmp
+
+# macOS-specific files
+.DS_Store
+
+# jetbrains setting folder
+.idea/

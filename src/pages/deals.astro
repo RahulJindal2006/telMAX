@@ -1,0 +1,105 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageTop from "../components/PageTop.astro";
+import AddressCheck from "../components/AddressCheck.astro";
+import { PROMO, INTERNET, TV, money } from "../data/catalog.js";
+import { listOf } from "../data/site.js";
+import photo from "../assets/photos/deals-hero.jpg";
+
+const popular = INTERNET.plans.find((p) => p.popular) || INTERNET.plans[0];
+const entry = INTERNET.plans[0];
+const tvFrom = Math.min(...TV.packages.map((p) => p.price));
+
+const deals = [
+  {
+    title: "Pure fibre internet",
+    text: `${PROMO ? PROMO.line + ". " : ""}Plans start at ${money(entry.price)} a month, and ${popular.name}, the most popular, is ${money(popular.price)}.`,
+    extra: PROMO ? PROMO.extras : "",
+    cta: { label: "See internet plans", href: "/internet#plans" },
+  },
+  {
+    title: "Add TV to your plan",
+    text: `${TV.totalChannels} channels in all, including ${listOf(TV.named)}. Packages from ${money(tvFrom)} a month with a qualifying internet plan.`,
+    cta: { label: "See TV packages", href: "/tv#packages" },
+  },
+  {
+    title: "Refer a friend",
+    text: "Share your link. When your friend joins telMAX, you both get a $50 account credit.",
+    cta: { label: "How referrals work", href: "/refer-a-friend" },
+  },
+];
+---
+
+<Layout
+  title="Deals"
+  description="Current telMAX offers on pure fibre internet and TV, and the refer-a-friend credit."
+>
+  <PageTop
+    title="What telMAX is offering now"
+    lead={`${PROMO ? `${PROMO.name} is on. ` : ""}The current offers on internet and TV, and what you earn for bringing a friend.`}
+    photo={photo}
+    alt="A family sharing a hot drink on the living-room floor"
+    focus="centre"
+    green
+  >
+    <a href="/get-started" class="btn btn--go">Check availability</a>
+  </PageTop>
+
+  <section class="band">
+    <div class="wrap">
+      <ul class="rows deals">
+        {
+          deals.map((d) => (
+            <li>
+              <h2>{d.title}</h2>
+              <div>
+                <p>{d.text}</p>
+                {d.extra && <p class="soft">{d.extra}</p>}
+              </div>
+              <a href={d.cta.href} class="btn btn--line">{d.cta.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="fine" style="margin-top:28px">
+        <p>Offers are for new customers only. A $4 a month network access fee applies.</p>
+        <p>
+          Promotional pricing can change without notice, can vary by technology and region, and
+          cannot be combined with other offers.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band on-lime">
+    <div class="wrap split split--even">
+      <h2 class="end__h">See what is offered at your address.</h2>
+      <AddressCheck id="end" />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .deals li {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 6fr) auto;
+    gap: 12px clamp(24px, 4vw, 56px);
+    align-items: center;
+    padding-block: clamp(24px, 3vw, 36px);
+  }
+  .deals h2 {
+    font-size: clamp(1.5rem, 1.6vw + 1rem, 2.125rem);
+  }
+  .deals p + p {
+    margin-top: 8px;
+  }
+  .end__h {
+    font-size: var(--t-h1);
+  }
+  @media (max-width: 900px) {
+    .deals li {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: start;
+    }
+  }
+</style>

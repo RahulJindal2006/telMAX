@@ -1,0 +1,189 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageTop from "../components/PageTop.astro";
+import PlansBlock from "../components/PlansBlock.astro";
+import UploadTool from "../components/UploadTool.astro";
+import AddressCheck from "../components/AddressCheck.astro";
+import { INTERNET, EERO, PROMO } from "../data/catalog.js";
+import { SITE, AREAS, listOf } from "../data/site.js";
+import photo from "../assets/photos/internet-service-bg.jpg";
+
+const faqs = [
+  {
+    q: "Where is telMAX internet available?",
+    a: `In ${listOf(AREAS)}, and the network is still growing. The address check at the foot of this page tells you about your home.`,
+  },
+  {
+    q: "Why is fibre better than copper or coax?",
+    a: "Fibre carries data as light through glass. That is what lets it send as fast as it receives and respond with very little delay, and telMAX runs it all the way to your home with no copper on the last stretch.",
+  },
+  {
+    q: "Does telMAX use the same lines as other providers?",
+    a: "No. The network is telMAX's own: it built the pure fibre itself and owns it from end to end.",
+  },
+  {
+    q: "Is the data really unlimited?",
+    a: "Yes. Unlimited data is part of every MAXfibre plan.",
+  },
+];
+---
+
+<Layout
+  title="Internet plans"
+  description="MAXfibre pure fibre internet from telMAX: four speeds up to 8 Gbps, the same up and down, with unlimited data and eero WiFi."
+>
+  <PageTop
+    title="Pure fibre internet"
+    lead={`Four speeds, each the same up and down. Unlimited data, eero WiFi and eero Secure come with every plan.`}
+    photo={photo}
+    alt="A woman laughing over a coffee beside her laptop"
+    focus="right"
+  >
+    <a href="/get-started" class="btn btn--go">Check availability</a>
+    <a href="#plans" class="btn btn--line">Compare the plans</a>
+  </PageTop>
+
+  <section class="band" id="plans">
+    <div class="wrap">
+      <div class="head">
+        <h2>Choose your speed</h2>
+        {
+          PROMO && (
+            <p class="lead">
+              <span class="tag">{PROMO.name}</span> {PROMO.line}. {PROMO.extras}
+            </p>
+          )
+        }
+      </div>
+      <PlansBlock />
+    </div>
+  </section>
+
+  <section class="band ruled">
+    <div class="wrap">
+      <div class="head">
+        <h2>Upload as fast as you download.</h2>
+        <p class="lead">
+          Cable and DSL plans usually send far slower than they receive. Every MAXfibre plan does
+          both at the same speed. Here is what that does to a long upload.
+        </p>
+      </div>
+      <UploadTool />
+    </div>
+  </section>
+
+  <section class="band ruled">
+    <div class="wrap split">
+      <div>
+        <h2>WiFi that reaches every room</h2>
+        <p class="lead" style="margin-top:16px">
+          Fast fibre is only as good as the WiFi that carries it through the house. Every plan
+          comes with a high-performance eero system, and extenders stretch it further.
+        </p>
+        <p class="cluster apps">
+          <span class="small soft">The eero app:</span>
+          <a class="link out" href={SITE.apps.eero.ios} rel="noopener">App Store</a>
+          <a class="link out" href={SITE.apps.eero.android} rel="noopener">Google Play</a>
+        </p>
+      </div>
+      <div class="stack" style="--stack:40px">
+        <div>
+          <h3>How far extenders reach</h3>
+          <table class="reach">
+            <thead>
+              <tr><th scope="col">Extenders</th><th scope="col">Covers up to</th></tr>
+            </thead>
+            <tbody>
+              {
+                EERO.coverage.map((c) => (
+                  <tr>
+                    <th scope="row">{c.extenders}</th>
+                    <td class="num">{c.sqft} sq. ft.</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3>eero Secure, at no extra cost</h3>
+          <ul class="ticks secure">
+            {EERO.secure.map((s) => <li>{s}</li>)}
+          </ul>
+        </div>
+        <p class="note">
+          <span>MAXfibre 4.0 comes with eero Pro&nbsp;7, a WiFi&nbsp;7 system.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band ruled">
+    <div class="wrap split">
+      <div>
+        <h2>Questions about internet</h2>
+        <p class="lead" style="margin-top:16px">
+          More answers are in the <a class="link" href="/support">support centre</a>.
+        </p>
+      </div>
+      <div class="faq">
+        {
+          faqs.map((f) => (
+            <details>
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="band on-lime">
+    <div class="wrap split split--even">
+      <h2 class="end__h">Is MAXfibre at your address?</h2>
+      <AddressCheck id="end" />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .apps {
+    margin-top: 24px;
+  }
+  .reach {
+    width: 100%;
+    max-width: 26rem;
+    margin-top: 12px;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  .reach th,
+  .reach td {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .reach thead th {
+    font-size: var(--t-small);
+    font-weight: 650;
+    color: var(--ink-soft);
+  }
+  .reach tbody th {
+    font-weight: 700;
+  }
+  .reach td {
+    font-weight: 700;
+  }
+  .secure {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 14px;
+  }
+  .end__h {
+    font-size: var(--t-h1);
+  }
+  @media (max-width: 560px) {
+    .secure {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

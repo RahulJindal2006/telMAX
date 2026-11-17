@@ -1,0 +1,378 @@
+---
+/**
+ * The site header: logo, six destinations, the account link and the one
+ * lime button. To add or rename a destination, edit `nav`.
+ * Below 1080px the destinations move into a menu that opens under the bar.
+ */
+import { SITE, CONTACT } from "../data/site.js";
+
+const nav = [
+  { label: "Internet", href: "/internet" },
+  { label: "TV & Streaming", href: "/tv" },
+  { label: "Home Phone", href: "/home-phone" },
+  { label: "Deals", href: "/deals" },
+  { label: "Business", href: "/business" },
+  { label: "Support", href: "/support" },
+];
+/* Reached from the menu on small screens and from the footer on large ones. */
+const more = [
+  { label: "Network status", href: "/status" },
+  { label: "Report an outage", href: "/report-outage" },
+  { label: "Refer a friend", href: "/refer-a-friend" },
+  { label: "Contact", href: "/contact" },
+];
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const here = (href: string) => path === href || path.startsWith(href + "/");
+const inFlow = path === "/get-started";
+---
+
+<header class="site-header">
+  <div class="wrap site-header__in">
+    <a href="/" class="brand" aria-label="telMAX home"><span class="logo"></span></a>
+
+    <nav class="nav" aria-label="Main">
+      <ul>
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={here(item.href) ? "page" : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__side">
+      <a href="/status" class="net" data-net>
+        <span class="net__dot" aria-hidden="true"></span>
+        <span data-net-text>Network status</span>
+      </a>
+      <a href={SITE.portal} class="acct out" rel="noopener">My telMAX</a>
+      {!inFlow && <a href="/get-started" class="btn btn--go btn--sm check">Check availability</a>}
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-menu">
+        <span class="menu-btn__bars" aria-hidden="true"></span>
+        <span class="menu-btn__label">Menu</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="menu" id="site-menu" hidden>
+    <nav class="wrap menu__in" aria-label="Menu">
+      <ul class="menu__main">
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={here(item.href) ? "page" : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <ul class="menu__more">
+        {more.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        <li><a class="out" href={SITE.portal} rel="noopener">My telMAX</a></li>
+      </ul>
+      <p class="menu__call">
+        Support <a class="link" href={CONTACT.support.tel}>{CONTACT.support.phone}</a>
+      </p>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--cream);
+    border-bottom: 1px solid var(--line);
+  }
+  .site-header__in {
+    display: flex;
+    align-items: center;
+    gap: clamp(16px, 2.4vw, 36px);
+    min-height: var(--header-h);
+  }
+  .brand {
+    flex: none;
+    display: block;
+    padding: 6px 0;
+    color: var(--green);
+  }
+  .logo {
+    display: block;
+    width: 124px;
+    aspect-ratio: 176 / 54;
+    background: currentColor;
+    -webkit-mask: url("/images/logos/telmax.svg") left center / contain no-repeat;
+    mask: url("/images/logos/telmax.svg") left center / contain no-repeat;
+  }
+
+  .nav ul {
+    display: flex;
+    gap: clamp(2px, 0.8vw, 10px);
+  }
+  .nav a {
+    display: block;
+    padding: 10px 10px;
+    font-size: var(--t-small);
+    font-weight: 650;
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: 8px;
+  }
+  .nav a:hover {
+    background: var(--well);
+  }
+  /* The page you are on is underlined, not coloured in. */
+  .nav a[aria-current="page"] {
+    text-decoration: underline;
+    text-decoration-thickness: 2.5px;
+    text-underline-offset: 8px;
+    text-decoration-color: var(--green);
+  }
+
+  .site-header__side {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 1.6vw, 22px);
+    margin-left: auto;
+  }
+  .net,
+  .acct {
+    font-size: var(--t-small);
+    font-weight: 650;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .check {
+    white-space: nowrap;
+  }
+  .net:hover,
+  .acct:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+  .net {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  /* A plain ring until the status file answers; then it takes the status colour. */
+  .net__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--line-firm);
+  }
+  .net[data-state="operational"] .net__dot {
+    border-color: var(--ok);
+    background: var(--ok);
+  }
+  .net[data-state="maintenance"] .net__dot {
+    border-color: var(--maint);
+    background: var(--maint);
+    border-radius: 2px;
+  }
+  .net[data-state="degraded"] .net__dot,
+  .net[data-state="outage"] .net__dot {
+    border-color: var(--down);
+    background: var(--down);
+    border-radius: 0;
+    transform: rotate(45deg);
+  }
+
+  .menu-btn {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1.5px solid var(--line-firm);
+    border-radius: var(--r-ctl);
+    background: none;
+    font-size: var(--t-small);
+    font-weight: 700;
+  }
+  .menu-btn__bars {
+    position: relative;
+    width: 18px;
+    height: 12px;
+    border-block: 2px solid currentColor;
+  }
+  .menu-btn__bars::after {
+    content: "";
+    position: absolute;
+    inset: 3px 0 auto;
+    border-top: 2px solid currentColor;
+  }
+  .menu-btn[aria-expanded="true"] .menu-btn__bars {
+    border-color: transparent;
+  }
+  .menu-btn[aria-expanded="true"] .menu-btn__bars::before,
+  .menu-btn[aria-expanded="true"] .menu-btn__bars::after {
+    content: "";
+    position: absolute;
+    inset: 3px 0 auto;
+    border-top: 2px solid currentColor;
+    transform: rotate(45deg);
+  }
+  .menu-btn[aria-expanded="true"] .menu-btn__bars::after {
+    transform: rotate(-45deg);
+  }
+
+  .menu {
+    border-top: 1px solid var(--line);
+    background: var(--cream);
+    max-height: calc(100dvh - var(--header-h));
+    overflow-y: auto;
+  }
+  .menu__in {
+    padding-block: 8px 28px;
+  }
+  .menu__main a {
+    display: block;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--serif);
+    font-size: 1.625rem;
+    font-weight: 500;
+    line-height: 1.1;
+    text-decoration: none;
+  }
+  .menu__main a[aria-current="page"] {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
+  }
+  .menu__more {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px 20px;
+    margin-top: 20px;
+  }
+  .menu__more a {
+    display: block;
+    padding: 10px 0;
+    font-size: var(--t-small);
+    font-weight: 650;
+    text-decoration: none;
+  }
+  .menu__call {
+    margin-top: 18px;
+    font-size: var(--t-small);
+    color: var(--ink-soft);
+  }
+
+  /* A laptop-width bar holds everything on one line by closing the gaps. */
+  @media (max-width: 1320px) {
+    .site-header__in {
+      gap: 16px;
+    }
+    .site-header__side {
+      gap: 14px;
+    }
+    .nav ul {
+      gap: 2px;
+    }
+    .nav a {
+      padding-inline: 8px;
+    }
+  }
+  @media (max-width: 1200px) {
+    .net {
+      display: none;
+    }
+  }
+  @media (max-width: 1080px) {
+    .nav,
+    .acct {
+      display: none;
+    }
+    .menu-btn {
+      display: inline-flex;
+    }
+  }
+  @media (max-width: 520px) {
+    :global(:root) {
+      --header-h: 64px;
+    }
+    .logo {
+      width: 104px;
+    }
+    /* On a phone the lime button lives in the bar at the bottom of the screen. */
+    .check {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // The menu under the bar on small screens.
+  const btn = document.querySelector<HTMLButtonElement>(".menu-btn");
+  const menu = document.getElementById("site-menu");
+  if (btn && menu) {
+    const set = (open: boolean) => {
+      menu.hidden = !open;
+      btn.setAttribute("aria-expanded", String(open));
+      const label = btn.querySelector(".menu-btn__label");
+      if (label) label.textContent = open ? "Close" : "Menu";
+    };
+    btn.addEventListener("click", () => set(menu.hidden));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !menu.hidden) {
+        set(false);
+        btn.focus();
+      }
+    });
+    // Leaving phone width with the menu open would strand it.
+    window.matchMedia("(min-width: 1081px)").addEventListener("change", (e) => {
+      if (e.matches) set(false);
+    });
+  }
+
+  // The network dot. It only makes a claim when the status file is fresh:
+  // a file nobody has updated for a while is sample data, and says nothing.
+  const FRESH_MINUTES = 15;
+  const WORDS: Record<string, string> = {
+    operational: "All systems operational",
+    maintenance: "Maintenance under way",
+    degraded: "Service issue",
+    outage: "Service outage",
+  };
+  /* The bar at the top has less room than the footer. */
+  const SHORT: Record<string, string> = {
+    operational: "All systems go",
+    maintenance: "Maintenance",
+    degraded: "Service issue",
+    outage: "Outage",
+  };
+  const ORDER = ["operational", "maintenance", "degraded", "outage"];
+  const pills = document.querySelectorAll<HTMLElement>("[data-net]");
+  if (pills.length) {
+    fetch("/status.json", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data || !data.updated) return;
+        const age = (Date.now() - new Date(data.updated).getTime()) / 60000;
+        if (!(age >= 0 && age <= FRESH_MINUTES)) return;
+        let worst = "operational";
+        for (const item of [...(data.services || []), ...(data.areas || [])]) {
+          if (ORDER.indexOf(item.status) > ORDER.indexOf(worst)) worst = item.status;
+        }
+        const state = WORDS[data.overall] ? data.overall : worst;
+        pills.forEach((pill) => {
+          pill.dataset.state = state;
+          const text = pill.querySelector("[data-net-text]");
+          if (text) text.textContent = pill.classList.contains("net") ? SHORT[state] : WORDS[state];
+        });
+      })
+      .catch(() => {
+        /* no status file: the link stays a plain link */
+      });
+  }
+</script>
